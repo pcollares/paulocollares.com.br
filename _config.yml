@@ -7,7 +7,7 @@
 # server process.
 
 # Basic Site Settings
-locale                   : "pt-BR"
+locale                   : "pt"
 title                    : "Paulo Collares"
 title_separator          : "-"
 name                     : &name "Paulo Collares"

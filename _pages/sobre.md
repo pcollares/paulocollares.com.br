@@ -1,10 +1,7 @@
 ---
-permalink: /
+permalink: /sobre
 title: "Sobre"
 author_profile: true
-redirect_from: 
-  - /about/
-  - /about.html
 ---
 
 Profissional de TI com vasta experiência no desenvolvimento de sistemas em Java. Amplo conhecimento nas áreas da Engenharia de Software e da Ciência da Computação. Habilidades práticas na coordenação de equipes de programação e no gerenciamento de grandes projetos de Pesquisa e Desenvolvimento.
@@ -68,13 +65,3 @@ Publicações
 *   Contador de Palavras paralelizado com o uso do MPI. 4º Congresso Científico da Semana Tecnológica – IFSP (2013)
     
 *   Classificador de embarcações marítimas utilizando lógica Fuzzy. SPOLM (2014)
-    
-
-Links
-=====
-
-*   [Blog pessoal](https://www.paulocollares.com.br/)
-*   [Twitter](https://twitter.com/pcollares)
-*   [Linkedin](https://br.linkedin.com/in/pcollares)
-*   [Github](https://github.com/pcollares)
-*   [Alura](https://cursos.alura.com.br/user/pcollares)
