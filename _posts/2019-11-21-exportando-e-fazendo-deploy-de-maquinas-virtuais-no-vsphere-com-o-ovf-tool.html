@@ -1,0 +1,87 @@
+---
+title: Exportando e fazendo deploy de maquinas virtuais no vSphere com o OVF Tool
+excerpt: Exportando e fazendo deploy de maquinas virtuais no vSphere com o OVF Tool
+date: 2019-11-21 11:02:52.000000000 -03:00
+categories:
+- Infraestrutura
+tags:
+- linux
+permalink: "/infraestrutura/exportando-e-fazendo-deploy-de-maquinas-virtuais-no-vsphere-com-o-ovf-tool/"
+---
+<p></p>
+<p>O <a href="https://www.vmware.com/br/products/vsphere.html">VMware vSphere</a> é uma ferramenta poderosa para gerenciamento de maquinas virtuais, e mesmo em sua versão gratuita oferece inúmeras ferramentas que facilitam a vida do SisAdmin.</p>
+<p></p>
+<p></p>
+<p>Uma delas é a possibilidade de exportar maquinas virtuais e fazer deploy pela linha de comando, uma vez que esse processo pela interface web é bem penoso.</p>
+<p></p>
+<p></p>
+<p>O primeiro passo é baixar e instalar o OVF Tool, a aplicação é gratuita, bastando apenas um cadastro no site. Há versões para Windows, Linux e Mac.</p>
+<p></p>
+<p></p>
+<p>Baixe aqui: <a href="https://www.vmware.com/support/developer/ovf/" target="_blank" rel="noreferrer noopener" aria-label=" (abre numa nova aba)">https://www.vmware.com/support/developer/ovf/</a></p>
+<p></p>
+<p></p>
+<h2>Exportando uma maquina virtual</h2>
+<p></p>
+<p></p>
+<p>O comando para exportar uma maquina virtual remota é o seguinte:</p>
+<p></p>
+<p></p>
+<pre class="wp-block-preformatted">ovftool --noSSLVerify vi://root@192.168.1.1/VM VM.ova</pre>
+<p></p>
+<p></p>
+<p>Onde: 'root' é o usuário, é possível informar a senha por meio dos ':' entre o nome de usuário e o '@'; '192.168.1.1' é o host do vSphere; 'VM' é o nome da maquina virtual no host remoto e 'VM.ova' é o nome do arquivo a ser salvo em sua maquina.</p>
+<p></p>
+<p></p>
+<h2>Fazendo deploy de uma maquina virtual</h2>
+<p></p>
+<p></p>
+<p>O comando para fazer deploy de uma imagem para um host remoto é o seguinte:</p>
+<p></p>
+<p></p>
+<pre class="wp-block-preformatted">ovftool -n=VM-teste VM.ova vi://root@192.168.1.1</pre>
+<p></p>
+<p></p>
+<p>Onde: 'VM-teste' é o nome que será dado a virtualização no vSphere. 'root' é o usuário, é possível informar a senha por meio dos ':' entre o nome de usuário e o '@' e '192.168.1.1' é o host do vSphere.</p>
+<p></p>
+<p></p>
+<h2>Problemas com a senha</h2>
+<p></p>
+<p></p>
+<p>O OVF Tool não entende senhas com caracteres especiais, por isso é necessário informar esses caracteres com o '%' seguido do código hexadecimal ASCII correspondente.</p>
+<p></p>
+<p></p>
+<p>Por exemplo, se sua senha for 'senha@123' deve informar 'senha%40123', ou se sua senha for 'senha#123' deve informar 'senha%23123'.</p>
+<p></p>
+<p></p>
+<p>Confira os códigos hexadecimal dos caracteres aqui: <a href="https://ascii.cl/htmlcodes.htm" target="_blank" rel="noreferrer noopener" aria-label=" (abre numa nova aba)">https://ascii.cl/htmlcodes.htm</a></p>
+<p></p>
+<p></p>
+<p>Isso resolve o erro "Error: Could not lookup host: root".</p>
+<p></p>
+<p></p>
+<h2>Outros erros</h2>
+<p></p>
+<p></p>
+<p><strong>Error: No network mapping specified. OVF networks: X. Target networks: Y Z</strong></p>
+<p></p>
+<p></p>
+<p>Esse erro ocorre quando tenta importar uma VM com um nome de rede diferente das existentes no servidor de destino, se houver apenas uma rede no servidor de destino, esse problema não ocorre quando há apenas uma rede no servidor de destino, mas quando há mais de uma a ferramenta não sabe mapear a rede antiga para a nova. Isso é solucionado com o parâmetro --net:"[nomeInterfaceAntiga=nomeInterfaceNova]", ex:</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>ovftool <strong>--net:"X=Z"</strong> -n=VM-teste VM.ova vi://root@192.168.1.1</code></pre>
+<p></p>
+<p></p>
+<h2>Referências<a href="https://www.vmware.com/support/developer/ovf/ovftool-430-userguide.pdf"></a></h2>
+<p></p>
+<p></p>
+<ul><!-- wp:list-item --></p>
+<li>A documentação completa: <a href="https://www.vmware.com/support/developer/ovf/ovftool-430-userguide.pdf">https://www.vmware.com/support/developer/ovf/ovftool-430-userguide.pdf</a></li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li><a href="http://jdgreen.io/export-vms-via-command-line-using-ovf-tool/">http://jdgreen.io/export-vms-via-command-line-using-ovf-tool/</a></li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li><a href="https://virtuallyvtrue.com/2019/08/01/error-could-not-lookup-host-root/" target="_blank" rel="noreferrer noopener" aria-label=" (abre numa nova aba)">https://virtuallyvtrue.com/2019/08/01/error-could-not-lookup-host-root/</a></li>
+<p><!-- /wp:list-item --></ul>
+<p></p>

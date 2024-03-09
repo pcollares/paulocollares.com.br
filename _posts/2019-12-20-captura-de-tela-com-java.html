@@ -1,0 +1,38 @@
+---
+title: Captura de tela com Java
+date: 2019-12-20 15:21:53.000000000 -03:00
+categories:
+- Programação
+tags:
+- java
+permalink: "/programacao/captura-de-tela-com-java/"
+excerpt: Projeto simples que demonstra como capturar a tela do computador com Java.
+---
+<p></p>
+<p>Projeto simples que demonstra como capturar a tela do computador com Java.</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code prettyprint"><code>Robot robot = new Robot();
+
+Rectangle tamanhoTela = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
+
+BufferedImage captura = robot.createScreenCapture(tamanhoTela);
+
+File file = new File(System.getProperty("java.io.tmpdir") + File.separator + "captura_tela_teste_" + System.currentTimeMillis() + ".png");
+
+try {
+  ImageIO.write(captura, "png", file);
+} catch (IOException ex) { 
+  Logger.getLogger(CapturaTelaJava.class.getName()).log(Level.SEVERE, null, ex);
+}</code></pre>
+<p></p>
+<p></p>
+<p>Esse código captura a tela do computador e salva um arquivo png no diretório temporário do sistema operacional.</p>
+<p></p>
+<p></p>
+<p>O projeto completo com uma janela feita com JavaFX pode ser baixado no meu Github: <a href="https://github.com/pcollares/exemplos-blog/tree/master/CapturaTelaJava">https://github.com/pcollares/exemplos-blog/tree/master/CapturaTelaJava</a></p>
+<p></p>
+<p></p>
+<p></p>
+<p>[]'s</p>
+<p></p>

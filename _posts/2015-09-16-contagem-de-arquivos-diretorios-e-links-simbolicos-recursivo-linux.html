@@ -1,0 +1,18 @@
+---
+title: Contagem de arquivos, diretórios e links simbólicos recursivo Linux
+date: 2015-09-16 13:05:48.000000000 -03:00
+categories:
+- Infraestrutura
+tags:
+- linux
+permalink: "/infraestrutura/contagem-de-arquivos-diretorios-e-links-simbolicos-recursivo-linux/"
+excerpt: Este simples comando exibe a contagem de arquivos, diretórios e links simbólicos
+  recursivo dentro de um diretório
+---
+<p>Este simples comando exibe a contagem de arquivos, diretórios e links simbólicos recursivo dentro de um diretório:</p>
+<p><strong>Contagem de arquivos:</strong><br />
+<code>ls -l -R | grep ^- | wc -l</code></p>
+<p><strong>Contagem de diretórios:</strong><br />
+<code>ls -l -R | grep ^d | wc -l</code></p>
+<p><strong>Contagem de links simbólicos:</strong><br />
+<code>ls -l -R | grep ^l | wc -l</code></p>

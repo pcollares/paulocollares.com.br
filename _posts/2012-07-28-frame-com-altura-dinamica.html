@@ -1,0 +1,42 @@
+---
+title: Frame com Altura Dinâmica
+excerpt: Frame com Altura Dinâmica
+date: 2012-07-28 11:49:59.000000000 -03:00
+categories:
+- Frontend e Desing
+tags:
+- html
+permalink: "/desing/frame-com-altura-dinamica/"
+---
+<p><a href="http://www.paulocollares.com.br/frame-com-altura-dinamica/iframe_com_altura_dinamica/" rel="attachment wp-att-510"><img src="{{ site.baseurl }}/images/2012/07/iframe_com_altura_dinamica.jpg" alt="" title="iframe_com_altura_dinamica" width="634" height="247" class="alignnone size-full wp-image-510" /></a></p>
+<p>Já sei o que vocês vão falar: "Ninguém mais usa frame!!", seu sei, mas em casos muito específicos, pode haver a necessidade de usá-los.</p>
+<p>Este código coloca um frame na janela inteira, largura e altura, e redimensiona conforme o tamanho do navegador.</p>
+<pre>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<script>
+function frameResize(){
+	altura=document.documentElement.clientHeight-10;
+	if (altura<200)
+		altura=200;
+    document.getElementById('frame').style.height = (altura) + "px";
+   
+}
+</script>
+</head>
+
+<body style="overflow:hidden;" onresize=" frameResize(); " scroll="no">
+
+<div id="tudo">
+
+<iframe scrolling="auto" id="frame" src="frame.html" style="width:100%;  background-color:#FFFFFF" frameborder="0" border="0" allowtransparency="no"></iframe>
+
+<script>
+frameResize();
+</script>
+
+</div>
+</body>
+</html>
+</pre>
+<p>Veja um exemplo: <a href="http://www.paulocollares.com.br/arqs/exemplos/iframe_altura_dinamica/">http://www.paulocollares.com.br/arqs/exemplos/iframe_altura_dinamica/</a></p>

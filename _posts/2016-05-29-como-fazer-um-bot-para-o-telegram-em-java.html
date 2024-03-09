@@ -1,0 +1,149 @@
+---
+title: Como fazer um bot para o Telegram em Java
+date: 2016-05-29 12:50:49.000000000 -03:00
+categories:
+- Programação
+tags:
+- java
+permalink: "/programacao/como-fazer-um-bot-para-o-telegram-em-java/"
+excerpt: Exemplo básico de como fazer um bot do Telegram em Java. Bots do Telegram
+  são robôs que se comportam como uma conversa no Telegram, porém respondem a comando
+  definidos pelo programador, neste exemplo nosso programa ficará fazendo um pooling
+  de requisições e processará cada requisição, invertendo a frase que é enviado para
+  ele.
+---
+<p><a href="http://www.paulocollares.com.br/2016/05/como-fazer-um-bot-para-o-telegram-em-java/bottelegramjava/" rel="attachment wp-att-1526"><img src="{{ site.baseurl }}/images/2016/05/botTelegramJava.png" alt="Como fazer um bot para o Telegram em Java " width="900" height="400" class="aligncenter size-full wp-image-1526" /></a></p>
+<p>Este é um exemplo básico de como fazer um bot do Telegram em Java. Bots do Telegram são robôs que se comportam como uma conversa no Telegram, porém respondem a comando definidos pelo programador, neste exemplo nosso programa ficará fazendo um pooling de requisições e processará cada requisição, invertendo a frase que é enviado para ele.</p>
+<p>Este exemplo criei a partir de um artigo do Nicola Malizia, que pode ser conferido <a href="https://unnikked.ga/how-to-create-your-custom-telegram-bot-using-the-long-polling-technique/" target="_blank" rel="noopener noreferrer">aqui</a>. Confira também toda a documentação no site do <a href="https://core.telegram.org/bots" target="_blank" rel="noopener noreferrer">Telegram</a>.</p>
+<p>Temos que tratar requisições HTTP, para isso usei a biblioteca <a href="http://unirest.io/java.html" target="_blank" rel="noopener noreferrer">unirest</a> para facilitar a implementação. Todo o exemplo a seguir foi feito no netbeans, mas pode ser facilmente realizado em outras IDEs.</p>
+<h2>Solicitando uma chave de acesso ao Telegram</h2>
+<p>Como todas as requisições serão feitas por uma conexão HTTP, é necessário ter uma chave de acesso privada para o seu bot, para isso, inicie uma conversa com o <a href="https://telegram.me/botfather" target="_blank" rel="noopener noreferrer">BotFather</a> e digite <em>/newbot</em> ele irá te perguntar o nome do seu bot e gerar uma chave de acesso no final, guarde ela, usaremos mais adiante.</p>
+<p>[caption id="attachment_1520" align="aligncenter" width="575"]<a href="http://www.paulocollares.com.br/2016/05/como-fazer-um-bot-para-o-telegram-em-java/criando-um-bot/" rel="attachment wp-att-1520"><img class="size-full wp-image-1520" src="{{ site.baseurl }}/images/2016/05/criando-um-bot.png" alt="Criando um bot no BotFather" width="575" height="751" /></a> Criando um bot no BotFather[/caption]</p>
+<h2>Criando o projeto e tratando as dependências</h2>
+<p>Vamos criar um projeto Maven no Netbeans para resolver as dependências da biblioteca <a href="http://unirest.io/java.html" target="_blank" rel="noopener noreferrer">unirest.</a> Em novo projeto, Maven, Aplicação Java, defina as suas configurações, e salve. Edite o arquivo Pom.xml em Arquivos do Projeto, e adicione as dependências do unirest:</p>
+<pre>
+ <dependencies>
+        <dependency>
+            <groupid>com.mashape.unirest</groupid>
+            <artifactid>unirest-java</artifactid>
+            <version>1.4.9</version>
+        </dependency>
+        <dependency>
+            <groupid>org.apache.httpcomponents</groupid>
+            <artifactid>httpclient</artifactid>
+            <version>4.3.6</version>
+        </dependency>
+        <dependency>
+            <groupid>org.apache.httpcomponents</groupid>
+            <artifactid>httpasyncclient</artifactid>
+            <version>4.0.2</version>
+        </dependency>
+        <dependency>
+            <groupid>org.apache.httpcomponents</groupid>
+            <artifactid>httpmime</artifactid>
+            <version>4.3.6</version>
+        </dependency>
+        <dependency>
+            <groupid>org.json</groupid>
+            <artifactid>json</artifactid>
+            <version>20140107</version>
+        </dependency>
+    </dependencies>
+</pre>
+<p>Clique com o botão direito em Dependências e depois em Fazer download de dependências declaradas, isso fará com que o Maven baixe as dependências informadas do Pom.xml.</p>
+<p>Uma vez que já temos todas as dependências, vamos ao código, precisaremos de apenas duas classes, TelegramBot.java (será a classe que tratara as requisições do bot) e Main.java (apenas uma classe principal para iniciar a aplicação).</p>
+<h3>TelegramBot.java</h3>
+<pre>package br.com.paulocollares.telegrambot;
+
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.JsonNode;
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+public final class TelegramBot {
+
+    private final String endpoint = "https://api.telegram.org/";
+    private final String token;
+
+    public TelegramBot(String token) {
+        this.token = token;
+    }
+
+    public HttpResponse<jsonnode> sendMessage(Integer chatId, String text) throws UnirestException {
+        return Unirest.post(endpoint + "bot" + token + "/sendMessage")
+                .field("chat_id", chatId)
+                .field("text", text)
+                .asJson();
+    }
+
+    public HttpResponse<jsonnode> getUpdates(Integer offset) throws UnirestException {
+        return Unirest.post(endpoint + "bot" + token + "/getUpdates")
+                .field("offset", offset)
+                .asJson();
+    }
+
+    public void run() throws UnirestException {
+        int last_update_id = 0; // controle das mensagens processadas
+        HttpResponse<jsonnode> response;
+        while (true) {
+            response = getUpdates(last_update_id++);
+            if (response.getStatus() == 200) {
+                JSONArray responses = response.getBody().getObject().getJSONArray("result");
+                if (responses.isNull(0)) {
+                    continue;
+                } else {
+                    last_update_id = responses
+                            .getJSONObject(responses.length() - 1)
+                            .getInt("update_id") + 1;
+                }
+
+                for (int i = 0; i < responses.length(); i++) {
+                    JSONObject message = responses
+                            .getJSONObject(i)
+                            .getJSONObject("message");
+                    int chat_id = message
+                            .getJSONObject("chat")
+                            .getInt("id");
+                    String usuario = message
+                            .getJSONObject("chat")
+                            .getString("username");
+                    String texto = message
+                            .getString("text");
+                    String textoInvertido = "";
+
+                    for (int j = texto.length() - 1; j >= 0; j--) {
+                        textoInvertido += texto.charAt(j);
+                    }
+
+                    sendMessage(chat_id, textoInvertido);
+                }
+            }
+        }
+    }
+}
+</jsonnode></jsonnode></jsonnode></pre>
+<h3>Main.java</h3>
+<pre>package br.com.paulocollares.telegrambot;
+
+import com.mashape.unirest.http.exceptions.UnirestException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+public class Main {
+
+    public static void main(String[] args) {
+        TelegramBot tb = new TelegramBot("cole aqui a chave gerada pelo BotFather");
+        try {
+            tb.run();
+        } catch (UnirestException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+}
+</pre>
+<p>O método run(), depois de ser iniciado, ficará requisitando constantemente ao Telegram as requisições do seu bot, que serão obtidas por um JSON, será tratada e enviada de volta.</p>
+<p>[caption id="attachment_1524" align="aligncenter" width="558"]<a href="http://www.paulocollares.com.br/2016/05/como-fazer-um-bot-para-o-telegram-em-java/bot-em-uso/" rel="attachment wp-att-1524"><img class="size-full wp-image-1524" src="{{ site.baseurl }}/images/2016/05/bot-em-uso.png" alt="Exemplo de uso do bot" width="558" height="315" /></a> Exemplo de uso do bot[/caption]</p>
+<p>Vale ressaltar que este bot só irá funcionar se a aplicação java estiver rodando, uma vez que é que responsabilidade do programa obter as requisições e enviar de volta. É um exemplo simples que apenas demonstra o uso do recurso de bots do Telegram. Postei também um exemplo em PHP, <a href="http://www.paulocollares.com.br/2016/05/como-fazer-um-bot-para-o-telegram-em-php/" target="_blank" rel="noopener noreferrer">confira aqui</a>.</p>
+<p>Um abraço, e fiquem na Paz.</p>

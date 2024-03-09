@@ -1,0 +1,16 @@
+---
+title: Redirecionamento SQL Server de um servidor externo com a base interna no pf.conf
+excerpt: Redirecionamento SQL Server de um servidor externo com a base interna no pf.conf
+date: 2011-11-08 15:48:21.000000000 -03:00
+categories:
+- Programação
+tags: []
+permalink: "/programacao/redirecionamento-sql-de-um-servidor-externo-com-a-base-interna-no-pf-conf/"
+---
+<p>Usei essa funcionalidade do pf.conf para fazer um redirecionamento de um servidor externo usado para acesso web, em uma base interna.</p>
+<p>Primeiramente habilitei uma NAT para acesso do servidor externo à rede interna. Em seguida criei dois redirecionamentos do IP do servidor externo para o IP do servidor interno onde está a base de dados. Um é para a porta 1433 TCP e o outro para a porta 1434 UPD.</p>
+<pre>
+nat on $int_if inet proto tcp from IP_SRV_EXTERNO to any -> ($int_if)
+
+rdr on $ext_if inet proto tcp from IP_SRV_EXTERNO to any port 1433 -> IP_SRV_INTERNO port 1433
+rdr on $ext_if inet proto udp from IP_SRV_EXTERNO to any port 1434 -> IP_SRV_INTERNO port 1434</pre>

@@ -1,0 +1,393 @@
+---
+title: Anotações do curso 'Git - Básico ao avançado'
+date: 2021-10-23 15:54:10.000000000 -03:00
+categories:
+- Infraestrutura
+- Programação
+tags:
+- cursos
+- git
+- udemy
+permalink: "/programacao/anotacoes-do-curso-git-basico-ao-avancado-da-udemy/"
+excerpt: Resumo do curso de GIT
+---
+<p></p>
+<p>Recentemente conclui o curso <a href="https://www.udemy.com/share/105evC3@6wfCug2HkqKfKFdupn1ffLslXSDWhAosc0yvP-vu1ipP3XGJHpgnbyg8bDeOIYXu/" target="_blank" rel="noreferrer noopener">Git - Básico ao avançado (2021) na Udemy</a> ministrado pelo Rodrigo Santana. Foi uma excelente experiência onde pude aprender bastante sobre esta ferramenta. Por mais que já usava o GIT a alguns anos, sempre há algo novo para se aprender. </p>
+<p></p>
+<p></p>
+<p>Esse post é um resumo com minhas anotações do curso. E no final alguns bônus pessoais.</p>
+<p></p>
+<p></p>
+<h2>Introdução</h2>
+<p></p>
+<p></p>
+<p><strong>Criar um repositório</strong></p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>git init</code></pre>
+<p></p>
+<p></p>
+<p><strong>Associar um repositório local ao remoto</strong></p>
+<p></p>
+<p></p>
+<p>Adiciona um repositório remoto ao local com o nome de origin, Podem haver mais de um repositório remoto associado ao local.</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>git remote add origin &#91;URL]</code></pre>
+<p></p>
+<p></p>
+<p><strong>Configurar informações do colaborador</strong></p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>git config --global user.name "Fulano de Tal"
+git config --global user.email fulanodetal@exemplo.br</code></pre>
+<p></p>
+<p></p>
+<p>As opção são do git config são: --local --global --system. Há uma prioridade da esquerda para direita.</p>
+<p></p>
+<p></p>
+<p><strong>Alias</strong></p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>git config alias.&#91;comando curto] &#91;comando longo]</code></pre>
+<p></p>
+<p></p>
+<p>Exemplo:</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>git config --global alias.hist 'log --pretty=format:"%h %ad | %s%d &#91;%an]" --graph --date=short'</code></pre>
+<p></p>
+<p></p>
+<p><strong>Ajuda</strong></p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>git &#91;comando] -help|--help</code></pre>
+<p></p>
+<p></p>
+<p>-help exibe a ajuda do comando no terminal, --help exibe no navegador.</p>
+<p></p>
+<p></p>
+<h2>Iniciando com Git</h2>
+<p></p>
+<p></p>
+<p><strong>Adicionar um arquivo para a área de staging</strong></p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>git add .
+git add &#91;arquivo]</code></pre>
+<p></p>
+<p></p>
+<p><strong>Commitar os arquivos da área de staging</strong></p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>git commit -m &#91;mensagem]</code></pre>
+<p></p>
+<p></p>
+<p><strong>Exibir detalhes de um ou vários commits</strong></p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>git show
+git show &#91;hash]
+git show &#91;hash]..&#91;hashN]</code></pre>
+<p></p>
+<p></p>
+<p>Exibir detalhes dos GIT object</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>git cat-file -p &#91;hash comit, tree ou blob]</code></pre>
+<p></p>
+<p></p>
+<p><strong>Exibir detalhes do estado atual da área de trabalho</strong></p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>git status</code></pre>
+<p></p>
+<p></p>
+<h2>Referências no Git</h2>
+<p></p>
+<p></p>
+<blockquote class="wp-block-quote"><p>Na teoria, uma branch é uma rafmificação de um projeto, na prática, uma branch é um ponteiro para um commit</p>
+</blockquote>
+<p></p>
+<p></p>
+<p><strong>Criação de branches</strong></p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>git branch &#91;nome]
+git checkout -b &#91;nome] #cria uma branch e alterna para ela</code></pre>
+<p></p>
+<p></p>
+<blockquote class="wp-block-quote"><p>HEAD é uma referência para o branch que se esta trabalhando</p>
+</blockquote>
+<p></p>
+<p></p>
+<p><strong>Listar branches</strong></p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>git branch
+git branch -a #lista as locais e as de rastreamento</code></pre>
+<p></p>
+<p></p>
+<blockquote class="wp-block-quote"><p>Branch de rastreamento (upstream branch), são as branches remotas</p>
+</blockquote>
+<p></p>
+<p></p>
+<p><strong>Enviar as alterações para o remoto</strong></p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>git push
+git push --set-upstream|-u origin &#91;branch] #empurra para o remoto criando a branch de rastreamento</code></pre>
+<p></p>
+<p></p>
+<p><strong>Outras operações com branches</strong></p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>git branch -m "novo_nome" #renomeia a branch corrente
+git branch -d &#91;nome] #remove uma branch local
+git branch origin :&#91;branch] #remove uma branch remota</code></pre>
+<p></p>
+<p></p>
+<p><strong>Tags</strong></p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>git tab -a "v1.0" -m "primeira versão" #cria uma tag anotada
+git tab &#91;nome_tag] #cria uma tag leve
+git push --tags #por padrão o push não envia tags</code></pre>
+<p></p>
+<p></p>
+<blockquote class="wp-block-quote"><p>Uma tag leve apenas marca um commit com um nome, sem referencias de quem criou ou outras anotações. Uma tag anotada cria uma versão com referências do criador e anotações</p>
+</blockquote>
+<p></p>
+<p></p>
+<h2>Descartando alterações</h2>
+<p></p>
+<p></p>
+<p><strong>Descartar as alterações locais</strong></p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>git restore &#91;arquivo]
+git restore .</code></pre>
+<p></p>
+<p></p>
+<p>Descartar todas as modificações ainda não controladas pelo GIT.</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>git clean -f &#91;arquivo]
+git clean -f</code></pre>
+<p></p>
+<p></p>
+<p>No comando acima, se não especificar nenhum arquivo, todos os arquivos serão afetados. -n lista o que seria afetado, sem realizar nada.</p>
+<p></p>
+<p></p>
+<p><strong>Descarta as modificações do stage</strong></p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>git restore --staged &#91;arquivo]
+git restore --staged .</code></pre>
+<p></p>
+<p></p>
+<p><strong>Reverter as alterações mantendo o histórico</strong></p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>git revert HEAD #reverte as alterações do ultimo commit 
+git revert HEAD~1 #reverte as alterações do penúltimo commit </code></pre>
+<p></p>
+<p></p>
+<p>Esta ação realiza um novo commit, o parâmetro --no-edit faz com uma mensagem padrão.</p>
+<p></p>
+<p></p>
+<p><strong> Reverter as alterações excluindo o histórico</strong></p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>git reset HEAD</code></pre>
+<p></p>
+<p></p>
+<p>O commit resetado passa a não mais existir no historico do GIT. Há tres tipos de reset: soft, mixed e hard, se nada for informado o padrão é o mixed:<br />  --soft: preserva a area de trabalho e o staged (staged e untraked);<br />  --mixed: preserva a area de trabalho (untraked);<br />  --hard: não preserva nada.</p>
+<p></p>
+<p></p>
+<p><strong>Listar os logs de comandos do GIT</strong></p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>git reflog</code></pre>
+<p></p>
+<p></p>
+<p>Útil para obter um reset feito de forma errada e restaurar com o git branch [hash].</p>
+<p></p>
+<p></p>
+<p><strong>Exibir um arquivo em uma versão antiga</strong></p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>git restore --source &#91;hash] &#91;arquivo]</code></pre>
+<p></p>
+<p></p>
+<h2>Merges e DAG</h2>
+<p></p>
+<p></p>
+<p><strong>Mesclar branches</strong></p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>git merge &#91;branch]</code></pre>
+<p></p>
+<p></p>
+<p><span style="text-decoration: underline;">Tipos de merge</span>:<br /><span style="text-decoration: underline;">Merge fast-foward:</span> quando o branch derivado esta a frente do que deu origem, assim ocorre apenas uma troca do HEAD para o ultimo commit dessa nova branch, já que não ouve alterações na de origem.<br />Passando a opção --no-ff no merge, pode pedir ao GIT que crie um commit de merge com dois pais.<br /><span style="text-decoration: underline;">Merge three way (estratégia recursiva):</span> quando também ouveram mudanças no branch de origem, assim há uma mesclagem entre os dois branches, o commit de merge tem dois pais.</p>
+<p></p>
+<p></p>
+<p>Commits de merges tem dois pais.</p>
+<p></p>
+<p></p>
+<blockquote class="wp-block-quote"><p>O GIT modela a relação de commits com grafos, utiliza o DAG (Grafo acíclico dirigido), onde cada nó representa um commit e as setas para os pais de um commit</p>
+</blockquote>
+<p></p>
+<p></p>
+<h2>Trabalho colaborativo</h2>
+<p></p>
+<p></p>
+<p><strong>Baixar o conteúdo remoto</strong></p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>git fetch</code></pre>
+<p></p>
+<p></p>
+<p>O comando acima faz o download do conteúdo remoto mas não atualiza o estado de funcionamento do seu repositório local.</p>
+<p></p>
+<p></p>
+<p><strong>Mesclar entre uma branch local e uma remota</strong></p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>git merge origin/master</code></pre>
+<p></p>
+<p></p>
+<p>O comando pull realiza exatamente as duas operações acima.</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>git pull</code></pre>
+<p></p>
+<p></p>
+<h2>Reescrevendo o histórico</h2>
+<p></p>
+<p></p>
+<p>Mesclar branches sem fazer merge.</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>git rebase &#91;branch]
+git rebase -i &#91;branch] #iterativo</code></pre>
+<p></p>
+<p></p>
+<p>O rebase mescla branches sem fazer merge, esse commit não terá dois pais, porém ele deleta commits para que a HEAD aponte para ele.</p>
+<p></p>
+<p></p>
+<blockquote class="wp-block-quote"><p>Regra de outro do rebase: Não recrie commits que existam fora de seu repositório e nos quais as pessoas possam ter trabalhado</p>
+</blockquote>
+<p></p>
+<p></p>
+<p>O merge é uma operação não destrutiva. As ramificações existentes não são alteradas de forma alguma. Isso evita todas as possiveis armadilhas do rebease, porém, isso também significa a existencia de bifurcações em merges não fast-forward, o que irá poluir o histórico.</p>
+<p></p>
+<p></p>
+<p>O rebase é uma operação destrutiva. Um ou mais commits serão eliminados e criados novamente, por isso, para não gerar problemas maiores que um histórico poluído, é importante seguir a regra de ouro do rebase. Se você utiliza esse comando de forma consciente, terá um histórico mais linear e fácil de ser entendido.</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>git pull --rebase #Faz a mesclagem com a branch de rastreamento sem gerar um merge, e por consequência uma bifurcação </code></pre>
+<p></p>
+<p></p>
+<p><strong>Corrigir o ultimo commit</strong></p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>git commit --amend -m "&#91;mensagem]"</code></pre>
+<p></p>
+<p></p>
+<p>O comando acima 'emenda' o ultimo commit, útil para quando esqueceu de algo, ele recria o ultimo commit com o novo conteúdo e até a nova mensagem. Importante, tenha certeza de que ninguém criou uma branch a partir desse commit. <span style="text-decoration: underline;">Também serve para renomear o ultimo commit.</span></p>
+<p></p>
+<p></p>
+<p><strong>Mesclagem juntando vários commits</strong></p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>git merge --squash &#91;branch]</code></pre>
+<p></p>
+<p></p>
+<p>O comando acima realiza um merge juntando dos os commits desse branch. Na pratica ele faz o merge e adiciona todos os arquivos mesclados na área de trabalho, forçando assim uma operação de commit que seria a junção de todos eles.</p>
+<p></p>
+<p></p>
+<h2>Outros conceitos e comandos</h2>
+<p></p>
+<p></p>
+<p><strong>Stash</strong></p>
+<p></p>
+<p></p>
+<p>Coloca os arquivos que não foram commitados ainda em uma pilha para que seja possível alterar de branch sem perder essas alterações. Arquivos untracked não entram nessa pilha.</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>git stash
+git stash list #exibe o conteúdo da stash
+git stash pop #retira os arquivos do stash
+git stash apply stash@{1} #obtém sem remover um elemento especifico da pilha
+git stash clear #limpa a pilha</code></pre>
+<p></p>
+<p></p>
+<p><strong>Exibir alterações de arquivo e o ultimo autor a alterar cada linha</strong></p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>git blame &#91;arquivo]
+git blame -L 1,3 &#91;arquivo] #especifica as linhas</code></pre>
+<p></p>
+<p></p>
+<p><strong>Remover arquivos já versionados</strong></p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>git rm &#91;arquivo] #marca arquivos já versionados para remoção
+git rm --cached &#91;arquivo] #mantém esses arquivos na área de trabalho</code></pre>
+<p></p>
+<p></p>
+<p><strong>Ver diferenças nos arquivos</strong></p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>git diff #exibe as alterações da área de trabalho atual com o ultimo commit
+git diff --staged #compara as alterações com a área de preparo
+git diff &#91;hash]..&#91;hash] #compara entre dois commits</code></pre>
+<p></p>
+<p></p>
+<p><strong>Ignorar arquivos e diretórios</strong></p>
+<p></p>
+<p></p>
+<p>É possível fazer isto criando um arquivo .gitignore na raiz do projeto, e listando os arquivos e diretóios que não deseja ser versionados pelo GIT.</p>
+<p></p>
+<p></p>
+<p><strong>Outros recursos</strong></p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>git bisect #rastreia de forma iterativa commit a commit para encontrar bugs
+git cherry-pick #permite mesclar um commit especifico com sua branch
+git config --global credential.helper store #salva localmente a próxima autenticação remota usada</code></pre>
+<p></p>
+<p></p>
+<h2>Vídeos complementares</h2>
+<p></p>
+<p></p>
+<p>Como complemento ao assunto, indico esses dois vídeos do Fabio Akita sobre GIT</p>
+<p></p>
+<p><!-- wp:embed {"url":"https://www.youtube.com/watch?v=6Czd1Yetaac","type":"video","providerNameSlug":"youtube","responsive":true,"className":"wp-embed-aspect-16-9 wp-has-aspect-ratio"} --></p>
+<figure class="wp-block-embed is-type-video is-provider-youtube wp-block-embed-youtube wp-embed-aspect-16-9 wp-has-aspect-ratio">
+<div class="wp-block-embed__wrapper">
+https://www.youtube.com/watch?v=6Czd1Yetaac
+</div>
+</figure>
+<p><!-- /wp:embed --></p>
+<p><!-- wp:embed {"url":"https://www.youtube.com/watch?v=6OokP-NE49k","type":"video","providerNameSlug":"youtube","responsive":true,"className":"wp-embed-aspect-16-9 wp-has-aspect-ratio"} --></p>
+<figure class="wp-block-embed is-type-video is-provider-youtube wp-block-embed-youtube wp-embed-aspect-16-9 wp-has-aspect-ratio">
+<div class="wp-block-embed__wrapper">
+https://www.youtube.com/watch?v=6OokP-NE49k
+</div>
+</figure>
+<p><!-- /wp:embed --></p>
+<p></p>
+<h2>Referências e outros links</h2>
+<p></p>
+<p></p>
+<ul>
+<li><a href="https://www.udemy.com/course/git-basico-ao-avancado-2021/learn/lecture/27837080#overview" target="_blank" rel="noreferrer noopener">https://www.udemy.com/course/git-basico-ao-avancado-2021/learn/lecture/27837080</a></li>
+<li><a href="https://www.lumis.com.br/a-lumis/blog/git-entenda-conceitos-basicos-sobre-o-sistema.htm" target="_blank" rel="noreferrer noopener">https://www.lumis.com.br/a-lumis/blog/git-entenda-conceitos-basicos-sobre-o-sistema.htm</a></li>
+<li><a href="https://rogerdudler.github.io/git-guide/index.pt_BR.html" target="_blank" rel="noreferrer noopener">https://rogerdudler.github.io/git-guide/index.pt_BR.html</a></li>
+</ul>
+<p></p>
+<p></p>
+<p>[]´s</p>
+<p></p>

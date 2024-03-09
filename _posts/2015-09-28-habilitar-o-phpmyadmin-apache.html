@@ -1,0 +1,14 @@
+---
+title: Habilitar o phpmyadmin Apache
+date: 2015-09-28 10:40:02.000000000 -03:00
+categories:
+- Infraestrutura
+tags:
+- linux
+permalink: "/infraestrutura/habilitar-o-phpmyadmin-apache/"
+excerpt: Após a instalação do Apache com PHP e o phpmyadmin, pode ocorrer deste não
+  estar acessível.
+---
+<p>Após a instalação do Apache com PHP e o phpmyadmin, pode ocorrer deste não estar acessível, para resolver isto adicione a seguinte linha em <em>/etc/apache2/apache2.conf</em>:</p>
+<p><code>Include /etc/phpmyadmin/apache.conf</code></p>
+<p>Agora basta restartar o apache.</p>

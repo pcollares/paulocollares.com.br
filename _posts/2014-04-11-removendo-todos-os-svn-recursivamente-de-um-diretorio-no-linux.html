@@ -1,0 +1,16 @@
+---
+title: Removendo todos os .svn recursivamente de um diretório no Linux
+date: 2014-04-11 08:10:56.000000000 -03:00
+categories:
+- Infraestrutura
+tags:
+- linux
+permalink: "/infraestrutura/removendo-todos-os-svn-recursivamente-de-um-diretorio-no-linux/"
+excerpt: Este comando remove todos os arquivos ocultos .svn de um diretório recursivamente,
+  muito útil para limpar um diretório que está sob um controlador de versões.
+---
+<p>Este comando remove todos os arquivos ocultos .svn de um diretório recursivamente, muito útil para limpar um diretório que está sob um controlador de versões.</p>
+<p><code>$ cd /home/paulo/exemplo<br />
+$ find . -iname .svn | xargs rm -frv<br />
+</code></p>
+<p>[]'s</p>

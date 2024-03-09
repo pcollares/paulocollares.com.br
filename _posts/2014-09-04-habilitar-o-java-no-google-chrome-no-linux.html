@@ -1,0 +1,18 @@
+---
+title: Habilitar o Java no Google Chrome no Linux
+date: 2014-09-04 09:06:21.000000000 -03:00
+categories:
+- Infraestrutura
+tags:
+- linux
+permalink: "/infraestrutura/habilitar-o-java-no-google-chrome-no-linux/"
+excerpt: Habilitar o Java no Google Chrome no Linux
+---
+<p>Usando a JDK instalada em seu sistema, você pode habilitar o java no Google Chrome:</p>
+<pre>
+#mkdir /opt/google/chrome/plugins
+#ln -s /opt/jdk1.7.0_17/jre/lib/amd64/libnpjp2.so /opt/google/chrome/plugins/libnpjp2.so
+#ls /opt/google/chrome/plugins/
+</pre>
+<p>Lembrando que tanto a JDK quanto o Chrome podem estar em locais diferentes do descrito acima.</p>
+<p>[]`s</p>

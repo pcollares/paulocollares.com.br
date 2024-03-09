@@ -1,0 +1,306 @@
+---
+title: Bíblia em Java - Conexão com o Postgres
+date: 2013-06-19 17:52:54.000000000 -03:00
+categories:
+- Programação
+tags:
+- java
+permalink: "/programacao/biblia-em-java-conexao-com-o-postgres/"
+excerpt: Este é um simples exemplo de conexão com o banco de dados, com o PostgreSQL,
+  para acessar a bíblia em uma aplicação Java.
+---
+<p>[caption id="attachment_966" align="aligncenter" width="660"]<a href="http://www.paulocollares.com.br/biblia-em-java-conexao-com-o-postgres/biblia-java/" rel="attachment wp-att-966"><img class="size-full wp-image-966" alt="Bíblia em Java" src="{{ site.baseurl }}/images/2013/06/biblia-java.png" width="660" height="466" /></a> Bíblia em Java[/caption]</p>
+<h2>Introdução</h2>
+<p>Este é um simples exemplo de conexão com o banco de dados, neste caso com o PostgreSQL, utilizando o Java. Como é um exemplo simples, não utilizei nenhum <em>framework </em>como Hibernate ou JPA, apenas a conexão direta com o <em>PreparedStatement</em>.</p>
+<h2>Instalação</h2>
+<p>Baixe o SQL da bíblia <a href="http://www.paulocollares.com.br/arqs/biblia.zip">aqui</a>, e execute no PostgreSQL em um banco chamado bíblia. No projeto Java, não se esqueça de importar a biblioteca do Driver JDBC do PostgreSQL.</p>
+<h2>Código Fonte</h2>
+<p>Utilizei apenas duas classes, uma para realizar a conexão, através de um <a href="http://www.paulocollares.com.br/exemplo-do-padrao-de-projeto-singleton-o-forever-alone-do-desing-patterns/">Singleton</a>, e um JFrame para exibir o conteúdo.</p>
+<p>Na classe ConexaoBD.java, deve ser passado os parâmetros de conexão com o banco, e há um método estático para obter um capítulo, passando como parâmetro o livro e o número do capítulo.</p>
+<p>Na classe Frame.java, há o método main, e uma caixa de seleção de livros e um controle giratório para selecionar o capítulo, que é exibido também nesta tela.</p>
+<p><strong>ConexaoBD.java</strong></p>
+<pre>package biblia;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+public class ConexaoBD {
+
+    private static Connection instance = null;
+
+    private ConexaoBD() {
+        try {      
+            Class.forName("org.postgresql.Driver");
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(ConexaoBD.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try {
+            instance = DriverManager.getConnection("jdbc:postgresql://localhost:5432/biblia", "postgres", "postgres");
+        } catch (SQLException ex) {
+            Logger.getLogger(ConexaoBD.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public static Connection getInstance() throws SQLException {
+        if (instance == null || instance.isClosed()) {
+            new ConexaoBD();
+        }
+        return instance;
+    }
+
+    public static String recuperarCapitulo(int livro, int capitulo) throws SQLException {
+        Connection conn = null;
+        ResultSet rs = null;
+        StringBuilder sql = new StringBuilder();
+        String texto = null;
+        sql.append("select versiculo,texto ");
+        sql.append("from versiculos ");
+        sql.append("where id_livro=? and capitulo=? ");
+        sql.append("ORDER by id");
+
+        try {
+            conn = ConexaoBD.getInstance();
+            PreparedStatement ps = conn.prepareStatement(sql.toString());
+            ps.setInt(1, livro);
+            ps.setInt(2, capitulo);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                String versiculo = rs.getString(1) + ". " + rs.getString(2) + "\n";
+                if (texto == null) {
+                    texto = versiculo;
+                } else {
+                    texto += versiculo;
+                }
+            }
+            if (texto == null) {
+                texto = "Este capítulo não existe neste livro";
+            }
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (conn != null) {
+                conn.close();
+            }
+        }
+        return texto;
+    }
+}</pre>
+<p><strong>Frame.java</strong></p>
+<pre>package biblia;
+
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.SpinnerNumberModel;
+
+public class Frame extends javax.swing.JFrame {
+
+    public Frame() {
+        super("Bíblia Sagrada em Java");
+        initComponents();
+
+        this.setLocationRelativeTo(null);
+
+        SpinnerNumberModel modelCap = new SpinnerNumberModel(1, 1, 150, 1);
+        jSpinnerCap.setModel(modelCap);
+
+        jComboBoxLivros.addItem("Genesis");
+        jComboBoxLivros.addItem("Exodo");
+        jComboBoxLivros.addItem("Levitico");
+        jComboBoxLivros.addItem("Numeros");
+        jComboBoxLivros.addItem("Deuteronomio");
+        jComboBoxLivros.addItem("Josue");
+        jComboBoxLivros.addItem("Juizes");
+        jComboBoxLivros.addItem("Rute");
+        jComboBoxLivros.addItem("ISamuel");
+        jComboBoxLivros.addItem("IISamuel");
+        jComboBoxLivros.addItem("IReis");
+        jComboBoxLivros.addItem("IIReis");
+        jComboBoxLivros.addItem("ICronicas");
+        jComboBoxLivros.addItem("IICronicas");
+        jComboBoxLivros.addItem("Esdras");
+        jComboBoxLivros.addItem("Neemias");
+        jComboBoxLivros.addItem("Ester");
+        jComboBoxLivros.addItem("Jo");
+        jComboBoxLivros.addItem("Salmos");
+        jComboBoxLivros.addItem("Proverbios");
+        jComboBoxLivros.addItem("Eclesiastes");
+        jComboBoxLivros.addItem("CanticodosCanticos");
+        jComboBoxLivros.addItem("Isaias");
+        jComboBoxLivros.addItem("Jeremias");
+        jComboBoxLivros.addItem("LamentacoesJeremias");
+        jComboBoxLivros.addItem("Ezequiel");
+        jComboBoxLivros.addItem("Daniel");
+        jComboBoxLivros.addItem("Oseias");
+        jComboBoxLivros.addItem("Joel");
+        jComboBoxLivros.addItem("Amos");
+        jComboBoxLivros.addItem("Obadias");
+        jComboBoxLivros.addItem("Jonas");
+        jComboBoxLivros.addItem("Miqueias");
+        jComboBoxLivros.addItem("Naum");
+        jComboBoxLivros.addItem("Habacuque");
+        jComboBoxLivros.addItem("Sofonias");
+        jComboBoxLivros.addItem("Ageu");
+        jComboBoxLivros.addItem("Zacarias");
+        jComboBoxLivros.addItem("Malaquias");
+        jComboBoxLivros.addItem("Mateus");
+        jComboBoxLivros.addItem("Marcos");
+        jComboBoxLivros.addItem("Lucas");
+        jComboBoxLivros.addItem("Joao");
+        jComboBoxLivros.addItem("Atos");
+        jComboBoxLivros.addItem("Romanos");
+        jComboBoxLivros.addItem("ICorintios");
+        jComboBoxLivros.addItem("IICorintios");
+        jComboBoxLivros.addItem("Galatas");
+        jComboBoxLivros.addItem("Efesios");
+        jComboBoxLivros.addItem("Filipenses");
+        jComboBoxLivros.addItem("Colossenses");
+        jComboBoxLivros.addItem("ITessalonicenses");
+        jComboBoxLivros.addItem("IITessalonicenses");
+        jComboBoxLivros.addItem("ITimoteo");
+        jComboBoxLivros.addItem("IITimoteo");
+        jComboBoxLivros.addItem("Tito");
+        jComboBoxLivros.addItem("Filemom");
+        jComboBoxLivros.addItem("Hebreus");
+        jComboBoxLivros.addItem("Tiago");
+        jComboBoxLivros.addItem("IPedro");
+        jComboBoxLivros.addItem("IIPedro");
+        jComboBoxLivros.addItem("IJoao");
+        jComboBoxLivros.addItem("IIJoao");
+        jComboBoxLivros.addItem("IIIJoao");
+        jComboBoxLivros.addItem("Judas");
+        jComboBoxLivros.addItem("Apocalipse");;
+    }
+    @SuppressWarnings("unchecked")
+    // 
+    private void initComponents() {
+
+        jScrollPane1 = new javax.swing.JScrollPane();
+        campoTexto = new javax.swing.JTextArea();
+        jComboBoxLivros = new javax.swing.JComboBox();
+        jSpinnerCap = new javax.swing.JSpinner();
+        botaoConsultar = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        campoTexto.setEditable(false);
+        campoTexto.setColumns(20);
+        campoTexto.setRows(5);
+        jScrollPane1.setViewportView(campoTexto);
+
+        jComboBoxLivros.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBoxLivrosActionPerformed(evt);
+            }
+        });
+
+        botaoConsultar.setText("Consultar");
+        botaoConsultar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botaoConsultarActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setText("Livro:");
+
+        jLabel2.setText("Capítulo:");
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1)
+                .addGap(5, 5, 5)
+                .addComponent(jComboBoxLivros, 0, 268, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSpinnerCap, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(botaoConsultar, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(12, 12, 12)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jComboBoxLivros, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jSpinnerCap, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(botaoConsultar)
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 354, Short.MAX_VALUE))
+        );
+
+        pack();
+    }// 
+
+    private void botaoConsultarActionPerformed(java.awt.event.ActionEvent evt) {
+        int numLivro = jComboBoxLivros.getSelectedIndex() + 1;
+        int numCap = Integer.valueOf(jSpinnerCap.getValue().toString());
+        String capitulo = "";
+
+        try {
+            capitulo = ConexaoBD.recuperarCapitulo(numLivro, numCap);
+        } catch (SQLException ex) {
+            Logger.getLogger(Frame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        campoTexto.setText(capitulo);
+        campoTexto.setCaretPosition(0);
+    }
+
+    private void jComboBoxLivrosActionPerformed(java.awt.event.ActionEvent evt) {
+        jSpinnerCap.setValue(1);
+    }
+
+    public static void main(String args[]) {
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(Frame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(Frame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(Frame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(Frame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new Frame().setVisible(true);
+            }
+        });
+    }
+    // Variables declaration - do not modify
+    private javax.swing.JButton botaoConsultar;
+    private javax.swing.JTextArea campoTexto;
+    private javax.swing.JComboBox jComboBoxLivros;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JSpinner jSpinnerCap;
+    // End of variables declaration
+}</pre>
+<h2>Conclusão</h2>
+<p>Como disse, este foi um simples exemplo de conexão com o banco de dados usando Java, espero que seja útil.</p>
+<p>&nbsp;</p>
+<p>[]'s</p>

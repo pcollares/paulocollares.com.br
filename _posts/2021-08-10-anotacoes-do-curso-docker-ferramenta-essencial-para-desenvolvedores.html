@@ -1,0 +1,141 @@
+---
+title: 'Anotações do curso ''Docker: Ferramenta essencial para Desenvolvedores'''
+date: 2021-08-10 20:52:31.000000000 -03:00
+categories:
+- Infraestrutura
+- Textos
+tags:
+- docker
+- linux
+permalink: "/textos/anotacoes-do-curso-docker-ferramenta-essencial-para-desenvolvedores/"
+excerpt: 'Em 2020 fiz o curso ''Docker: Ferramenta essencial para Desenvolvedores''
+  na Udemy, Este post são anotações simples que fiz durante este curso.'
+---
+<p></p>
+<p>Em 2020 fiz o curso '<a rel="noreferrer noopener" href="https://www.udemy.com/course/curso-docker/" target="_blank">Docker: Ferramenta essencial para Desenvolvedores</a>' na Udemy, Este post são anotações simples que fiz durante este curso.</p>
+<p></p>
+<p></p>
+<h2>O que são containers?</h2>
+<p></p>
+<p></p>
+<ul>
+<li>Processo segregado usando o mesmo kernel da máquina host</li>
+<li>Sistema de arquivos isolado</li>
+<li>Ambiente leve e portátil</li>
+</ul>
+<p></p>
+<p></p>
+<h2>O que são imagens docker</h2>
+<p></p>
+<p></p>
+<ul>
+<li>Modelo de sistema de arquivo usado para criar um container</li>
+<li>É criada através de um processo build</li>
+<li>São armazenadas em repositórios no Register (ex dockerhub)</li>
+<li>São compostas por uma ou mais camadas (layers). A junção dessas camadas forma uma imagem.</li>
+<li>Todas as camadas que formam a imagem são somente leitura, menos a última que pode ser alterada quando um container for iniciado</li>
+<li>Uma camada representa uma ou mais mudanças no sistema de arquivos</li>
+<li>A imagem é como se fosse uma classe da OO, é um modelo onde é possível criar múltiplos containers</li>
+<li>O cache local é baseado nessas camadas, logo para se baixar uma nova imagem é reaproveitado camadas em comum já baixadas</li>
+</ul>
+<p></p>
+<p></p>
+<h2>Criando e rodando um conatiner</h2>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>docker container run –name &#91;nome] //cria o container
+docker container start –ai &#91;nome] //executa novamente o container criado
+docker container ls/ps //lista os conatiner em execução no momento
+docker container ls/ps –a //lista todos os container, até os inativos
+docker container run –p &#91;porta ex]:&#91;port int] nginx //roda o container exportando a porta 8080 para fora
+docker container run -d --name tested -p 80:80 -v &#91;diretorio do host a ser mapeado]:&#91;diretorio interno] nginx // rodar em background
+</code></pre>
+<p></p>
+<p></p>
+<h2>Resumo comandos básicos</h2>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>docker container run ... (criar um novo)
+docker container start &#91;nome]
+docker container restart &#91;nome]
+docker container stop &#91;nome]
+docker container logs &#91;nome]
+docker container inspect &#91;nome]
+docker container exec &#91;nome] &#91;comado] //executa um comando dentro do container
+docker container --help
+docker image --help
+docker volume --help</code></pre>
+<p></p>
+<p></p>
+<h2>Trabalhando com imagens</h2>
+<p></p>
+<p></p>
+<p>As tags são ponteiros para imagens especificas</p>
+<p></p>
+<p></p>
+<p>O ideal é não trabalhar com a versão ‘lasted’ mas sim com versões especificas, para evitar que a imagem seja atualizada automaticamente e alguma função possa ser quebrada</p>
+<p></p>
+<p></p>
+<p>Cada comando no docker file é uma nova camada na imagem</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>docker image pull redis:lasted // baixa a imagem, o docker container run fiz isso em um dos seus passos
+docker image ls //lista todas as imagens
+docker image tag redis:lasted &#91;nome] // cria uma nova tag baseado na imagem
+docker image rm &#91;nome] // remover uma tag
+docker image inspect &#91;nome]//inspecionar uma imagem
+docker image build //construir uma imagem
+docker image push // publicar uma imagem no registro local ou remoto
+docker image build --build-arg S3_BUCKET=app -t build-com-arg . // passando argumentos no build</code></pre>
+<p></p>
+<p></p>
+<h2>Rede</h2>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>docker network ls // lista as redes disponiveis, por padrão as redes padrões mas é possível criar novos modelos</code></pre>
+<p></p>
+<p></p>
+<p><strong>None network</strong></p>
+<p></p>
+<p></p>
+<p>Containers ficam isolados em si mesmos, ideal para aplicações que não usam nenhum recurso de rede</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>docker container run –d –net none debian</code></pre>
+<p></p>
+<p></p>
+<p><strong>Bridge</strong></p>
+<p></p>
+<p></p>
+<p>Por padrão os containers estão em uma bridge, onde os containers se comunicam por essa rede</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>docker network inspect bridge</code></pre>
+<p></p>
+<p></p>
+<p><strong>Host</strong></p>
+<p></p>
+<p></p>
+<p>Usa diretamente a interface de rede da maquina host</p>
+<p></p>
+<p></p>
+<p>Tem uma proteção mais baixa, ganha na velocidade</p>
+<p></p>
+<p></p>
+<h2>Docker compose</h2>
+<p></p>
+<p></p>
+<p>Agrupa varias imagens</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>docker-compose up
+docker-compose up –d //deamon
+docker-compose down
+docker-compose ls
+docker-compose logs –f –t
+docker-compose up –d –scale worker=3 // escala esse serviço, irá subir 3</code></pre>
+<p></p>
+<p></p>
+<p>[]´s</p>
+<p></p>
+<p></p>

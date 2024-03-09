@@ -1,0 +1,48 @@
+---
+title: Script .vbs para mapeamento automático de unidades de rede por grupo no AD
+excerpt: Script .vbs para mapeamento automático de unidades de rede por grupo no AD
+date: 2011-12-05 15:33:11.000000000 -03:00
+categories:
+- Infraestrutura
+tags:
+- windows
+permalink: "/infraestrutura/script-vbs-para-mapeamento-automatico-de-unidades-de-rede-por-grupo-no-ad/"
+---
+<p>Esse script mapeia, de forma automática, unidades de rede nas estações de trabalho de acordo com o grupo do usuário. Funciona em minha rede com o Windows Server 2008 e estações com Windows 7.</p>
+<p><strong>Dependências:</strong><br />
+<a href="http://www.paulocollares.com.br/chamar-scripts-vbs-no-logon-do-usuario-no-ad-do-windows-server">Um script .bat configurado para chamar esse arquivo, sendo executado no logon do usuário.</a></p>
+<p><strong>Código</strong></p>
+<p>Edite dentro do <em>'Select Case'</em> de acordo com os grupos e compartilhamento de sua rede.</p>
+<pre>
+On Error Resume Next
+
+set objNetwork= CreateObject("WScript.Network")
+strDom = objNetwork.UserDomain
+strUser = objNetwork.UserName
+Set objUser = GetObject("WinNT://" & strDom & "/" & strUser &  ",user")
+
+'============================================='
+
+For Each objGroup In objUser.Groups
+
+    Select Case objGroup.Name
+
+
+        Case "grupo1" 
+		If Not FSODrive.DriveExists("Y:") Then
+			objNetwork.MapNetworkDrive "Y:", "\\IP_DO_SERVIDOR\COMPARTILHAMENTO"	
+		End If
+
+        Case "grupo2" 
+		If Not FSODrive.DriveExists("Y:") Then
+			objNetwork.MapNetworkDrive "Y:", "\\IP_DO_SERVIDOR\COMPARTILHAMENTO"	
+		End If
+
+    End Select
+
+Next
+
+'============================================='
+
+wscript.quit
+</pre>

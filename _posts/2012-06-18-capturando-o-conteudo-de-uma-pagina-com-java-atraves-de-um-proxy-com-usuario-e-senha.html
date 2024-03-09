@@ -1,0 +1,64 @@
+---
+title: Capturando o conteúdo de uma página com Java através de um Proxy com usuário
+excerpt: Capturando o conteúdo de uma página com Java através de um Proxy com usuário
+  e Senha
+date: 2012-06-18 20:36:45.000000000 -03:00
+categories:
+- Programação
+tags:
+- java
+permalink: "/programacao/capturando-o-conteudo-de-uma-pagina-com-java-atraves-de-um-proxy-com-usuario-e-senha/"
+---
+<p><a href="http://www.paulocollares.com.br/capturando-o-conteudo-de-uma-pagina-com-java-atraves-de-um-proxy-com-usuario-e-senha/proxyjava/" rel="attachment wp-att-424"><img src="{{ site.baseurl }}/images/2012/06/proxyJava.png" alt="" title="proxyJava" width="800" height="475" class="alignnone size-full wp-image-424" /></a></p>
+<p>Este código captura o conteúdo de uma página HTML para manipulação no Java, com destaque para a configuração de proxy, com endereço, porta, usuário e senha.</p>
+<pre>
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import sun.misc.BASE64Encoder;
+
+public class GetURLProxy {
+
+public static void main(String args[]) throws MalformedURLException, IOException {
+
+//Edite
+
+String usuario = "";
+String senha = "";
+String host = "";
+String porta = "";
+String endereco = "http://www.google.com.br";
+
+/////////////////////////
+
+URL url = new URL(endereco);
+
+String conteudo = "";
+
+System.setProperty("http.proxyHost", host);
+System.setProperty("http.proxyPort", porta);
+
+String usuarioSenha = usuario + ":" + senha;
+
+URLConnection con = url.openConnection();
+String encodedLogin = new BASE64Encoder().encode(usuarioSenha.getBytes());
+con.setRequestProperty("Proxy-Authorization", "Basic " + encodedLogin);
+con.setDoInput(true);
+con.setDoOutput(true);
+con.setAllowUserInteraction(false);
+
+InputStream in = con.getInputStream();
+
+for (int b = in.read(); b != -1; b = in.read()) {
+char[] temp = Character.toChars(b);
+conteudo += temp[0];
+}
+
+System.out.println(conteudo);
+
+}
+}
+
+</pre>

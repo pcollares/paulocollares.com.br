@@ -1,0 +1,54 @@
+---
+title: Como ler o conteúdo de uma URL no Java
+date: 2019-04-16 16:44:04.000000000 -03:00
+categories:
+- Programação
+tags:
+- java
+permalink: "/programacao/como-ler-o-conteudo-de-uma-url-no-java/"
+excerpt: Esse trecho de código faz a leitura de uma URL e exibe o conteúdo no terminal.
+---
+<p></p>
+<p>Esse trecho de código faz a leitura de uma URL e exibe o conteúdo no terminal.</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code prettyprint"><code>package leitorurl;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+public class LeitorURL {
+
+    public static void main(String[] args) {
+        try {
+            String url = "http://www.paulocollares.com.br/comments/feed/";
+
+            URL obj = new URL(url);
+            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+            con.setRequestMethod("GET");
+
+            int responseCode = con.getResponseCode();
+
+            if (responseCode == 200) {
+                BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream()));
+
+                String inputLine = br.readLine();
+
+                System.out.println(inputLine);
+
+            } else {
+                System.out.println("erro " + responseCode);
+            }
+        } catch (IOException e) {
+            System.out.println("Erro de leitura");
+        }
+    }
+
+}</code></pre>
+<p></p>
+<p></p>
+<p>[]'s</p>
+<p></p>

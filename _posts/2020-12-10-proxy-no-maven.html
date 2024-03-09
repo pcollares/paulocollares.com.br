@@ -1,0 +1,33 @@
+---
+title: Proxy no Maven
+date: 2020-12-10 08:40:21.000000000 -03:00
+categories:
+- Infraestrutura
+tags: []
+permalink: "/infraestrutura/proxy-no-maven/"
+excerpt: Dica rápida para definir as configurações de proxy no Maven.
+---
+<p></p>
+<p>Dica rápida para definir as configurações de proxy no Maven.</p>
+<p></p>
+<p></p>
+<p>Basta editar o arquivo em ~/.m2/settings.xml com o bloco abaixo, após salvar, as configurações estarão aplicadas.</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>&lt;settings>
+        &lt;proxies>
+                &lt;proxy>
+                        &lt;active>true&lt;/active>
+                        &lt;protocol>http&lt;/protocol>
+                        &lt;host>proxy.com.br&lt;/host>
+                        &lt;port>8080&lt;/port>
+                        &lt;username>usuario&lt;/username>
+                        &lt;password>senha&lt;/password>
+                        &lt;nonProxyHosts>&lt;/nonProxyHosts>
+                &lt;/proxy>
+        &lt;/proxies>
+&lt;/settings></code></pre>
+<p></p>
+<p></p>
+<p>[]'s</p>
+<p></p>

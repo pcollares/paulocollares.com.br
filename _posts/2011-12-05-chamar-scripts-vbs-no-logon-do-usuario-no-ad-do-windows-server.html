@@ -1,0 +1,21 @@
+---
+title: Chamar scripts .vbs no logon do usuário no AD do Windows Server
+excerpt: Chamar scripts .vbs no logon do usuário no AD do Windows Server
+date: 2011-12-05 15:25:52.000000000 -03:00
+categories:
+- Infraestrutura
+tags:
+- windows
+permalink: "/infraestrutura/chamar-scripts-vbs-no-logon-do-usuario-no-ad-do-windows-server/"
+---
+<p>Scripts .vbs são bastante úteis para manipulação de algumas tarefas em uma rede com um AD.</p>
+<p>Primeiramente crie um arquivo .bat em <em>C:/Windows/SYSVOL/domain/scripts/</em> nomeie ele de <em>logon.bat</em>, por exemplo, dentro dele chame os seus scripts .vbs que deverão estar nesta mesma pasta, exemplo:</p>
+<pre>mensagem.vbs
+mapear.vbs
+links.vbs
+</pre>
+<p>Abra o gerenciador de "Usuários e Grupos do Active Directory" em Ferramentas Administrativas do AD, selecione todos os usuários e clique com o botão direito &gt; Propriedades &gt; Perfil. Em Scripts de Logon escreva <em>"logon.bat"</em>, que é o nome do arquivo que criamos anteriormente.</p>
+<p><strong>Exemplos de Scripts .vbs</strong><br />
+- <a href="https://www.paulocollares.com.br/infraestrutura/script-vbs-para-mapeamento-automatico-de-unidades-de-rede-por-grupo-no-ad/">Script .vbs para mapeamento automático de unidades de rede por grupo no AD</a><br />
+- <a href="https://www.paulocollares.com.br/infraestrutura/script-vbs-para-exibir-uma-caixa-de-alerta-para-todos-os-usuarios-do-ad/">Script .vbs para exibir uma caixa de alerta para todos os usuários do AD</a><br />
+- <a href="https://www.paulocollares.com.br/infraestrutura/chamar-scripts-vbs-no-logon-do-usuario-no-ad-do-windows-server/">Chamar scripts .vbs no logon do usuário no AD do Windows Server</a></p>

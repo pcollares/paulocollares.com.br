@@ -1,0 +1,25 @@
+---
+title: Desligar um computador linux remotamente
+date: 2014-09-04 13:20:59.000000000 -03:00
+categories:
+- Infraestrutura
+tags:
+- linux
+permalink: "/infraestrutura/desligar-um-computador-linux-remotamente/"
+excerpt: Este simples script desliga um computador linux remotamente.
+---
+<p>Este simples script desliga um computador linux remotamente.</p>
+<p>Primeiramente instale o sshpass na maquina que executará o script:</p>
+<pre>#apt-get install sshpass</pre>
+<p>Também será necessário instalar o ssh na máquina remota:</p>
+<pre>#apt-get install ssh</pre>
+<p>Script:</p>
+<pre>
+#! /bin/bash
+
+host="192.168.0.1"
+senha="senha_de_root"
+
+sshpass -p $senha ssh root@$host 'shutdown -h now; exit'
+</pre>
+<p>[]`s</p>

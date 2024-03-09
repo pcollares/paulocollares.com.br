@@ -1,0 +1,23 @@
+---
+title: Script de Backup por SFTP
+excerpt: Script de Backup por SFTP
+date: 2011-11-08 13:49:39.000000000 -03:00
+categories:
+- Programação
+tags:
+- linux
+- shell script
+permalink: "/programacao/script-de-backup-por-sftp/"
+---
+<p>Script muito útil para fazer backup de servidores externos por SFTP</p>
+<pre>
+#!/bin/sh
+
+cd /backup #abre o diretório para salvar o backup
+rm * #remove o backup antigo
+
+sshpass -p SENHA_DO_USUARIO_ROOT sftp root@IP_DO_SERVIDOR << ENDSHERE
+cd /backup #diretório remoto
+get *
+ENDSHERE
+</pre>

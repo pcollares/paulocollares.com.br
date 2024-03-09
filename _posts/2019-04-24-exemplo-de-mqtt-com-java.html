@@ -1,0 +1,263 @@
+---
+title: Exemplo de uso do MQTT com Java
+excerpt: Exemplo de uso do MQTT com Java
+date: 2019-04-24 09:14:57.000000000 -03:00
+categories:
+- Programação
+tags:
+- java
+- mqtt
+permalink: "/programacao/exemplo-de-mqtt-com-java/"
+---
+<p><!-- wp:paragraph {"textColor":"very-dark-gray"} --></p>
+<p class="has-text-color has-very-dark-gray-color">MQTT (Message Queuing Telemetry Transport) é um protocolo de mensagens leve e simples de se usar, tem sido muito usado para desenvolvimento de soluções para IoT (Internet das coisas), mas que também atende aplicações mais pesadas, já que o seu broker é muito robusto.</p>
+<p></p>
+<p></p>
+<p>O MQTT é um padrão <em>publish/subscribe,</em> onde o servidor (broker) recebe as mensagens e distribui para quem tem interesse. Isso é feito por meio de tópicos, em que cada mensagem publicada possui, e os clientes interessados se inscrevem.</p>
+<p></p>
+<p><!-- wp:image {"id":2477} --></p>
+<figure class="wp-block-image"><img src="{{ site.baseurl }}/images/2019/04/mqtt-1024x768.jpg" alt="" class="wp-image-2477" /><br />
+<figcaption>Diagrama descrevendo o do funcionamento do MQTT</figcaption>
+</figure>
+<p></p>
+<p></p>
+<h2>Dependências</h2>
+<p></p>
+<p></p>
+<p>Há apenas uma dependência para o projeto, que é o cliente Paho para o MQTT, desenvolvido pela Eclipse , que pode ser baixado aqui: <a rel="noreferrer noopener" aria-label="https://www.eclipse.org/paho/clients/java/ (abre numa nova aba)" href="https://www.eclipse.org/paho/clients/java/" target="_blank">https://www.eclipse.org/paho/clients/java/</a>.</p>
+<p></p>
+<p></p>
+<h2>Classes</h2>
+<p></p>
+<p></p>
+<p>Segue abaixo as três classes necessárias para a execução do projeto: Main, que contem a classe principal do projeto e inicia o cliente e o ouvinte e publica as mensagens de teste, ClienteMQTT, que contém os métodos de conexão, inscrição e publicação e Ouvinte, que se inscreve em um tópico e exibe a mensagem no terminal.</p>
+<p></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3>Main.java</h3>
+<p></p>
+<p></p>
+<pre class="wp-block-code prettyprint"><code>package javamqtt;
+
+import java.text.SimpleDateFormat;
+
+public class Main {
+
+    public static void main(String[] args) throws InterruptedException {
+        ClienteMQTT clienteMQTT = new ClienteMQTT("tcp://broker.mqttdashboard.com:1883", null, null);
+        clienteMQTT.iniciar();
+
+        new Ouvinte(clienteMQTT, "br/com/paulocollares/#", 0);
+
+        while (true) {
+            Thread.sleep(1000);
+            String mensagem = "Mensagem enviada em " + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(System.currentTimeMillis()) + " - Teste de MQTT disponivel em www.paulocollares.com.br";
+
+            clienteMQTT.publicar("br/com/paulocollares/teste", mensagem.getBytes(), 0);
+        }
+    }
+}</code></pre>
+<p></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3>ClienteMQTT.java</h3>
+<p></p>
+<p></p>
+<pre class="wp-block-code prettyprint"><code>package javamqtt;
+
+import java.util.Arrays;
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
+import org.eclipse.paho.client.mqttv3.IMqttToken;
+import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
+
+public class ClienteMQTT implements MqttCallbackExtended {
+
+    private final String serverURI;
+    private MqttClient client;
+    private final MqttConnectOptions mqttOptions;
+
+    public ClienteMQTT(String serverURI, String usuario, String senha) {
+        this.serverURI = serverURI;
+
+        mqttOptions = new MqttConnectOptions();
+        mqttOptions.setMaxInflight(200);
+        mqttOptions.setConnectionTimeout(3);
+        mqttOptions.setKeepAliveInterval(10);
+        mqttOptions.setAutomaticReconnect(true);
+        mqttOptions.setCleanSession(false);
+
+        if (usuario != null &amp;&amp; senha != null) {
+            mqttOptions.setUserName(usuario);
+            mqttOptions.setPassword(senha.toCharArray());
+        }
+    }
+
+    public IMqttToken subscribe(int qos, IMqttMessageListener gestorMensagemMQTT, String... topicos) {
+        if (client == null || topicos.length == 0) {
+            return null;
+        }
+        int tamanho = topicos.length;
+        int[] qoss = new int[tamanho];
+        IMqttMessageListener[] listners = new IMqttMessageListener[tamanho];
+
+        for (int i = 0; i &lt; tamanho; i++) {
+            qoss[i] = qos;
+            listners[i] = gestorMensagemMQTT;
+        }
+        try {
+            return client.subscribeWithResponse(topicos, qoss, listners);
+        } catch (MqttException ex) {
+            System.out.println(String.format("Erro ao se inscrever nos tópicos %s - %s", Arrays.asList(topicos), ex));
+            return null;
+        }
+    }
+
+    public void unsubscribe(String... topicos) {
+        if (client == null || !client.isConnected() || topicos.length == 0) {
+            return;
+        }
+        try {
+            client.unsubscribe(topicos);
+        } catch (MqttException ex) {
+            System.out.println(String.format("Erro ao se desinscrever no tópico %s - %s", Arrays.asList(topicos), ex));
+        }
+    }
+
+    public void iniciar() {
+        try {
+            System.out.println("Conectando no broker MQTT em " + serverURI);
+            client = new MqttClient(serverURI, String.format("cliente_java_%d", System.currentTimeMillis()), new MqttDefaultFilePersistence(System.getProperty("java.io.tmpdir")));
+            client.setCallback(this);
+            client.connect(mqttOptions);
+        } catch (MqttException ex) {
+            System.out.println("Erro ao se conectar ao broker mqtt " + serverURI + " - " + ex);
+        }
+    }
+
+    public void finalizar() {
+        if (client == null || !client.isConnected()) {
+            return;
+        }
+        try {
+            client.disconnect();
+            client.close();
+        } catch (MqttException ex) {
+            System.out.println("Erro ao desconectar do broker mqtt - " + ex);
+        }
+    }
+
+    public void publicar(String topic, byte[] payload, int qos) {
+        publicar(topic, payload, qos, false);
+    }
+
+    public synchronized void publicar(String topic, byte[] payload, int qos, boolean retained) {
+        try {
+            if (client.isConnected()) {
+                client.publish(topic, payload, qos, retained);
+                System.out.println(String.format("Tópico %s publicado. %dB", topic, payload.length));
+            } else {
+                System.out.println("Cliente desconectado, não foi possível publicar o tópico " + topic);
+            }
+        } catch (MqttException ex) {
+            System.out.println("Erro ao publicar " + topic + " - " + ex);
+        }
+    }
+
+    @Override
+    public void connectionLost(Throwable thrwbl) {
+        System.out.println("Conexão com o broker perdida -" + thrwbl);
+    }
+
+    @Override
+    public void connectComplete(boolean reconnect, String serverURI) {
+        System.out.println("Cliente MQTT " + (reconnect ? "reconectado" : "conectado") + " com o broker " + serverURI);
+    }
+
+    @Override
+    public void deliveryComplete(IMqttDeliveryToken imdt) {
+    }
+
+    @Override
+    public void messageArrived(String topic, MqttMessage mm) throws Exception {
+    }
+
+}</code></pre>
+<p></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3>Ouvinte.java</h3>
+<p></p>
+<p></p>
+<pre class="wp-block-code prettyprint"><code>package javamqtt;
+
+import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+
+public class Ouvinte implements IMqttMessageListener {
+
+    public Ouvinte(ClienteMQTT clienteMQTT, String topico, int qos) {
+        clienteMQTT.subscribe(qos, this, topico);
+    }
+
+    @Override
+    public void messageArrived(String topico, MqttMessage mm) throws Exception {
+        System.out.println("Mensagem recebida:");
+        System.out.println("\tTópico: " + topico);
+        System.out.println("\tMensagem: " + new String(mm.getPayload()));
+        System.out.println("");
+    }
+
+}</code></pre>
+<p></p>
+<p></p>
+<h2>Brokers MQTT gratuitos e públicos para teste</h2>
+<p></p>
+<p></p>
+<p>No exemplo eu uso um broker publico para testes, porém deve ser usado apenas para esse propósito, já que não há privacidade no conteúdo publicado. Para uso em seu projeto, recomendo o <a href="https://projects.eclipse.org/projects/technology.mosquitto" target="_blank" rel="noreferrer noopener" aria-label="Mosquitto (abre numa nova aba)">Mosquitto</a>, também da Eclipse.</p>
+<p></p>
+<p></p>
+<p>Abaixo outros brokers públicos para testes:</p>
+<p></p>
+<p><!-- wp:table {"className":"is-style-stripes"} --></p>
+<table class="wp-block-table is-style-stripes">
+<tbody>
+<tr>
+<td><strong>Broker</strong></td>
+<td><strong>Servidor</strong></td>
+<td><strong>Porta</strong></td>
+</tr>
+<tr>
+<td> Mosquitto</td>
+<td> iot.eclipse.org </td>
+<td> 1883 / 8883 </td>
+</tr>
+<tr>
+<td>  Mosquitto </td>
+<td> test.mosquitto.org  </td>
+<td> 1883 </td>
+</tr>
+<tr>
+<td> HiveMQ </td>
+<td>   broker.hivemq.com </td>
+<td> 1883 </td>
+</tr>
+<tr>
+<td> HiveMQ  </td>
+<td> broker.mqttdashboard.com </td>
+<td> 1883 </td>
+</tr>
+</tbody>
+</table>
+<p><!-- /wp:table --></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3>Baixe o projeto</h3>
+<p></p>
+<p></p>
+<p>Baixe o projeto deste exemplo no meu Github: <a href="https://github.com/pcollares/exemplos-blog/tree/master/JavaMQTT" target="_blank" rel="noreferrer noopener" aria-label="https://github.com/pcollares/exemplos-blog/tree/master/JavaMQTT (abre numa nova aba)">https://github.com/pcollares/exemplos-blog/tree/master/JavaMQTT</a></p>
+<p></p>
+<p></p>
+<p>[]'s</p>
+<p></p>

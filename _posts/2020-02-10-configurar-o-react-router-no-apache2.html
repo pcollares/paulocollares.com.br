@@ -1,0 +1,60 @@
+---
+title: Como configurar o React Router no Apache2
+date: 2020-02-10 09:59:44.000000000 -03:00
+categories:
+- Infraestrutura
+- Programação
+tags:
+- Apache2
+- JavaScript
+- React
+permalink: "/programacao/configurar-o-react-router-no-apache2/"
+excerpt: Como configurar o Apache2 para funcionar adequadamente com as rotas do React
+  Router. Com essas configurações será possível recarregar a pagina ou acessar uma
+  rota diretamente pela URL no navegador.
+---
+<p></p>
+<p>Como configurar o Apache2 para funcionar adequadamente com as rotas do React Router. Com essas configurações será possível recarregar a pagina ou acessar uma rota diretamente pela URL no navegador.</p>
+<p></p>
+<p></p>
+<p>1. Adicione a linha 'homepage' no package.json:</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>"homepage": "/meu-site",</code></pre>
+<p></p>
+<p></p>
+<p>2. Adicione o atributo 'basename' na tag BrowserRouter:</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>&lt;BrowserRouter basename="/meu-site"></code></pre>
+<p></p>
+<p></p>
+<p>3. Habilite o modulo 'rewrite' no apache:</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>sudo a2enmod rewrite</code></pre>
+<p></p>
+<p></p>
+<p>4. Edite o arquivo '/etc/apache2/sites-available/000-default.conf' e adicione a regra de reescrita dentro da tag VirtualHost:</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>&lt;Directory "/var/www/html/meu-site">
+    RewriteEngine on
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+    RewriteRule ^ index.html [L]
+&lt;/Directory></code></pre>
+<p></p>
+<p></p>
+<p>5. Reinicie o serviço do Apache:</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>sudo service apache2 restart</code></pre>
+<p></p>
+<p></p>
+<p>6. Crie um diretório com o nome 'meu-site' em '/var/www/html' e copie o código compilado para ele.</p>
+<p></p>
+<p></p>
+<p>[]'s</p>
+<p></p>

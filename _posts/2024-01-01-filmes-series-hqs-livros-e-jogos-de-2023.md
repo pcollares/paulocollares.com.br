@@ -6,7 +6,7 @@ categories:
   - textos
 tags:
   - Lista anual
-
+excerpt: Como já virou tradição, cataloguei os filmes, séries, jogos e leituras que consumi durante o ano, esta é a lista de 2023.
 ---
 
 Como já virou tradição, cataloguei os filmes, séries, jogos e leituras que consumi durante o ano, esta é a lista de 2023.

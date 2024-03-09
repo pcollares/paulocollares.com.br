@@ -1,0 +1,17 @@
+---
+title: Script .vbs para exibir uma caixa de alerta para todos os usuários do AD
+excerpt: Script .vbs para exibir uma caixa de alerta para todos os usuários do AD
+date: 2011-12-05 15:29:16.000000000 -03:00
+categories:
+- Infraestrutura
+tags:
+- windows
+permalink: "/infraestrutura/script-vbs-para-exibir-uma-caixa-de-alerta-para-todos-os-usuarios-do-ad/"
+---
+<p>Esse Script simplesmente abre uma caixa de alerta para o usuário quando ele faz logon na máquina, útil para informar algo importante.</p>
+<p><strong>Dependências:</strong><br />
+<a href="http://www.paulocollares.com.br/chamar-scripts-vbs-no-logon-do-usuario-no-ad-do-windows-server">Um script .bat configurado para chamar esse arquivo, sendo executado no logon do usuário.</a></p>
+<p><strong>Código</strong></p>
+<pre>
+MsgBox ("ATENÇÃO: Pedimos que ao desligar seu computador, escolha a opção 'Instalar as atualizações e desligar'." & vbcrlf & "Somente assim seu computador instalará atualizações críticas de segurança e ficará atualizado e seguro." & vbcrlf & "Agradecemos pela compreensão," & vbcrlf & "Atenciosamente," & vbcrlf & "Equipe de TI")
+</pre>

@@ -1,0 +1,68 @@
+---
+title: Exemplo do Padrão de Projeto "Singleton" - O "Forever Alone" do Desing Patterns
+excerpt: Exemplo do Padrão de Projeto "Singleton" - O "Forever Alone" do Desing Patterns
+date: 2012-08-08 07:49:12.000000000 -03:00
+categories:
+- Programação
+tags:
+- java
+permalink: "/programacao/exemplo-do-padrao-de-projeto-singleton-o-forever-alone-do-desing-patterns/"
+---
+<p><a href="http://www.paulocollares.com.br/exemplo-do-padrao-de-projeto-singleton/foreverasingleton/" rel="attachment wp-att-569"><img class="aligncenter size-full wp-image-569" title="foreverAsingleton" src="{{ site.baseurl }}/images/2012/08/foreverAsingleton.jpg" alt="" width="500" height="500" /></a></p>
+<p>Há horas em que necessitamos ter a certeza que há apenas uma instância de uma determinada classe em nosso sistema, classes de configuração, janelas únicas e classes com atributos únicos.</p>
+<p>Para isso surge a solução proposta pelo padrão de projetos "Singleton".</p>
+<p>Mas como podemos ter a certeza de que haverá apenas uma instância de uma classe em nossa aplicação, veja o exemplo abaixo:</p>
+<p>Temos um classe configuração, que contém informações como IP, porta, usuário e senha, para acesso a um banco de dados ou uma aplicação externa, por exemplo.</p>
+<p>Vejam o código completo, mais abaixo explico com mais detalhes sua implementação:</p>
+<pre>public class Configuracao {
+
+    private static Configuracao instancia;
+
+    private String ip;
+    private int porta;
+    private String usuario;
+    private String senha;
+
+    private Configuracao(){
+    }
+
+    public static Configuracao getInstancia(){
+        if (instancia==null){
+            instancia=new Configuracao();
+        }
+        return instancia;
+    }
+
+    public void autenticar(){
+    }
+
+    /*
+     * getters e setters e outros métodos
+     */
+
+}</pre>
+<p>Vamos as explicações:</p>
+<p><strong>Atributo estático para guardar a única instância desta classe</strong></p>
+<pre>private static Configuracao instancia;</pre>
+<p><strong>Construtor privado para garantir que ninguém poderá acessá-lo, e desta forma instaciar, fora desta classe</strong><br />
+Aqui nosso construtor está vazio, sobrescrevendo o <em>default</em>, nada impede de possuir código dentro dele.</p>
+<pre>private Configuracao(){
+}</pre>
+<p><span style="text-decoration: underline;">Mas agora fica a pergunta, se ninguém pode chamar o contrutor, como vou instanciar a classe?</span></p>
+<p>O "pulo do gato" está no método <em>getInstancia()</em></p>
+<p><strong>Método estático que retorna a instância, e se não existir instância a própria classe</strong></p>
+<pre>
+public static Configuracao getInstancia(){
+        if (instancia==null){
+            instancia=new Configuracao();
+        }
+        return instancia;
+    }
+</pre>
+<p>&nbsp;</p>
+<p>Agora é só chamar a instância em quantas classes você quiser, que sempre terá a certeza de existir apenas uma!</p>
+<pre>       Configuracao conf = Configuracao.getInstancia();
+
+        conf.autenticar();</pre>
+<p>Este é, creio eu, o padrão de projetos mais simples, mas muito útil e muito utilizado.<br />
+Espero que tenha sido útil, e fiquem na Paz.</p>

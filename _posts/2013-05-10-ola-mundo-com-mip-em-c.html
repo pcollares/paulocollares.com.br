@@ -1,0 +1,141 @@
+---
+title: Olá Mundo com MIP em C
+date: 2013-05-10 08:56:29.000000000 -03:00
+categories:
+- Programação
+tags:
+- c
+permalink: "/programacao/ola-mundo-com-mip-em-c/"
+excerpt: MPI é a sigla para Message Passing Interface, um padrão de comunicação de
+  dados para computação paralela. Você pode programar e dividir o processamento em
+  vários processadores para otmizar o desempenho. É utilizado em computação de alto
+  desempenho em supercomputadores espalhados pelo mundo.
+---
+<p>MPI é a sigla para <em>Message Passing Interface</em>, um padrão de comunicação de dados para computação paralela. Você pode programar e dividir o processamento em vários processadores para otmizar o desempenho. É utilizado em computação de alto desempenho em supercomputadores espalhados pelo mundo.</p>
+<p>O <a href="http://www.top500.org/" target="_blank" rel="noopener noreferrer">Top500</a> mantém uma lista dos maiores supercomputadores do mundo, atualmente o número 1 é o Titan da Cray com 560.640 cores de processamento.</p>
+<p>[caption id="attachment_815" align="aligncenter" width="620"]<a href="http://www.paulocollares.com.br/ola-mundo-com-mip-em-c/titan-supercomputer-tesla-gpu/" rel="attachment wp-att-815"><img class="size-full wp-image-815" alt="Super computador Titan - Cray com 560.640 cores de processamento." src="{{ site.baseurl }}/images/2013/05/titan-supercomputer-tesla-gpu.jpg" width="620" height="370" /></a> Super computador Titan - Cray com 560.640 cores de processamento.[/caption]</p>
+<p>Há implementações para C/C++ e Fortran, e para Java também, mas não tão usada. Neste exemplo usarei o <a href="http://www.open-mpi.org/" target="_blank" rel="noopener noreferrer">OpenMPI</a> em C.</p>
+<p>Felizmente não é necessário um super computador para usar o MPI, você pode usar seu computador de casa para isso, se tiver vários núcleos melhor, mas ele simula caso não tenha, claro que ão terá o desenpenho esperado, mas para fim de teste é suficiente.</p>
+<h2>Instalação</h2>
+<p>Para os teste usei uma máquina com Debian 6.</p>
+<p>Instale os módulos do OpenMPI, e as bibliotecas de compilação do C.</p>
+<pre>#apt-get install gcc g++ openmpi-bin openmpi-doc libopenmpi-dev</pre>
+<p>Para testar você pode enviar um <em>echo</em> para o MPI:</p>
+<pre>mpirun -np 4 echo oi</pre>
+<p>A saída será:</p>
+<pre>oi
+oi
+oi
+oi</pre>
+<p>O comando mpirun enviou para 4 processos o comando 'echo oi' e cada um escreveu 'oi' na saida.</p>
+<h2>Código</h2>
+<p><strong>Exemplo 1</strong></p>
+<p>Escreve na tela para cada processo um ola mundo!</p>
+<pre>
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;mpi.h&gt;
+
+int size, rank;
+int main(int argc, char *argv[]){
+MPI_Init(&amp;argc,&amp;argv);
+MPI_Comm_size(MPI_COMM_WORLD,&amp;size);
+MPI_Comm_rank(MPI_COMM_WORLD,&amp;rank);
+
+printf("Olá eu sou o processo %d de %d\n",rank,size);
+
+MPI_Finalize();
+}
+</pre>
+<p>Salve este arquivo com o nome de olamundo.c por exemplo, compile com o MPI:</p>
+<pre>
+mpicc olamundo.c -o olamundo
+</pre>
+<p>e execute:</p>
+<pre>
+mpirun -np 5 olamundo
+</pre>
+<p>a saída será</p>
+<pre>
+Olá eu sou o processo 3 de 5
+Olá eu sou o processo 4 de 5
+Olá eu sou o processo 0 de 5
+Olá eu sou o processo 1 de 5
+Olá eu sou o processo 2 de 5
+</pre>
+<p><strong>Exemplo 2</strong></p>
+<p>O primeiro processo envia uma mensagem ponto a ponto para os restantes</p>
+<pre>
+#include <stdio.h>
+#include <stdlib.h>
+#include <mpi.h>
+
+int size, rank, msg, source, dest, tag;
+ 
+int main(int argc, char *argv[]){
+   MPI_Status stat;
+ 
+   MPI_Init(&argc,&argv);
+   MPI_Comm_size(MPI_COMM_WORLD,&size);
+   MPI_Comm_rank(MPI_COMM_WORLD,&rank);
+ 
+	if(rank==0){
+   	msg = 42; dest = 1; tag = 0;
+	
+	int i;
+	for (i=1;i<size;i++){
+	   	MPI_Send(&msg, 1, MPI_INT, i, tag, MPI_COMM_WORLD);
+	   	printf("Processo %d enviou %d para %d.\n", rank, msg, i);
+	}	
+	}
+ 
+	if(rank!=0){
+		source = 0; tag = 0;
+		MPI_Recv(&msg, 1, MPI_INT, source, tag, MPI_COMM_WORLD, &stat);
+		printf("Processo %d recebeu %d de %d.\n", rank, msg, source);
+	}
+ 
+   MPI_Finalize();
+}
+</mpi.h></stdlib.h></stdio.h></pre>
+<p>Salve, compile e execute como o exemplo acima, a saída com 3 processos será:</p>
+<pre>
+Processo 0 enviou 42 para 1.
+Processo 0 enviou 42 para 2.
+Processo 2 recebeu 42 de 0.
+Processo 1 recebeu 42 de 0.
+</pre>
+<p><b>Exemplo 3</b></p>
+<p>Neste exemplo o primeiro processo envia uma mensagem em broadcast para os restantes, o resultado será o mesmo do exemplo 2</p>
+<pre>
+#include <stdio.h>
+#include <stdlib.h>
+#include <mpi.h>
+
+int size, rank, msg, source, dest, tag;
+ 
+int main(int argc, char *argv[]){
+   MPI_Status stat;
+ 
+   MPI_Init(&argc,&argv);
+   MPI_Comm_size(MPI_COMM_WORLD,&size);
+   MPI_Comm_rank(MPI_COMM_WORLD,&rank);
+ 
+	if(rank==0){
+   	msg = 42; dest = 1; tag = 0;	
+		MPI_Bcast (&msg, 1, MPI_INT, 0, MPI_COMM_WORLD);	
+	}else{
+		MPI_Bcast (&msg, 1, MPI_INT, 0, MPI_COMM_WORLD);
+		printf("%d recebeu a mensagem %d\n",rank,msg);
+	}
+   MPI_Finalize();
+}
+</mpi.h></stdlib.h></stdio.h></pre>
+<p>Salve, compile e execute como o exemplo 1, a saída com 3 processos será:</p>
+<pre>
+1 recebeu a mensagem 42
+2 recebeu a mensagem 42
+</pre>
+<h2>Conclusão</h2>
+<p>Este é o basico do MPI, espero que sirva como um pontapé inicial para quem estiver interessado em aprender mais, tentarei colocar mais exemplos em breve</p>
+<p>[]'s</p>

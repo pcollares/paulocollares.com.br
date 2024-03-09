@@ -1,0 +1,180 @@
+---
+title: Manutenção de repositório SVN no Linux
+date: 2019-05-17 10:23:18.000000000 -03:00
+categories:
+- Infraestrutura
+tags:
+- linux
+- svn
+permalink: "/infraestrutura/manutencao-de-repositorio-svn-no-linux/"
+excerpt: Por mais que o GIT tenha dominado o mercado de controladores de versões,
+  o SVN ainda é bastante usado, por isso, trouxe esse breve tutorial com as principais
+  ações que podem ser feitas nesta ferramenta.
+---
+<p></p>
+<p>Por mais que o GIT tenha dominado o mercado de controladores de versões, o SVN ainda é bastante usado, por isso, trouxe esse breve tutorial com as principais ações que podem ser feitas nesta ferramenta.</p>
+<p></p>
+<p></p>
+<p>Para fim de demonstração,  vou considerar que temos um projeto de nome 'my-project', hospedado em um repositório na rede local, no endereço 'https://192.168.1.20/' e vou trabalhar no meu diretório home, em /home/pcollares/. </p>
+<p></p>
+<p></p>
+<p>Também vou considerar que a estrutura inicial já foi criada, como descrito abaixo: </p>
+<p></p>
+<p></p>
+<pre class="wp-block-preformatted">my-project<br />├─ branches <br />├─ tags<br />└─ trunk</pre>
+<p></p>
+<p></p>
+<h2>Checkout do repositório</h2>
+<p></p>
+<p></p>
+<p>Navegue até o diretório que deseja baixar o repositório:</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>$ cd /home/pcollares</code></pre>
+<p></p>
+<p></p>
+<p>Execute o comando para realizar o checkout:</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>$ svn co https://192.168.1.20/svn/my-project</code></pre>
+<p></p>
+<p></p>
+<h2>Criação de um novo Branche</h2>
+<p></p>
+<p></p>
+<p>Navegue até a raiz do repositório:</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>$ cd /home/pcollares/my-project </code></pre>
+<p></p>
+<p></p>
+<p>Rode o comando de criação do branche:</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>$ svn copy https://192.168.1.20/svn/my-project/trunk/ /home/pcollares/my-project/branches/[nome_do_branche] </code></pre>
+<p></p>
+<p></p>
+<p>Faça o commit da criação do Branche:</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>$ cd branches/[nome_do_branche]</code></pre>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>$ svn commit -m "Criação do branche [nome_do_branche]  </code></pre>
+<p></p>
+<p></p>
+<h2>Atualização de um Branche com as alterações do Trunk</h2>
+<p></p>
+<p></p>
+<p>Navegue até o branche:</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>$ cd /home/pcollares/my-project/branches/[nome_do_branche] </code></pre>
+<p></p>
+<p></p>
+<p>Atualize o branche:</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>$ svn update</code></pre>
+<p></p>
+<p></p>
+<p>Teste possíveis conflitos:</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>$ svn merge --dry-run https://192.168.1.20/svn/my-project/trunk </code></pre>
+<p></p>
+<p></p>
+<p>Rode efetivamente o merge com o Branche:</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>$ svn merge https://192.168.1.20/svn/my-project/trunk </code></pre>
+<p></p>
+<p></p>
+<p>Faça commit do Branche:</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>$ svn commit -m "Merge entre o trunk e o branche [nome_do_branche]" </code></pre>
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+<h2>Reintegração de um Branche</h2>
+<p></p>
+<p></p>
+<p>Navegue até o trunk:</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>$ cd /home/pcollares/my-project/trunk/ </code></pre>
+<p></p>
+<p></p>
+<p>Atualize o trunk:</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>$ svn update</code></pre>
+<p></p>
+<p></p>
+<p>Teste possíveis conflitos com o <em>--dry-run</em>:</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>$ svn merge --reintegrate --dry-run https://192.168.1.20/svn/my-project/branches/[nome_do_branche] </code></pre>
+<p></p>
+<p></p>
+<p>Rode efetivamente a reintegração o Trunk:</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>$ svn merge --reintegrate https://192.168.1.20/svn/my-project/branches/[nome_do_branche] </code></pre>
+<p></p>
+<p></p>
+<p>Resolva os possíveis conflitos.</p>
+<p></p>
+<p></p>
+<p>Faça commit do trunk:</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>$ svn commit -m "Reintegração do Branche [nome_do_branche] com o Trunk"  </code></pre>
+<p></p>
+<p></p>
+<p>Como esta linha de desenvolvimento se encerrou, remova este branche:</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>$ svn delete https://192.168.20.1/svn/my-project/branches/[nome_do_branche] -m "Remoção do branche [nome_do_branche] após a reintegração com o trunk"  </code></pre>
+<p></p>
+<p></p>
+<p>Remova o diretório local do Branche:</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>$ rm -Rf /home/pcollares/my-project/branches/[nome_do_branche] </code></pre>
+<p></p>
+<p></p>
+<h2>Criação de uma Tag</h2>
+<p></p>
+<p></p>
+<p>Navegue até o diretório do projeto:</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>$ cd /home/pcollares/my-project/</code></pre>
+<p></p>
+<p></p>
+<p>Crie a nova tag a partir do trunk:</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>$ svn copy https://192.168.1.20/svn/my-project/trunk/ tags/[nome_da_tag] </code></pre>
+<p></p>
+<p></p>
+<p>Faça commit da  criação da tag:</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>$ cd tags</code></pre>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>$ svn commit -m "Fechamento da criação da tag [nome_da_tag]"  </code></pre>
+<p></p>
+<p></p>
+<h2>Referências</h2>
+<p></p>
+<p></p>
+<p><a href="http://svnbook.red-bean.com/en/1.7/svn.branchmerge.basicmerging.html">http://svnbook.red-bean.com/en/1.7/svn.branchmerge.basicmerging.html</a></p>
+<p></p>
+<p></p>
+<p>[]'s</p>
+<p></p>

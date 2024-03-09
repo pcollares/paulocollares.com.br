@@ -1,0 +1,65 @@
+---
+title: 'TCP/IP 2 MQTT: Sistema simples de recebimento de mensagens TCP e UDP e envio
+  para o MQTT'
+date: 2019-04-04 13:46:56.000000000 -03:00
+categories:
+- Programação
+tags:
+- java
+- mqtt
+permalink: "/programacao/tcp-ip-2-mqtt-sistema-simples-de-recebimento-de-mensagens-udp-e-envio-para-o-mqtt/"
+excerpt: Sistema simples para recebimento de pacotes TCP e UDP e publicar em um tópico
+  MQTT
+---
+<p></p>
+<p>Sistema simples para recebimento de pacotes TCP e UDP e publicar em um tópico MQTT</p>
+<p></p>
+<p><!-- wp:button {"backgroundColor":"vivid-green-cyan","textColor":"very-dark-gray","className":"is-style-outline"} --></p>
+<div class="wp-block-button is-style-outline"><a class="wp-block-button__link has-text-color has-very-dark-gray-color has-background has-vivid-green-cyan-background-color" href="https://github.com/pcollares/tcpip2mqtt">Faça download ou clone no Github<br /></a></div>
+<p><!-- /wp:button --></p>
+<p></p>
+<h2>Como usar</h2>
+<p></p>
+<p></p>
+<p>Edite o config.properties conforme descrito abaixo</p>
+<p></p>
+<p></p>
+<p>SERVER_URI: URI do servidor MQTT, ex: tcp://127.0.0.1:1883</p>
+<p></p>
+<p></p>
+<p>TIMEOUT_SUBSCRIBE: Configuração de timeout ao se inscrever</p>
+<p></p>
+<p></p>
+<p>TIMEOUT_PUBLISH: Configuração de timeout ao publicar</p>
+<p></p>
+<p></p>
+<p>MAX_INFLIGHT: Maximo de mensagens que o cliente irá manter localmente</p>
+<p></p>
+<p></p>
+<p>USER_NAME: Usuário para conexão ao MQTT (Se houver)</p>
+<p></p>
+<p></p>
+<p>USER_PASS: Senha para conexão ao MQTT (Se houver)</p>
+<p></p>
+<p></p>
+<p>CONNECTIONS = Conexões para cada porta/Tópico MQTT, no seguinte formato:  "protocolo,porta,tópico,qos,tamanho_pacote;", ex:  TCP,4444,teste/sinal/4444,2,500;UDP,4445,teste/sinal/4445,2,100;TCP,4446,teste/sinal/4446,0,500; </p>
+<p></p>
+<p></p>
+<h2>Baixe o projeto</h2>
+<p></p>
+<p></p>
+<p><a href="https://github.com/pcollares/tcpip2mqtt">https://github.com/pcollares/tcpip2mqtt</a></p>
+<p></p>
+<p></p>
+<h2>Como testar</h2>
+<p></p>
+<p></p>
+<p>Veja minha postagem no blog de como enviar mensagens TCP ou UDP pelo terminal Linux de maneira muito simples:</p>
+<p></p>
+<p><!-- wp:embed {"url":"http://www.paulocollares.com.br/2017/02/enviar-uma-mensagem-tcp-ou-udp-pelo-terminal-do-linux/","type":"rich","providerNameSlug":"paulo-collares","className":""} --></p>
+<figure class="wp-block-embed is-type-rich is-provider-paulo-collares">
+<div class="wp-block-embed__wrapper">
+http://www.paulocollares.com.br/2017/02/enviar-uma-mensagem-tcp-ou-udp-pelo-terminal-do-linux/
+</div>
+</figure>
+<p><!-- /wp:embed --></p>

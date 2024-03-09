@@ -1,0 +1,30 @@
+---
+title: Include no JavaFX e acessar o seu controlador
+date: 2019-04-04 14:57:50.000000000 -03:00
+categories:
+- Programação
+tags:
+- java
+- javafx
+permalink: "/programacao/include-no-javafx-e-acessar-o-seu-controlador/"
+excerpt: Ao inserir um include no xhtml do JavaFX, é possível acessar o seu controlador
+  por meio do controlador principal, só é necessário uma pequena adaptação.
+---
+<p></p>
+<p>Ao inserir um <em>include</em> no xhtml do JavaFX, é possível acessar o seu controlador por meio do controlador principal, só é necessário uma pequena <del>gambiarra</del> adaptação.</p>
+<p></p>
+<p></p>
+<p><strong>No FXML</strong></p>
+<p></p>
+<p></p>
+<pre class="wp-block-code prettyprint"><code>&lt;fx:include fx:id="menu" source="../includes/Menu.fxml" /></code></pre>
+<p></p>
+<p></p>
+<p><strong>No controlador</strong></p>
+<p></p>
+<p></p>
+<pre class="wp-block-code prettyprint"><code>@FXML private MenuController menuController;﻿</code></pre>
+<p></p>
+<p></p>
+<p>OBS: O nome da variável deve ser <strong>exatamente</strong> [fx_id]Controller</p>
+<p></p>

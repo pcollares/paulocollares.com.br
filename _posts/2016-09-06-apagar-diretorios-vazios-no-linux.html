@@ -1,0 +1,16 @@
+---
+title: Apagar diretórios vazios no Linux
+date: 2016-09-06 10:49:55.000000000 -03:00
+categories:
+- Infraestrutura
+tags:
+- linux
+permalink: "/infraestrutura/apagar-diretorios-vazios-no-linux/"
+excerpt: Este simples comando remove, recursivamente, os diretórios vazios a partir
+  do diretório corrente
+---
+<p>[caption id="attachment_1653" align="aligncenter" width="640"]<a href="http://www.paulocollares.com.br/2016/09/apagar-diretorios-vazios-no-linux/apagar-diretorios-vazios-no-linux/" rel="attachment wp-att-1653"><img src="{{ site.baseurl }}/images/2016/09/apagar-diretorios-vazios-no-linux.png" alt="Apagar diretórios vazios no Linux" width="640" height="400" class="size-full wp-image-1653" /></a> Apagar diretórios vazios no Linux[/caption]</p>
+<p>Este simples comando remove, recursivamente, os diretórios vazios a partir do diretório corrente.</p>
+<pre>
+find ./ -empty -type d -exec rmdir {} \; 2> /dev/null
+</pre>

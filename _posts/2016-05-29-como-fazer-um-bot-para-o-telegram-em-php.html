@@ -1,0 +1,148 @@
+---
+title: Como fazer um bot para o Telegram em PHP
+excerpt: Como fazer um bot para o Telegram em PHP
+date: 2016-05-29 22:43:32.000000000 -03:00
+categories:
+- Programação
+tags:
+- php
+permalink: "/programacao/como-fazer-um-bot-para-o-telegram-em-php/"
+---
+<p>[caption id="attachment_1537" align="aligncenter" width="900"]<a href="http://www.paulocollares.com.br/2016/05/como-fazer-um-bot-para-o-telegram-em-php/bottelegramphp/" rel="attachment wp-att-1537"><img class="size-full wp-image-1537" src="{{ site.baseurl }}/images/2016/05/botTelegramPHP.png" alt="Como fazer um bot para o Telegram em PHP" height="400" width="900" /></a> Como fazer um bot para o Telegram em PHP[/caption]</p>
+<p>Este é um exemplo básico de como fazer um bot do Telegram em PHP. Bots do Telegram são robôs que se comportam como uma conversa no Telegram, porém respondem a comando definidos pelo programador, neste exemplo configuraremos usaremos um 'webhook' para receber as requisições, este bot aplicará as classes de filtros gramáticas, que já postei anteriormente <a href="http://www.paulocollares.com.br/2011/12/filtro-gramatical-em-php/" target="_blank" rel="noopener noreferrer">aqui no blog</a>.</p>
+<p>Este exemplo criei a partir do <a href="https://core.telegram.org/bots/samples/hellobot" target="_blank" rel="noopener noreferrer">exemplo </a>da própria documentação do Telegram. Confira também toda a documentação no site do <a href="https://core.telegram.org/bots" target="_blank" rel="noopener noreferrer">Telegram</a>.</p>
+<h2>Solicitando uma chave de acesso ao Telegram</h2>
+<p>Como todas as requisições serão feitas por uma conexão HTTP, é necessário ter uma chave de acesso privada para o seu bot, para isso, inicie uma conversa com o <a href="https://telegram.me/botfather" target="_blank" rel="noopener noreferrer">BotFather</a> e digite <em>/newbot</em> ele irá te perguntar o nome do seu bot e gerar uma chave de acesso no final, guarde ela, usaremos mais adiante.</p>
+<p>[caption id="attachment_1533" align="aligncenter" width="566"]<a href="http://www.paulocollares.com.br/2016/05/como-fazer-um-bot-para-o-telegram-em-php/criando-um-bot2/" rel="attachment wp-att-1533"><img class="size-full wp-image-1533" src="{{ site.baseurl }}/images/2016/05/criando-um-bot2.png" alt="Criando um bot no BotFather" height="722" width="566" /></a> Criando um bot no BotFather[/caption]</p>
+<h2>Projeto</h2>
+<p>Diferente do exemplo anterior que <a href="http://www.paulocollares.com.br/2016/05/como-fazer-um-bot-para-o-telegram-em-java/" target="_blank" rel="noopener noreferrer">demonstrei em Java</a>, onde são realizadas várias requisições a todo momento ao servidor do Telegram para conferir se há alguma nova requisição para ser tratada, neste exemplo usaremos o recurso de 'Webhook', que basicamente dirá ao Telegram que, para cada nova requisição ao bot, será repassada para um endereço público na web, que será nosso PHP, onde será tratado.</p>
+<h3>index.php</h3>
+<pre><!--?php include 'filtro.php'; define('BOT_TOKEN', ''); define('API_URL', 'https://api.telegram.org/bot'.BOT_TOKEN.'/'); define('WEBHOOK_URL', ''); function apiRequestWebhook($method, $parameters) { if (!is_string($method)) { error_log("Method name must be a string\n"); return false; } if (!$parameters) { $parameters = array(); } else if (!is_array($parameters)) { error_log("Parameters must be an array\n"); return false; } $parameters["method"] = $method; header("Content-Type: application/json"); echo json_encode($parameters); return true; } function exec_curl_request($handle) { $response = curl_exec($handle); if ($response === false) { $errno = curl_errno($handle); $error = curl_error($handle); error_log("Curl returned error $errno: $error\n"); curl_close($handle); return false; } $http_code = intval(curl_getinfo($handle, CURLINFO_HTTP_CODE)); curl_close($handle); if ($http_code &gt;= 500) {
+    // do not wat to DDOS server if something goes wrong
+    sleep(10);
+    return false;
+  } else if ($http_code != 200) {
+    $response = json_decode($response, true);
+    error_log("Request has failed with error {$response['error_code']}: {$response['description']}\n");
+    if ($http_code == 401) {
+      throw new Exception('Invalid access token provided');
+    }
+    return false;
+  } else {
+    $response = json_decode($response, true);
+    if (isset($response['description'])) {
+      error_log("Request was successfull: {$response['description']}\n");
+    }
+    $response = $response['result'];
+  }
+
+  return $response;
+}
+
+function apiRequest($method, $parameters) {
+  if (!is_string($method)) {
+    error_log("Method name must be a string\n");
+    return false;
+  }
+
+  if (!$parameters) {
+    $parameters = array();
+  } else if (!is_array($parameters)) {
+    error_log("Parameters must be an array\n");
+    return false;
+  }
+
+  foreach ($parameters as $key =&gt; &amp;$val) {
+    // encoding to JSON array parameters, for example reply_markup
+    if (!is_numeric($val) &amp;&amp; !is_string($val)) {
+      $val = json_encode($val);
+    }
+  }
+  $url = API_URL.$method.'?'.http_build_query($parameters);
+
+  $handle = curl_init($url);
+  curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
+  curl_setopt($handle, CURLOPT_CONNECTTIMEOUT, 5);
+  curl_setopt($handle, CURLOPT_TIMEOUT, 60);
+
+  return exec_curl_request($handle);
+}
+
+function apiRequestJson($method, $parameters) {
+  if (!is_string($method)) {
+    error_log("Method name must be a string\n");
+    return false;
+  }
+
+  if (!$parameters) {
+    $parameters = array();
+  } else if (!is_array($parameters)) {
+    error_log("Parameters must be an array\n");
+    return false;
+  }
+
+  $parameters["method"] = $method;
+
+  $handle = curl_init(API_URL);
+  curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
+  curl_setopt($handle, CURLOPT_CONNECTTIMEOUT, 5);
+  curl_setopt($handle, CURLOPT_TIMEOUT, 60);
+  curl_setopt($handle, CURLOPT_POSTFIELDS, json_encode($parameters));
+  curl_setopt($handle, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
+
+  return exec_curl_request($handle);
+}
+
+function processMessage($message) {
+  // process incoming message
+  $message_id = $message['message_id'];
+  $chat_id = $message['chat']['id'];
+  if (isset($message['text'])) {
+    // incoming text message
+    $text = filtro($message['text']);
+
+     apiRequest("sendMessage", array('chat_id' =&gt; $chat_id, "text" =&gt; $text));
+  }
+}
+
+if (isset($_GET['webhook'])){
+	if ($_GET['webhook']=='create'){
+		echo 'Criando webhook';
+		apiRequest('setWebhook',  array('url' =&gt; WEBHOOK_URL));
+	}
+	if ($_GET['webhook']=='delete'){
+		echo 'Removendo webhook';
+		apiRequest('setWebhook',  array('url' =&gt; 'delete'));
+	}
+	exit;
+}
+
+$content = file_get_contents("php://input");
+$update = json_decode($content, true);
+
+if (!$update) {
+  // receive wrong update, must not happen
+  exit;
+}
+
+if (isset($update["message"])) {
+  processMessage($update["message"]);
+}
+?-->
+</pre>
+<p>Neste exemplo usarei as funções que publiquei a um tempo atrás no blog, que são recursos para corrigir um texto, acerta acentuações, pontuações, letras maiúsculas no inicio das frase, dentre outros, a função pode ser obtida <a href="http://www.paulocollares.com.br/2011/12/filtro-gramatical-em-php/" target="_blank" rel="noopener noreferrer">aqui</a>. Crie um arquivo filtro.php com o conteúdo doas funções de filtro, serão importadas em 'include 'filtro.php';'</p>
+<p>No define BOT_TOKEN, informe a chave fornecida pelo BotFather.</p>
+<p>No define WEBHOOK_URL, informe o caminho do ser arquivo em seu servidor.</p>
+<blockquote><p>DICA 1: Proteja esta URL em seu site, crie um diretório 'secreto' em seu servidor, com o valor da chave do bot por exemplo: https://www.paulocollares.com.br/bots/[CHAVE]/index.php</p></blockquote>
+<p>&nbsp;</p>
+<blockquote><p>DICA 2: A URL do Webhook tem que ser obrigatoriamente uma url segura (https), seu o seu domínio não possui uma conexão segura configurada, você pode tentar usar a do seu servidor, caso for uma conta compartilhada.<br />
+No meu caso, por exemplo, meu site está hospedado na Hostgator, se tentar acessar https://www.paulocollares.com.br/ encontrará um erro de configuração, mas o endereço da Hostgator está configurado corretamente, sabendo que posso acessar meu diretório pelo domínio do DNS, configurei meu webhook assim: https://ns136.hostgator.com.br/~[USUARIO]/bots/[CHAVE]/index.php</p></blockquote>
+<p>Suba os arquivos para seu servidor, e acesse a primeira vez para configurar o webhook:</p>
+<ul>
+<li>Criar: https:// ... /bots/[CHAVE]/index.php?webhook=create</li>
+<li>Remover: Criar: https:// ... /bots/[CHAVE]/index.php?webhook=delete</li>
+</ul>
+<p>Seu bot já está pronto para receber e tratar as requisições:</p>
+<p>[caption id="attachment_1536" align="aligncenter" width="543"]<a href="http://www.paulocollares.com.br/2016/05/como-fazer-um-bot-para-o-telegram-em-php/bot-em-uso2/" rel="attachment wp-att-1536"><img class="size-full wp-image-1536" src="{{ site.baseurl }}/images/2016/05/bot-em-uso2.png" alt="Bot em uso" height="400" width="543" /></a> Bot em uso[/caption]</p>
+<p>Você pode conferir este meu exemplo <a href="http://telegram.me/filtro_gramatical_bot" target="_blank" rel="noopener noreferrer">aqui</a>.</p>
+<p>Um abraço, e fiquem na Paz.</p>

@@ -1,0 +1,100 @@
+---
+title: Script de Backup Incremental para compartilhamentos Windows
+excerpt: Script de Backup Incremental para compartilhamentos Windows
+excerpt: Script de Backup Incremental para compartilhamentos Windows
+date: 2011-11-08 13:42:30.000000000 -03:00
+categories:
+- Programação
+tags:
+- linux
+- shell script
+permalink: "/programacao/script-de-backup-incremental-para-compartilhamentos-windows/"
+---
+<p>Criei esse script para realizar backups dos documentos dos nossos servidores.</p>
+<p>Script muito útil, basta montar um pequeno servidor, pode ser uma máquina bem simples, só com um bom espaço de HD.</p>
+<p>Dependência:</p>
+<p><strong>rsync</strong></p>
+<pre># apt-get instal rsync</pre>
+<h3>Como funciona</h3>
+<p>O script utiliza o rsync, que copia apenas os arquivos novos ou os que foram modificados.</p>
+<p>O script está pré-configurando para realizar o backup diário, e criar uma pasta para cada dia da semana, assim teremos 1 cópia para cada dia.</p>
+<p>Ele cria um log para cada servidor.</p>
+<p>Configure seu cron para rodar no horário que sua rede tiver menos tráfego, e nos dias que você tem certeza que terão modificações em seus arquivos, por exemplo: se sua empresa funciona de segunda à sexta, não tem porquê colocar o script para rodar nos fins de semana.</p>
+<pre>
+#! /bin/bash
+
+################################
+# Script de backup de arquivos #
+# Paulo Collares               #
+# www.paulocollares.com.br     #
+# 20/04/2010		       #
+################################
+
+################################################
+#VARIAVEIS
+################################################
+
+semana=$(date +"%a") 
+nome_semana=$(date +"%A") 
+DIR_BKP="/backup/"$semana"/" # diretorio do backup
+DIR_LOG="/backup/logs/"$(date +"%d_%m_%Y")"_"$semana"/" # diretorio do log
+
+sudo mkdir $DIR_LOG
+sudo mkdir $DIR_BKP
+
+login='' #Usuário do AD com privilégios para acessar os compartilhamentos
+senha='' #Senha do Usuário do AD
+dominio='' #Seu domínio
+
+################################################
+#FUNCOES
+################################################
+
+#funções para criação dos logs
+function log(){
+	data=$(date +"%H:%M:%S")
+	echo $data- $1 >> $DIR_LOG"log.log"
+}
+
+function log2(){
+	echo "" >> $DIR_LOG"log.log"
+}
+
+#A função que faz o backup
+function fazBackup(){	
+	dir_bkp=$DIR_BKP$2
+	dir_log_rsync=$DIR_LOG"log_"$2".log"	
+
+	log "Fazendo coṕia dos arquivos de "$2" ("$1" para "$dir_bkp")"
+	rsync --delete -v --log-file=$dir_log_rsync -Cravzp $1 $dir_bkp
+	log "Fim coṕia dos arquivos em "$1" para "$dir_bkp
+
+}
+
+
+################################################
+#MAIN
+################################################
+
+log "Iniciando Backup diário de "$nome_semana" em "$(date +"%d-%m-%Y")
+log2
+
+# Aqui você monta os compartilhamentos que serão utilizados para fazer o backup
+# Crie os diretórios no /mnt antes
+sudo mount -t cifs -o username=$login,password=$senha,workgroup=$dominio //IP_DO_SERVIDOR/NOME_DO_COMPARTILHAMENTO /mnt/NOME_DO_PONTO_DE_MONTAGEM -o iocharset=utf8
+
+
+#chama a função de backup
+fazBackup "/mnt/NOME_DO_PONTO_DE_MONTAGEM" "NOME_PARA_O_LOG"
+
+
+#desmonta
+sudo umount /mnt/NOME_DO_PONTO_DE_MONTAGEM
+
+
+log2
+log "Finalizando Backup diário de "$nome_semana" em "$(date +"%d-%m-%Y")
+log2
+log2
+</pre>
+<p>Espero que esse script seja útil para você, assim como foi para mim. Qualquer dúvida me pergunte nos comentários.</p>

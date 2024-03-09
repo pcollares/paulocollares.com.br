@@ -1,0 +1,33 @@
+---
+title: Como abrir multiplas sessões do NetBeans - Windows e Linux
+date: 2013-01-14 20:26:41.000000000 -03:00
+categories:
+- Infraestrutura
+tags:
+- linux
+- netbeans
+- windows
+permalink: "/infraestrutura/como-abrir-multiplas-sessoes-do-netbeans-windows-e-linux/"
+excerpt: Muitas vezes você precisa abrir mais de uma sessão do NetBeans ao mesmo tempo,
+  seja para verificar ou testar projetos diferentes, seja para utilizar o Grupo de
+  Projetos da IDE. Porém a instalação do NetBeans não permite isso, vou mostrar aqui
+  como realizar essa 'façanha'
+---
+<p>Muitas vezes você precisa abrir mais de uma sessão do NetBeans ao mesmo tempo, seja para verificar ou testar projetos diferentes, seja para utilizar o <a href="https://www.paulocollares.com.br/infraestrutura/trabalhe-com-grupos-de-projetos-no-netbeans/">Grupo de Projetos da IDE</a>.</p>
+<p>Porém a instalação do NetBeans não permite isso, vou mostrar aqui como realizar essa 'façanha'</p>
+<p>[caption id="attachment_737" align="aligncenter" width="650"]<a href="http://www.paulocollares.com.br/como-abrir-multiplas-sessoes-do-netbeans-windows-e-linux/selecao_004/" rel="attachment wp-att-737"><img class="size-full wp-image-737" src="{{ site.baseurl }}/images/2013/01/Sele%C3%A7%C3%A3o_004.png" alt="Duas Sessões do NetBeans Abertas simultâneamente" width="650" /></a> Duas Sessões do NetBeans Abertas simultâneamente[/caption]</p>
+<h2>Linux</h2>
+<p>Primeiramente, duplique a pasta de configurações do usuários, fica localizada em <em>/home/USUARIO/.netbeans/ </em></p>
+<p>Cole no mesmo diretório, com o nome de ./netbeans2, por exemplo</p>
+<p>[caption id="attachment_738" align="aligncenter" width="343"]<a href="http://www.paulocollares.com.br/como-abrir-multiplas-sessoes-do-netbeans-windows-e-linux/selecao_005/" rel="attachment wp-att-738"><img class="size-full wp-image-738" src="{{ site.baseurl }}/images/2013/01/Sele%C3%A7%C3%A3o_005.png" alt="Pasta de Configuração Duplicada" width="343" height="147" /></a> Pasta de Configuração Duplicada[/caption]</p>
+<p>Agora, em seu desktop, duplique o atalho do NetBeans, edite as propriedades deste e inclua no fim do campo Comando o atributo: <em>--userdir /home/USUARIO/.netbeans2/7.2.1/ </em>este informará a outra sessão do NetBeans.</p>
+<p>[caption id="attachment_742" align="aligncenter" width="650"]<a href="http://www.paulocollares.com.br/como-abrir-multiplas-sessoes-do-netbeans-windows-e-linux/selecao_006/" rel="attachment wp-att-742"><img class="size-full wp-image-742 " title="Configuração do atalho" src="{{ site.baseurl }}/images/2013/01/Sele%C3%A7%C3%A3o_006.png" alt="Configuração do atalho" width="650" height="530" /></a> Configuração do atalho[/caption]</p>
+<h2> Windows</h2>
+<p>Primeiramente, duplique a pasta de configurações do usuários, fica localizada em <em>C:\Users\USUARIO\AppData\Roaming\NetBeans\</em></p>
+<p>[caption id="attachment_745" align="aligncenter" width="209"]<a href="http://www.paulocollares.com.br/como-abrir-multiplas-sessoes-do-netbeans-windows-e-linux/pastas/" rel="attachment wp-att-745"><img class="size-full wp-image-745" src="{{ site.baseurl }}/images/2013/01/pastas.png" alt="Pasta de Configuração Duplicada" width="209" height="143" /></a> Pasta de Configuração Duplicada[/caption]</p>
+<p>Cole no mesmo diretório, com o nome de NetBeans2, por exemplo</p>
+<p>Agora, em seu desktop, duplique o atalho do NetBeans, edite as propriedades deste e inclua no fim do campo Destino o atributo: <em>--userdir C:\Users\USUARIO\AppData\Roaming\NetBeans2\7.2.1\ </em>este informará a outra sessão do NetBeans.</p>
+<p>[caption id="attachment_746" align="aligncenter" width="532"]<a href="http://www.paulocollares.com.br/como-abrir-multiplas-sessoes-do-netbeans-windows-e-linux/atalho/" rel="attachment wp-att-746"><img class="size-full wp-image-746" src="{{ site.baseurl }}/images/2013/01/atalho.png" alt="Configuração do atalho" width="532" height="552" /></a> Configuração do atalho[/caption]</p>
+<p>Para conferir o local de configuração do usuário do NetBeans, acesse Ajuda &gt; Sobre</p>
+<p>[caption id="attachment_750" align="aligncenter" width="650"]<a href="http://www.paulocollares.com.br/como-abrir-multiplas-sessoes-do-netbeans-windows-e-linux/sobre/" rel="attachment wp-att-750"><img class="size-full wp-image-750" src="{{ site.baseurl }}/images/2013/01/sobre.png" alt="Sobre do NetBeans" width="650" /></a> Sobre do NetBeans[/caption]</p>
+<p>Repita este processo quantas vezes necessário, fiquem na Paz</p>

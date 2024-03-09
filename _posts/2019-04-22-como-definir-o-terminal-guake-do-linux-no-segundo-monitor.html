@@ -1,0 +1,31 @@
+---
+title: Como definir o terminal Guake do Linux no segundo monitor
+excerpt: Como definir o terminal Guake do Linux no segundo monitor
+date: 2019-04-22 15:42:48.000000000 -03:00
+categories:
+- Infraestrutura
+tags:
+- linux
+permalink: "/infraestrutura/como-definir-o-terminal-guake-do-linux-no-segundo-monitor/"
+---
+<p></p>
+<p>O <a href="http://guake-project.org/" target="_blank" rel="noreferrer noopener" aria-label="Guake (abre numa nova aba)">Guake</a> é um excelente terminal para Linux, sua facilidade de acesso faz com que esteja sempre disponível, bastando apenas pressionar a tecla F12 para ter acesso a ele.</p>
+<p></p>
+<p></p>
+<p>Porém quando se usa mais de um monitor, não há uma configuração simples para selecionar a apresentação do Guake em outra tela. Para isso, edite o arquivo localizado em:</p>
+<p></p>
+<p></p>
+<pre class="wp-block-preformatted">/usr/bin/guake</pre>
+<p></p>
+<p></p>
+<p>Após a linha '<em>window_rect.y = 0</em>', adicione:</p>
+<p></p>
+<p></p>
+<pre class="wp-block-preformatted">window_rect.x = 1920</pre>
+<p></p>
+<p></p>
+<p>Onde 1920 é o valor em pixes de onde o Guake irá ser desenhado.</p>
+<p></p>
+<p></p>
+<p>[]'s</p>
+<p></p>

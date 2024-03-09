@@ -1,0 +1,42 @@
+---
+title: Exibindo os mapas do Google Earth e Maps com Java
+date: 2013-04-30 21:44:17.000000000 -03:00
+categories:
+- Programação
+tags:
+- java
+permalink: "/programacao/exibindo-os-mapas-do-google-earth-e-maps-com-java/"
+excerpt: O Google libera o acesso de sua API do Google Maps para desenvolvedores usarem
+  em suas aplicações, neste tutorial, passarei brevemente como acessar e exibir os
+  mapas em um frame no Java.
+---
+<p><a href="http://www.paulocollares.com.br/exibindo-os-mapas-do-google-earth-e-maps-com-java/30-04-2013-21-39-25/" rel="attachment wp-att-806"><img class="aligncenter size-full wp-image-806" alt="" src="{{ site.baseurl }}/images/2013/04/30-04-2013-21-39-25.png" width="664" height="719" /></a></p>
+<p>O Google libera o acesso de sua API do Google Maps para desenvolvedores usarem em suas aplicações, neste tutorial, passarei brevemente como acessar e exibir os mapas em um frame no Java.</p>
+<h2>API do Google Maps</h2>
+<p>Primeiramente você deve criar uma chave para acesso do seu aplicativo no painel do desenvolvedor do Google, <a href="https://code.google.com/apis/console/b/0/" target="_blank" rel="noopener noreferrer">clique aqui</a>, e crie uma para você.</p>
+<p>Atenção, a requisição NÃO irá funcionar sem a chave correta.</p>
+<p>Nosso aceso será por requisições GET de imagens, abaixo um exemplo de URL:</p>
+<pre>http://maps.googleapis.com/maps/api/staticmap?center=-22.8634,-43.1792&amp;zoom=12&amp;size=640x640&amp;maptype=satellite&amp;key=sua_chave&amp;sensor=false&amp;format=jpg</pre>
+<h2>Código Java</h2>
+<p>Crie um BufferedImage e por meio de uma conexão HTTP é possível acessar a imagem no modelo da url acima:</p>
+<pre>String chave = "sua_chave";
+
+String endereco = "http://maps.googleapis.com/maps/api/staticmap?center=-22.8634,-43.1792&amp;zoom=" + zoom + "&amp;size=640x640&amp;maptype=" + tipo + "&amp;key="+chave+"&amp;sensor=false&amp;format=jpg";
+
+URL url = new URL(endereco);
+
+HttpURLConnection con = (HttpURLConnection) url.openConnection();
+BufferedImage img img = ImageIO.read(con.getInputStream());</pre>
+<p>Com isso é possível exibir em um Label por exemplo</p>
+<pre>ImageIcon mapa = new ImageIcon(img);
+jLabel.setIcon(mapa);</pre>
+<h2>Projeto Completo</h2>
+<p>Este é um exemplo básico de implementação, <a href="http://www.paulocollares.com.br/arqs/projetos/GoogleMaps.zip" target="_blank" rel="noopener noreferrer">clique aqui</a> e baixe o projeto inteiro, que contém zoom e acesso a várias camadas.</p>
+<p>Veja mais exemplos na documentação oficial: <a href="http://developers.google.com/maps/documentation/staticmaps/" target="_blank" rel="noopener noreferrer">developers.google.com/maps/documentation/staticmaps/</a></p>
+<p>Espero que tenha sido útil, poste nos comentários dúvidas e sugestões.</p>
+<h2>Mais imagens</h2>
+<p>[caption id="attachment_801" align="aligncenter" width="664"]<a href="http://www.paulocollares.com.br/exibindo-os-mapas-do-google-earth-e-maps-com-java/30-04-2013-21-20-40/" rel="attachment wp-att-801"><img class="size-full wp-image-801" title="Terreno" alt="Terreno" src="{{ site.baseurl }}/images/2013/04/30-04-2013-21-20-40.png" width="664" height="719" /></a> Terreno[/caption]</p>
+<p>[caption id="attachment_800" align="aligncenter" width="664"]<a href="http://www.paulocollares.com.br/exibindo-os-mapas-do-google-earth-e-maps-com-java/30-04-2013-21-20-35/" rel="attachment wp-att-800"><img class="size-full wp-image-800" title="Híbrido" alt="Híbrido" src="{{ site.baseurl }}/images/2013/04/30-04-2013-21-20-35.png" width="664" height="719" /></a> Híbrido[/caption]</p>
+<p>[caption id="attachment_799" align="aligncenter" width="664"]<a href="http://www.paulocollares.com.br/exibindo-os-mapas-do-google-earth-e-maps-com-java/30-04-2013-21-20-30/" rel="attachment wp-att-799"><img class="size-full wp-image-799" title="Ruas" alt="Ruas" src="{{ site.baseurl }}/images/2013/04/30-04-2013-21-20-30.png" width="664" height="719" /></a> Ruas[/caption]</p>
+<p>[caption id="attachment_798" align="aligncenter" width="664"]<a href="http://www.paulocollares.com.br/exibindo-os-mapas-do-google-earth-e-maps-com-java/30-04-2013-21-20-22/" rel="attachment wp-att-798"><img class="size-full wp-image-798" title="Satélite" alt="Satélite" src="{{ site.baseurl }}/images/2013/04/30-04-2013-21-20-22.png" width="664" height="719" /></a> Satélite[/caption]</p>
+<p>[]'s</p>

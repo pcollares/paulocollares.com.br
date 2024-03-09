@@ -1,0 +1,843 @@
+---
+title: API REST com Spring + Testes com MockMVC + Documentação com Swagger
+date: 2019-08-08 19:45:20.000000000 -03:00
+categories:
+- Destaques
+- Programação
+tags:
+- java
+- rest
+permalink: "/programacao/api-rest-com-spring-testes-de-integracao-com-mockmvc-documentacao-com-swagger/"
+excerpt: Este post tem como objetivo desenvolver uma API REST 100% funcional com Spring
+  e banco de dados PostgreSQL, o Spring data JPA para facilitar as consultas, o padrão
+  DTO para inclusão e atualização dos dados, listar grandes quantidades de dados paginas,
+  com ordenação e busca, implementar testes de integração para validar nossos endpoints
+  com o MockMVC e gerar a documentação de forma automática com o Swagger.
+---
+<p></p>
+<h2>Introdução</h2>
+<p></p>
+<p></p>
+<p>Este post tem como objetivo desenvolver uma API REST 100% funcional com Spring e banco de dados PostgreSQL, o Spring data JPA para facilitar as consultas,  o padrão DTO para inclusão e atualização dos dados, listar grandes quantidades de dados paginas, com ordenação e busca, implementar testes de integração para validar nossos endpoints com o MockMVC  e gerar a documentação de forma automática com o Swagger.</p>
+<p></p>
+<p></p>
+<p>O código completo pode ser obtido no Github:</p>
+<p></p>
+<p><!-- wp:button {"backgroundColor":"very-dark-gray","textColor":"very-light-gray","align":"center"} --></p>
+<div class="wp-block-button aligncenter"><a class="wp-block-button__link has-very-light-gray-color has-very-dark-gray-background-color has-text-color has-background" href="https://github.com/pcollares/api-rest-spring">Clone no Github<br /></a></div>
+<p><!-- /wp:button --></p>
+<p></p>
+<h2>Dependências</h2>
+<p></p>
+<p></p>
+<p>As dependências na nossa aplicação são:</p>
+<p></p>
+<p></p>
+<ul>
+<li>Spring Boot</li>
+<li>Hibernate</li>
+<li>Spring data JPA</li>
+<li>MockMVC</li>
+<li>Swagger</li>
+</ul>
+<p></p>
+<p></p>
+<p>Todas serão tratadas pelo Maven, segundo o pom.xml abaixo:</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code prettyprint"><code>&lt;parent> 
+       &lt;groupId>org.springframework.boot&lt;/groupId> 
+       &lt;artifactId>spring-boot-starter-parent&lt;/artifactId> 
+       &lt;version>2.2.5.RELEASE&lt;/version> 
+&lt;/parent>
+
+&lt;dependencies> 
+        &lt;dependency> 
+            &lt;groupId>org.springframework.boot&lt;/groupId> 
+            &lt;artifactId>spring-boot-starter-web&lt;/artifactId> 
+        &lt;/dependency>
+        &lt;dependency> 
+            &lt;groupId>org.springframework.boot&lt;/groupId> 
+            &lt;artifactId>spring-boot-starter-test&lt;/artifactId>
+            &lt;scope>test&lt;/scope>
+        &lt;/dependency> 
+        &lt;dependency>
+            &lt;groupId>io.springfox&lt;/groupId>
+            &lt;artifactId>springfox-swagger2&lt;/artifactId>
+            &lt;version>2.6.1&lt;/version>
+        &lt;/dependency>
+        &lt;dependency>
+            &lt;groupId>io.springfox&lt;/groupId>
+            &lt;artifactId>springfox-swagger-ui&lt;/artifactId>
+            &lt;version>2.6.1&lt;/version>
+        &lt;/dependency>
+        &lt;dependency>
+            &lt;groupId>junit&lt;/groupId>
+            &lt;artifactId>junit&lt;/artifactId>
+            &lt;scope>test&lt;/scope>
+        &lt;/dependency>
+        &lt;dependency>
+            &lt;groupId>org.hamcrest&lt;/groupId>
+            &lt;artifactId>hamcrest-core&lt;/artifactId>
+            &lt;scope>test&lt;/scope>
+        &lt;/dependency>
+        &lt;dependency>
+            &lt;groupId>org.springframework.boot&lt;/groupId>
+            &lt;artifactId>spring-boot-starter-data-jpa&lt;/artifactId>
+        &lt;/dependency>
+        &lt;dependency>
+            &lt;groupId>org.springframework.boot&lt;/groupId>
+            &lt;artifactId>spring-boot-devtools&lt;/artifactId>
+            &lt;scope>runtime&lt;/scope>
+        &lt;/dependency>
+        &lt;dependency>
+            &lt;groupId>org.postgresql&lt;/groupId>
+            &lt;artifactId>postgresql&lt;/artifactId>
+        &lt;/dependency>
+    &lt;/dependencies></code></pre>
+<p></p>
+<p></p>
+<h2>Spring boot</h2>
+<p></p>
+<p></p>
+<p>O Spring boot dispensa a necessidade de um servidor de aplicação (explicito) para executar nossa aplicação, facilitando a execução durante o desenvolvimento e até em produção.</p>
+<p></p>
+<p></p>
+<p>Para isso basta criarmos uma classe com o método main do Java:</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code prettyprint"><code>@SpringBootApplication
+public class Main {
+    public static void main(String&#91;] args) {
+        SpringApplication.run(Main.class, args);
+    }
+}</code></pre>
+<p></p>
+<p></p>
+<h2>Hibernate e Spring data JPA</h2>
+<p></p>
+<p></p>
+<p>Vamos utilizar o Hibernate em conjunto do Spring data JPA para automatizar o mapeamento de nossas classes de domínio. </p>
+<p></p>
+<p></p>
+<p>Primeiramente, vamos criar uma classe Produto.java e usar as anotações necessárias para realizar o mapeamento. </p>
+<p></p>
+<p></p>
+<pre class="wp-block-preformatted">As anotações de @ApiModelProperty serão usadas para a documentação com o Swagger, que veremos mais a frente.</pre>
+<p></p>
+<p></p>
+<pre class="wp-block-code prettyprint"><code>@Entity
+@Table(name = "produto")
+public class Produto {
+
+    @Id
+    @SequenceGenerator(name = "produto_seq", sequenceName = "produto_seq", allocationSize = 1)
+    @GeneratedValue(generator = "produto_seq", strategy = GenerationType.AUTO)
+    private int id;
+
+    private String nome;
+
+    private double valor;
+
+    @ApiModelProperty(notes = "Identificador do produto")
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    @ApiModelProperty(notes = "Nome do produto")
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    @ApiModelProperty(notes = "Valor do produto")
+    public double getValor() {
+        return valor;
+    }
+
+    public void setValor(double valor) {
+        this.valor = valor;
+    }
+
+}</code></pre>
+<p></p>
+<p></p>
+<p>Depois criaremos um 'Repository', estrutura do Spring data JPA que facilita ainda mais as consultas ao banco de dados, além de ser útil mais a frente durante os testes, onde será possível criar uns repositórios falsos para que não seja necessário acessar o banco de dados durante essa etapa.</p>
+<p></p>
+<p></p>
+<p>No repositório de produto abaixo, criamos dois métodos, um <em>findAll()</em> passando um objeto de paginação, somente pelo nome do método, será inferido uma busca por todos os elementos, e um método de  busca com uma consulta personalizada.</p>
+<p></p>
+<p></p>
+<pre class="wp-block-preformatted">O 'Repository' são interfaces, que o Spring irá tratar como injeção de dependências quando forem invocadas mais a frente.</pre>
+<p></p>
+<p></p>
+<pre class="wp-block-code prettyprint"><code>@Repository
+public interface ProdutoRepository extends PagingAndSortingRepository&lt;Produto, Integer&gt; {
+
+    public Page&lt;Produto&gt; findAll(Pageable pageable);
+
+    @Query("SELECT p FROM Produto p "
+            + "WHERE lower(nome) like %:busca% ")
+    public Page&lt;Produto&gt; busca(@Param("busca") String busca, Pageable pageable);
+
+}</code></pre>
+<p></p>
+<p></p>
+<p>Edite o arquivo application.properties com os dados da sua conexão, configurações da api, como o caminho padrão e o modo de inicialização. Devemos criar também o banco de dados e um esquema no PostgreSQL.</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code prettyprint"><code>#debug
+debug=true
+
+#api
+server.servlet.context-path=/api
+
+#conexão
+javax.persistence.create-database-schemas=true
+spring.datasource.url=jdbc:postgresql://127.0.0.1:5432/teste
+spring.datasource.username=postgres
+spring.datasource.password=postgres
+spring.jpa.properties.hibernate.default_schema=api
+
+#define como o hibernate irá se comportar quanto a criação do esquema
+#create: Apaga e recria todo o esquema
+#update: Atualiza o mapeamento
+spring.jpa.hibernate.ddl-auto=update
+
+#define se irá executar o 'data.sql'
+#always: Sempre irá executar o data.sql
+#never: Nunca irá executar o data.sql
+spring.datasource.initialization-mode=never
+
+#codificação do data.sql
+spring.datasource.sqlScriptEncoding=UTF-8</code></pre>
+<p></p>
+<p></p>
+<h2>Controlador REST</h2>
+<p></p>
+<p></p>
+<p>Para disponibilizar nossa API publicamente, vamos criar uma classe ProdutoController.java para colocar todos os endpoints referentes a essa classe. E com as anotações necessárias do Spring. </p>
+<p></p>
+<p></p>
+<p>A anotação <em>@RequestMapping("/produtos")</em> irá definir o caminho padrão desse endpoint, nesse caso /produtos.</p>
+<p></p>
+<p></p>
+<p>Para permitir a invocação de nossos endpoint de outras fontes, como uma aplicação REACT ou Angular, precisamos habilitar o CORS (Cross-Origin Resource Sharing), com a anotação <em>@CrossOrigin.</em></p>
+<p></p>
+<p></p>
+<pre class="wp-block-preformatted">As anotações @Api e  @ApiOperation servirão para documenta pelo swagger, que veremos mais a frente.</pre>
+<p></p>
+<p></p>
+<pre class="wp-block-code prettyprint"><code>@RestController
+@RequestMapping("/produtos")
+@CrossOrigin
+@Api(tags = "Produtos", description = "API de produtos")
+public class ProdutoController {
+
+    private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+
+    @Autowired
+    ProdutoRepository produtoRepository;
+
+...
+
+}</code></pre>
+<p></p>
+<p></p>
+<p>Acima, temos a estrutura básica de um controlador rest, com as anotações necessárias, preparo uma instância do Logger e uma do Repositório de produtos, que será construído por injeção de dependências pelo próprio Spring.</p>
+<p></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3>GET</h3>
+<p></p>
+<p></p>
+<p>O primeiro endpoint que vamos criar, será o responsável pela resposta da consulta por todos os produtos, pela anotação @GetMapping() informo que responderá a uma requisição do tipo GET. Defino os parâmetros que essa URL pode receber, todos opcionais,  para que possa paginar, ordenar e fazer uma busca.</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code prettyprint"><code>@ApiOperation(value = "Lista os produtos")
+    @GetMapping()
+    public Page&lt;Produto&gt; listar(
+            @RequestParam(
+                    value = "page",
+                    required = false,
+                    defaultValue = "0") int page,
+            @RequestParam(
+                    value = "size",
+                    required = false,
+                    defaultValue = "10") int size,
+            @RequestParam(
+                    value = "sort",
+                    required = false) String sort,
+            @RequestParam(
+                    value = "q",
+                    required = false) String q
+    ) {
+        Pageable pageable = new PageableFactory(page, size, sort).getPageable();
+
+        Page&lt;Produto&gt; resultPage;
+
+        if (q == null) {
+            resultPage = produtoRepository.findAll(pageable);
+        } else {
+            resultPage = produtoRepository.busca(q.toLowerCase(), pageable);
+        }
+
+        return resultPage;
+    }</code></pre>
+<p></p>
+<p></p>
+<pre class="wp-block-preformatted">Preciso criar um objeto Pageable para passar para o repositório, para isso criei uma fábrica para facilitar essa criação, a PageableFactory.</pre>
+<p></p>
+<p></p>
+<p>Abaixo uma consulta de exemplo para a URL /api/produtos:</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code prettyprint"><code>{
+  "content": &#91;
+    {
+      "id": 2,
+      "nome": "Processador Intel Core i7-9700K",
+      "valor": 2454
+    },
+    {
+      "id": 3,
+      "nome": "Headset Gamer HyperX Cloud Stinger - HX-HSCS-BK/NA ",
+      "valor": 189.37
+    },
+    {
+      "id": 4,
+      "nome": "Teclado Mecânico Gamer HyperX Mars, RGB, Switch Outemu Bluem, US - HX-KB3BL3-US/R4 ",
+      "valor": 284.11
+    },
+    {
+      "id": 5,
+      "nome": "Mouse Logitech M90 Preto 1000DPI ",
+      "valor": 26.9
+    },
+    {
+      "id": 6,
+      "nome": "Gabinete C3Tech Gamer ATX sem Fonte Preto MT-G50BK",
+      "valor": 119.6
+    },
+    {
+      "id": 7,
+      "nome": "Headphone Edifier Bluetooth W800BT Preto",
+      "valor": 250
+    },
+    {
+      "id": 8,
+      "nome": "Kindle Novo Paperwhite, 8GB, Wi-Fi, Preto - AO0705 ",
+      "valor": 418.99
+    },
+    {
+      "id": 9,
+      "nome": "SSD Kingston A400, 240GB, SATA, Leitura 500MB/s, Gravação 350MB/s - SA400S37/240G ",
+      "valor": 166
+    },
+    {
+      "id": 10,
+      "nome": "HD Seagate BarraCuda, 1TB, 3.5´, SATA - ST1000DM010",
+      "valor": 290
+    },
+    {
+      "id": 11,
+      "nome": "Cadeira Gamer DT3sports GT, Black - 10293-5",
+      "valor": 552.41
+    }
+  ],
+  "pageable": {
+    "sort": {
+      "unsorted": true,
+      "sorted": false,
+      "empty": true
+    },
+    "pageSize": 10,
+    "pageNumber": 0,
+    "offset": 0,
+    "unpaged": false,
+    "paged": true
+  },
+  "last": false,
+  "totalPages": 2,
+  "totalElements": 19,
+  "numberOfElements": 10,
+  "sort": {
+    "unsorted": true,
+    "sorted": false,
+    "empty": true
+  },
+  "first": true,
+  "size": 10,
+  "number": 0,
+  "empty": false
+}</code></pre>
+<p></p>
+<p></p>
+<p>Alguns exemplos de outras consultas possíveis:</p>
+<p></p>
+<p></p>
+<ul>
+<li>http://127.0.0.1:8080/api/produtos?page=2</li>
+<li>http://127.0.0.1:8080/api/produtos?page=1&amp;size=30</li>
+<li>http://127.0.0.1:8080/api/produtos?q=teclado</li>
+<li>http://127.0.0.1:8080/api/produtos?sort=valor,asc</li>
+<li>http://127.0.0.1:8080/api/produtos?sort=valor,desc</li>
+<li>http://127.0.0.1:8080/api/produtos?page=0&amp;size=3&amp;ort=valor,desc&amp;q=intel</li>
+</ul>
+<p></p>
+<p></p>
+<p>Outro endpoint útil é a listagem de um item pelo seu id, que será feito assim:</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code prettyprint"><code> @ApiOperation(value = "Busca um produto pelo id")
+    @GetMapping(value = "/{id}")
+    public ResponseEntity&lt;Produto&gt; listar(@PathVariable Integer id) {
+        Optional&lt;Produto&gt; rastreador = produtoRepository.findById(id);
+
+        if (!rastreador.isPresent()) {
+            return ApiError.notFound("Produto não encontrado");
+        }
+
+        return new ResponseEntity&lt;&gt;(rastreador.get(), HttpStatus.OK);
+    }</code></pre>
+<p></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3>POST e PUT</h3>
+<p></p>
+<p></p>
+<p>Para inserir ou atualizar um novo produto, vamos primeiramente criar uma classe ProdutoDTO.java.</p>
+<p></p>
+<p></p>
+<pre class="wp-block-preformatted">O padrão DTO (Data transfer object) é uma classe que representa a entidade com apenas os atributos necessários para serem expostos publicamente, no nosso exemplo apenas preciso, na criação ou atualização, informar no nome e valor do produto, e nunca o seu id, por isso a sua classe de DTO não possui esse atributo</pre>
+<p></p>
+<p></p>
+<pre class="wp-block-code prettyprint"><code>public class ProdutoDTO {
+
+    private String nome;
+    private Double valor;
+
+    @ApiModelProperty(notes = "Nome do produto")
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public Double getValor() {
+        return valor;
+    }
+
+    @ApiModelProperty(notes = "Valor do produto")
+    public void setValor(Double valor) {
+        this.valor = valor;
+    }
+}</code></pre>
+<p></p>
+<p></p>
+<p>Sendo assim, o método que representa essa criação ficará assim:</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code prettyprint"><code>@ApiOperation(value = "Cria um novo Produto")
+    @PostMapping()
+    public ResponseEntity&lt;Produto&gt; criar(@RequestBody ProdutoDTO dto, UriComponentsBuilder ucBuilder) {
+        try {
+            //Crio um objeto da entidade preenchendo com os valores do DTO e validando
+            Produto produto = new Produto();
+
+            if (dto.getNome() == null || dto.getNome().length() &lt; 2) {
+                return ApiError.badRequest("Informe o nome do produto");
+            }
+            produto.setNome(dto.getNome());
+
+            if (dto.getValor() == null || dto.getValor() &lt;= 0) {
+                return ApiError.badRequest("Valor do produto inválido");
+            }
+            produto.setValor(dto.getValor());
+
+            Produto novo = produtoRepository.save(produto);
+
+            //Se ocorreu algum erro, retorno esse erro para a API
+            if (novo == null) {
+                return ApiError.badRequest("Ocorreu algum erro na criação do produto");
+            }
+
+            //Se foi criado com sucesso, retorno o objeto criado
+            return new ResponseEntity&lt;&gt;(novo, HttpStatus.CREATED);
+        } catch (Exception e) {
+            LOGGER.error("Erro ao criar um produto", e);
+            return ApiError.internalServerError("Ocorreu algum erro na criação do produto");
+        }
+    }</code></pre>
+<p></p>
+<p></p>
+<p>Repare que informo que o ProdutoDTO é o recurso esperado, logo, quando fizer essa requisição, devo passar um json com esses atributos, por exemplo:</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code prettyprint"><code>{
+"nome": "Teclado Microsoft",
+"valor": 124
+}</code></pre>
+<p></p>
+<p></p>
+<p>Ainda nesse método, faço as validações necessárias, retornando um erro quando não forem atendidos os requisitos, e por final chamo o repositório pedindo para persistir o novo produto.</p>
+<p></p>
+<p></p>
+<p>No final retorno o produto criado. Esse processo pode ser visto abaixo.</p>
+<p></p>
+<p><!-- wp:image {"id":2666} --></p>
+<figure class="wp-block-image"><img src="{{ site.baseurl }}/images/2019/08/post-1024x439.png" alt="" class="wp-image-2666" /></figure>
+<p></p>
+<p></p>
+<p>A atualização de um produto segue a mesma lógica, informando na URL o id do mesmo.</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code prettyprint"><code> @ApiOperation(value = "Atualiza um Rastreador Equipamento")
+    @PutMapping(value = "/{id}")
+    public ResponseEntity&lt;Produto&gt; atualizar(@PathVariable("id") int id, @RequestBody ProdutoDTO dto) {
+        try {
+            Optional&lt;Produto&gt; produtoAtual = produtoRepository.findById(id);
+
+            if (!produtoAtual.isPresent()) {
+                return ApiError.notFound("Produto não encontrado");
+            }
+
+            if (dto.getNome() != null) {
+                if (dto.getNome().length() &lt; 2) {
+                    return ApiError.badRequest("Nome do produto inválido");
+                }
+                produtoAtual.get().setNome(dto.getNome());
+            }
+
+            if (dto.getValor() != null) {
+                if (dto.getValor() &lt;= 0) {
+                    return ApiError.badRequest("Valor do produto inválido");
+                }
+                produtoAtual.get().setValor(dto.getValor());
+            }
+
+            //Atualizo o objeto utilizando o repositório
+            Produto atualizado = produtoRepository.save(produtoAtual.get());
+
+            //Se ocorreu algum erro, retorno esse erro para a API
+            if (atualizado == null) {
+                return ApiError.internalServerError("Erro na atualização do produto");
+            }
+
+            //Se foi criado com sucesso, retorno o objeto atualizado
+            return new ResponseEntity&lt;&gt;(atualizado, HttpStatus.CREATED);
+        } catch (Exception e) {
+            LOGGER.error("Erro ao atualizar um produto", e);
+            return ApiError.internalServerError("Erro na atualização do produto");
+        }
+    }</code></pre>
+<p></p>
+<p></p>
+<h2>DELETE</h2>
+<p></p>
+<p></p>
+<p>A remoção também é bem simples, recebo o id, verifico se existe, e retorno um erro se não existir e removo pelo repositório.</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code prettyprint"><code>  @ApiOperation(value = "Remove um produto")
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity&lt;Produto&gt; deletar(@PathVariable Integer id) {
+        Optional&lt;Produto&gt; produto = produtoRepository.findById(id);
+
+        if (!produto.isPresent()) {
+            return ApiError.notFound("Produto não encontrado");
+        } else {
+            produtoRepository.deleteById(id);
+        }
+
+        return new ResponseEntity&lt;&gt;(HttpStatus.OK);
+    }</code></pre>
+<p></p>
+<p></p>
+<h2>Documentação com Swagger</h2>
+<p></p>
+<p></p>
+<p>O Swagger irá gerar uma documentação da nossa API de forma automática, olhando as anotações que fizemos nos controladores e nas classes de entidade e DTO.</p>
+<p></p>
+<p></p>
+<p>Para isso vamos criar uma classe SwaggerConfig com as anotações necessárias e informando o pacote onde se encontram os nossos controladores.</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code prettyprint"><code>@Configuration
+@EnableSwagger2
+public class SwaggerConfig extends WebMvcConfigurationSupport {
+
+    @Bean
+    public Docket api() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .apiInfo(apiInfo())
+                .select()
+                .apis(apis())
+                .paths(PathSelectors.any())
+                .build();
+    }
+
+    private Predicate&lt;RequestHandler&gt; apis() {
+        return RequestHandlerSelectors.basePackage("br.com.paulocollares.api.controladores.rest");
+    }
+
+    private ApiInfo apiInfo() {
+
+        return new ApiInfoBuilder()
+                .title("SPRING REST API")
+                .description("Documentação das APIs REST")
+                .contact(new Contact("pcollares", "www.paulocollares.com.br", null))
+                .build();
+    }
+
+    @Override
+    protected void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("swagger-ui.html")
+                .addResourceLocations("classpath:/META-INF/resources/");
+
+        registry.addResourceHandler("/webjars/**")
+                .addResourceLocations("classpath:/META-INF/resources/webjars/");
+    }
+}</code></pre>
+<p></p>
+<p></p>
+<p>Acessando a URL /api/swagger-ui.html, podemos ver a documentação gerada, como no exemplo abaixo.</p>
+<p></p>
+<p><!-- wp:image {"id":2663} --></p>
+<figure class="wp-block-image"><img src="{{ site.baseurl }}/images/2019/08/Screenshot_2019-08-08-Swagger-UI-1024x593.png" alt="" class="wp-image-2663" /></figure>
+<p></p>
+<p></p>
+<pre class="wp-block-preformatted">No projeto há uma classe, MainController, que redireciona a requisição da  raiz para essa página, ou seja, se acessar http://127.0.0.1:8080/api/ é redirecionado para http://127.0.0.1:8080/api/swagger-ui.html.</pre>
+<p></p>
+<p></p>
+<h2>Testes</h2>
+<p></p>
+<p></p>
+<p>Para testar todos esses endpoins vamos usar o MockMVC para automatizar esse processo. Ele será responsável por invocar e testar o retorno das requisições. </p>
+<p></p>
+<p></p>
+<p>A estrutura inicial da classe ProdutoTest inicia o MockMVC.</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code prettyprint"><code>@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = {
+    ProdutoController.class
+})
+public class ProdutoTest {
+
+    //URL base para acesso desse controlador
+    private final String BASE_URL = "/produtos";
+
+    //Instância do ObjectMapper para trabalhar com JSON
+    private ObjectMapper objectMapper;
+
+    //Controlador REST tratado por meio de injeção de dependências
+    @Autowired
+    private ProdutoController restController;
+
+    //Instância do MockMVC
+    private MockMvc mockMvc;
+
+    //Instância do mock repository
+    @MockBean
+    private ProdutoRepository mockRepository;
+
+    @Before
+    public void setUp() {
+        objectMapper = new ObjectMapper();
+        mockMvc = MockMvcBuilders
+                .standaloneSetup(restController)
+                .build();
+    }
+
+...
+
+}</code></pre>
+<p></p>
+<p></p>
+<p>Vamos fazer um teste ao endpoint de consulta de um produto, para que não seja necessário acessar p banco de dados, e ter dados salvos no mesmo para realizar os testes, utilizamos do mockito para responder uma requisição ao repositório com um dado falso, e verificamos o retorno do endpoint em si.</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code prettyprint"><code>  @Test
+    public void buscar_id_200() throws Exception {
+
+        Produto produto = new Produto();
+        produto.setId(1);
+        produto.setNome("Teste");
+        produto.setValor(10.0);
+
+        when(mockRepository.findById(1)).thenReturn(Optional.of(produto));
+
+        mockMvc.perform(get(BASE_URL + "/1"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.nome", is("Teste")))
+                .andExpect(jsonPath("$.valor", is(10.0)));
+
+        verify(mockRepository, times(1)).findById(1);
+    }</code></pre>
+<p></p>
+<p></p>
+<p>Essa mesma lógica será usada nos outros endpoins.</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code prettyprint"><code>@Test
+    public void buscar_id_404() throws Exception {
+        mockMvc.perform(get(BASE_URL + "/2")).andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void criar_200() throws Exception {
+
+        ProdutoDTO dto = new ProdutoDTO();
+        dto.setNome("Teste");
+        dto.setValor(11.0);
+
+        Produto produto = new Produto();
+        produto.setId(1);
+        produto.setNome(dto.getNome());
+        produto.setValor(dto.getValor());
+
+        when(mockRepository.save(any(Produto.class))).thenReturn(produto);
+
+        mockMvc.perform(post(BASE_URL)
+                .content(objectMapper.writeValueAsString(dto))
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.nome", is("Teste")))
+                .andExpect(jsonPath("$.valor", is(11.0)));
+
+        verify(mockRepository, times(1)).save(any(Produto.class));
+
+    }
+
+    @Test
+    public void atualizar_200() throws Exception {
+
+        ProdutoDTO dto = new ProdutoDTO();
+        dto.setNome("Teste");
+        dto.setValor(11.0);
+
+        Produto produto = new Produto();
+        produto.setId(1);
+        produto.setNome(dto.getNome());
+        produto.setValor(dto.getValor());
+
+        when(mockRepository.findById(1)).thenReturn(Optional.of(produto));
+        when(mockRepository.save(any(Produto.class))).thenReturn(produto);
+
+        mockMvc.perform(put(BASE_URL + "/1")
+                .content(objectMapper.writeValueAsString(dto))
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id", is(1)));
+    }
+
+    @Test
+    public void deletar_200() throws Exception {
+
+        Produto produto = new Produto();
+        produto.setId(1);
+
+        when(mockRepository.findById(1)).thenReturn(Optional.of(produto));
+
+        mockMvc.perform(delete(BASE_URL + "/1"))
+                .andExpect(status().isOk());
+
+        verify(mockRepository, times(1)).deleteById(1);
+    }</code></pre>
+<p></p>
+<p></p>
+<h2>Conclusão</h2>
+<p></p>
+<p></p>
+<p>Mostrei nesse post um simples exemplo de uma API REST com Spring, o código completo pode ser encontrado no Github: <a href="https://github.com/pcollares/api-rest-spring">https://github.com/pcollares/api-rest-spring</a></p>
+<p></p>
+<p></p>
+<h2>Referências</h2>
+<p></p>
+<p></p>
+<p>Lista de links com referências para todos os assuntos abordados nesse post.</p>
+<p></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3>Conceitos</h3>
+<p></p>
+<p></p>
+<ul>
+<li><a href="https://restfulapi.net/resource-naming/">https://restfulapi.net/resource-naming/</a></li>
+<li><a href="https://blog.caelum.com.br/rest-principios-e-boas-praticas/">https://blog.caelum.com.br/rest-principios-e-boas-praticas/</a></li>
+<li></li>
+</ul>
+<p></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3>Spring</h3>
+<p></p>
+<p></p>
+<ul>
+<li><a href="https://spring.io/guides/gs/rest-service/">https://spring.io/guides/gs/rest-service/</a></li>
+<li><a href="https://blog.algaworks.com/como-criar-web-services-restful-com-spring-boot/">https://blog.algaworks.com/como-criar-web-services-restful-com-spring-boot/</a></li>
+<li><a href="https://www.mkyong.com/tutorials/spring-boot-tutorials/">https://www.mkyong.com/tutorials/spring-boot-tutorials/</a></li>
+<li><a href="https://blog.algaworks.com/injecao-de-dependencias-com-spring/">https://blog.algaworks.com/injecao-de-dependencias-com-spring/</a></li>
+</ul>
+<p></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3>Spring data JPA</h3>
+<p></p>
+<p></p>
+<ul>
+<li> <a href="https://www.mkyong.com/spring-boot/spring-boot-spring-data-jpa-postgresql/">https://www.mkyong.com/spring-boot/spring-boot-spring-data-jpa-postgresql/</a></li>
+<li><a href="https://www.mkyong.com/spring-boot/spring-boot-spring-data-jpa/">https://www.mkyong.com/spring-boot/spring-boot-spring-data-jpa/</a></li>
+<li><a href="https://domineospring.wordpress.com/2015/05/11/facilite-seus-daos-com-o-spring-data-jpa/">https://domineospring.wordpress.com/2015/05/11/facilite-seus-daos-com-o-spring-data-jpa/</a></li>
+<li></li>
+</ul>
+<p></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3>MockMVC</h3>
+<p></p>
+<p></p>
+<ul>
+<li><a href="http://marcelotozzi.com/teste/java/2014/09/10/usar-o-mockmvc-nos-testes-do-spring-e-mais-maneiro.html">http://marcelotozzi.com/teste/java/2014/09/10/usar-o-mockmvc-nos-testes-do-spring-e-mais-maneiro.html</a></li>
+<li><a href="https://www.baeldung.com/integration-testing-in-spring">https://www.baeldung.com/integration-testing-in-spring</a></li>
+<li><a href="https://howtodoinjava.com/spring-boot2/spring-boot-mockmvc-example/">https://howtodoinjava.com/spring-boot2/spring-boot-mockmvc-example/</a></li>
+<li><a href="http://blog.marcnuri.com/mockmvc-spring-mvc-framework/">http://blog.marcnuri.com/mockmvc-spring-mvc-framework/</a></li>
+</ul>
+<p></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3>Swagger</h3>
+<p></p>
+<p></p>
+<ul>
+<li><a href="http://www.marcelferry.com.br/tutoriais/documentando-suas-api-com-swagger-usando-springfox/">http://www.marcelferry.com.br/tutoriais/documentando-suas-api-com-swagger-usando-springfox/</a></li>
+<li><a href="https://dzone.com/articles/swagger-generation-with-spring-boot">https://dzone.com/articles/swagger-generation-with-spring-boot</a></li>
+<li><a href="https://www.baeldung.com/swagger-2-documentation-for-spring-rest-api">https://www.baeldung.com/swagger-2-documentation-for-spring-rest-api</a></li>
+</ul>
+<p></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3>DTO</h3>
+<p></p>
+<p></p>
+<ul>
+<li><a href="https://www.baeldung.com/entity-to-and-from-dto-for-a-java-spring-application">https://www.baeldung.com/entity-to-and-from-dto-for-a-java-spring-application</a></li>
+<li><a href="https://medium.com/@msealvial/blindando-sua-api-spring-boot-com-o-padr%C3%A3o-dto-44f97020d1a0">https://medium.com/@msealvial/blindando-sua-api-spring-boot-com-o-padr%C3%A3o-dto-44f97020d1a0</a></li>
+</ul>
+<p></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3>Paginação e ordenação</h3>
+<p></p>
+<p></p>
+<ul>
+<li><a href="https://dzone.com/articles/pagination-and-sorting-with-spring-data-jpa">https://dzone.com/articles/pagination-and-sorting-with-spring-data-jpa</a><a href="https://medium.com/@hantsy/protect-rest-apis-with-spring-security-and-jwt-5fbc90305cc5"></a></li>
+</ul>
+<p></p>
+<p></p>
+<p>[]'s</p>
+<p></p>

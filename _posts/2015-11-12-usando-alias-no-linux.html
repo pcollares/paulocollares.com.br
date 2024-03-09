@@ -1,0 +1,21 @@
+---
+title: Usando 'alias' no Linux
+excerpt: Usando 'alias' no Linux
+date: 2015-11-12 07:36:54.000000000 -03:00
+categories:
+- Infraestrutura
+tags:
+- linux
+permalink: "/infraestrutura/usando-alias-no-linux/"
+---
+<p>Um <em>alias</em> é um atalho para um comando que pode ser chamado em qualquer momento no terminal, útil para chamar rotinas que dependeriam d entrar em um diretório longo, por exemplo. Para usar o <em>alias</em> basta digitar o seguinte comando:</p>
+<p><code>$ alias home='cd /home/pcollares'</code></p>
+<p>Agora, basta digitar 'home' para que seja executado este comando. Para visualizar todos os alias criadas, digite <em>alias</em>, e para remover use o <em>unalias</em>.</p>
+<h2>Alias permanente</h2>
+<p>O comando <em>alias</em> é valido apenas durante a sessão atual, para isso devemos garantir que seja adicionado a cada nova sessão, para isso,  vamos adicionar nossos alias no arquivo <em>~/.bash_aliases</em> (um arquivo oculto que se encontra em seu diretório pessoal, crie ele caso não exista).</p>
+<p>Adicione nele os comandos alias desejados.</p>
+<p>Este arquivo é chamado pelo <em>~/.bashrc</em> que é invocado por shells que não requerem autenticação.</p>
+<h2>Fontes</h2>
+<p><a href="http://www.mediacollege.com/linux/command/alias.html" target="_blank" rel="noopener noreferrer">http://www.mediacollege.com/linux/command/alias.html</a></p>
+<p><a href="http://www.vivaolinux.com.br/dica/Arquivo-.bashrc" target="_blank" rel="noopener noreferrer">http://www.vivaolinux.com.br/dica/Arquivo-.bashrc</a></p>
+<p><a href="http://stackoverflow.com/questions/5137726/creating-permanent-executable-aliases" target="_blank" rel="noopener noreferrer">http://stackoverflow.com/questions/5137726/creating-permanent-executable-aliases</a></p>

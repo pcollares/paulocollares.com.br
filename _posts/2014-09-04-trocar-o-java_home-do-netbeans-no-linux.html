@@ -1,0 +1,20 @@
+---
+title: Trocar o java_home do netbeans no linux
+date: 2014-09-04 08:58:42.000000000 -03:00
+categories:
+- Infraestrutura
+tags:
+- linux
+permalink: "/infraestrutura/trocar-o-java_home-do-netbeans-no-linux/"
+excerpt: Se for necessário trocar o diretório da JDK ou atualizar-la, pode ser necessário,
+  atualizar a referência da JDK do próprio netbeans, pois se a JDK antiga for removida,
+  o netbeans não irá funcionar.
+---
+<p><a href="http://www.paulocollares.com.br/trocar-o-java_home-do-netbeans-no-linux/netbeans/" rel="attachment wp-att-1134"><img src="{{ site.baseurl }}/images/2014/09/netbeans.png" alt="Trocar o java_home do netbeans no linux" width="468" height="297" class="aligncenter size-full wp-image-1134" /></a></p>
+<p>Se for necessário trocar o diretório da JDK ou atualizar-la, pode ser necessário, atualizar a referência da JDK do próprio netbeans, pois se a JDK antiga for removida, o netbeans não irá funcionar.</p>
+<p>Mostro como fazer isso no Linux:</p>
+<p>Para isso acesse:</p>
+<p><em>/home/USUARIO/.netbeans-[NUMERO_VERSAO]/etc/netbeans.conf</em></p>
+<p>Neste arquivo procure pela linha <em>netbeans_jdkhome=</em>, altere o valor para o diretório correto da nova JDK.</p>
+<p>Pronto seu netbeans já esta funcional novamente</p>
+<p>[]`s</p>

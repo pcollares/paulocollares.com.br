@@ -1,0 +1,47 @@
+---
+title: Dicas e exemplos de .htaccess
+excerpt: Dicas e exemplos de .htaccess
+date: 2012-07-28 12:37:08.000000000 -03:00
+categories:
+- Infraestrutura
+tags: []
+permalink: "/infraestrutura/dicas-e-exemplos-de-htaccess/"
+---
+<p><a href="http://www.paulocollares.com.br/dicas-e-exemplos-de-htaccess/htaccess/" rel="attachment wp-att-529"><img src="{{ site.baseurl }}/images/2012/07/htaccess-.jpg" alt="" title="htaccess" width="640" height="231" class="alignnone size-full wp-image-529" /></a><br />
+Alguns exemplos de uso do .htaccess</p>
+<p><strong>Redirecionamento de Domínio:</strong><br />
+Redirecionamento de domínios sem o www, e de um dominio <em>.com.br</em> para um <em>.com</em></p>
+<pre>
+RewriteEngine on
+
+RewriteCond %{HTTP_HOST} ^site.com$ [OR]
+RewriteCond %{HTTP_HOST} ^www.site.com.br$
+RewriteRule ^(.*)$ "http\:\/\/site\.com\/$1" [R=301,L]
+</pre>
+<p><strong>Redirecionamento Personalizado:</strong><br />
+Neste exemplo ao acessar a URL <em>artigo/teste--usuario--13</em>, por exemplo, será redirecionado para <em>artigo.php?get=teste&get2=usuario&get3=13</em></p>
+<pre>
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+RewriteRule ^artigo/(.+)--(.+)--(.+) artigo.php?get=$1&get2=$2&get3=$3 [L]
+</pre>
+<p><strong>Remove o .php:</strong><br />
+Acessa a página <em>www.site.com/artigos.php > www.site.com/artigos</em></p>
+<pre>
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ $1.php [L,QSA]
+</pre>
+<p><strong>Redirecionamento de páginas de erro:</strong></p>
+<pre>
+ErrorDocument 401 http://www.site.com/erro
+ErrorDocument 404 http://www.site.com/erro
+ErrorDocument 403 http://www.site.com/erro
+ErrorDocument 500 http://www.site.com/erro
+</pre>
+<p><strong>Não permite acesso a diretórios sem um index:</strong><br />
+Ótima opção de segurança, não permite acessar, por exemplo, o diretório de imagens</p>
+<pre>
+Options -Indexes
+</pre>

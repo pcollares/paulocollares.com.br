@@ -1,0 +1,37 @@
+---
+title: "[Resumo de Artigo] Mutação Dirigida Adaptável para Algoritmos Genéticos com
+  Representação Real"
+date: 2013-05-16 19:27:11.000000000 -03:00
+categories:
+- Textos
+tags: []
+permalink: "/textos/resumo-de-artigo-mutacao-dirigida-adaptavel-para-algoritmos-geneticos-com-representacao-real/"
+excerpt: Algoritmos genéticos tem sido usado para encontrar soluções reais com técnicas
+  de otimização estudadas ao longo dos anos, tradicionalmente as implementações de
+  AG usam representações binárias, que contém desempenho satisfatórios em soluções
+  pequenas, que requerem pouca precisão, mas conforme esse problema aumenta também
+  aumenta a demanda por um esforço computacional maior. Por isso a representação real
+  tem sido amplamente usada para a elaboração de problemas maiores e mais complexos.
+---
+<p>[caption id="attachment_831" align="alignright" width="233"]<a href="http://www.paulocollares.com.br/resumo-de-artigo-mutacao-dirigida-adaptavel-para-algoritmos-geneticos-com-representacao-real/1-s2-0-s1568494612003845-fx1/" rel="attachment wp-att-831"><img class="size-full wp-image-831" alt="Mutação Dirigida Adaptável para Algoritmos Genéticos com Representação Real" src="{{ site.baseurl }}/images/2013/05/1-s2.0-S1568494612003845-fx1.jpg" width="233" height="200" /></a> Mutação Dirigida Adaptável para Algoritmos Genéticos com Representação Real[/caption]</p>
+<p>Resumo do artigo "Adaptive directed mutation for real-coded genetic algorithms" apresentado na aula de Algorítimos Genéticos na COPPE/UFRJ.</p>
+<p><em><strong>Título:</strong> Adaptive directed mutation for real-coded genetic algorithms<br />
+<strong>Autores:</strong> Ping-Hung Tanga, Ming-Hseng Tseng (School of Medical Informatics, Chung-Shan Medical University, Taiwan, ROC e Information Technology Office, Chung Shan Medical University Hospital, Taiwan, ROC)<br />
+<strong>Link:</strong> <a href="http://www.sciencedirect.com/science/article/pii/S1568494612003845" target="_blank" rel="noopener noreferrer">www.sciencedirect.com/science/article/pii/S1568494612003845</a></em></p>
+<h2>Abstract</h2>
+<p><em>Adaptive directed mutation (ADM) operator, a novel, simple, and efficient real-coded genetic algorithm (RCGA) is proposed and then employed to solve complex function optimization problems. The suggested ADM operator enhances the abilities of GAs in searching global optima as well as in speeding convergence by integrating the local directional search strategy and the adaptive random search strategies. Using 41 benchmark global optimization test functions, the performance of the new algorithm is compared with five conventional mutation operators and then with six genetic algorithms (GAs) reported in literature. Results indicate that the proposed ADM-RCGA is fast, accurate, and reliable, and outperforms all the other GAs considered in the present study.</em></p>
+<h2>Resumo</h2>
+<p>Algoritmos genéticos tem sido usado para encontrar soluções reais com técnicas de otimização estudadas ao longo dos anos, tradicionalmente as implementações de AG usam representações binárias, que contém desempenho satisfatórios em soluções pequenas, que requerem pouca precisão, mas conforme esse problema aumenta também aumenta a demanda por um esforço computacional maior. Por isso a representação real tem sido amplamente usada para a elaboração de problemas maiores e mais complexos.</p>
+<p>Independente da representação, os AG podem apresentar problemas de convergência prematura, e soluções tem sido relatadas na literatura. Dos operadores clássicos, a mutação é utilizada para prover a diversidade da população, gerando novos indivíduos aleatórios no espaço de busca, na tentativa de achar potenciais soluções, algumas técnicas de mutação clássica para representação com número real são: a mutação uniforme, a mutação gaussiana, a mutação não-uniforme, a mutação aleatória, a mutação polinomial, dentre outras.</p>
+<p>Porém, pouco esforço tem sido feito com objetivo de melhorar a eficiência da mutação, o autor afirma que a distância e a direção são as principais características da melhora de performance. Este é o objetivo deste trabalho, apresentar uma nova solução, simples e eficiente para problemas com representação real baseado no Adaptive Directed Mutation (ADM), operador onde a performance é demostrada em funções de otimização de problemas complexos e comparados com outros operadores de mutação encontrados na literatura.</p>
+<p>O principal objetivo do ADM é criar um operador que evite a possível concentração da população em um ótimo local, causado pelo crossover, e a busca não sistemática causada pela mutação aleatória.</p>
+<p>O novo ponto de busca é dirigido pela solução baseada na aptidão de 3 gerações consecutivas, é gerada também uma probabilidade adaptável de mutação, Pm, que faz com que os piores cromossomos tenham mais chances de sofrerem a mutação.</p>
+<p>Neste estudo foi proposto quatro estratégias de mutação baseada em nove tendências evolucionarias de um cromossomo, são elas: Mutação direcional em pequena escala, Mutação aleatória em pequena escala, mutação aleatória em média escala, e mutação aleatória em larga escala.</p>
+<p>O algoritmo consegue identificar se a população está convergindo para um ponto de ótimo, neste caso é aplicado uma mutação direcional para aumentar e agilizar as chances de se encontrar boa solução. Caso a população esteja totalmente convergida em um ótimo, é aplicado uma mutação aleatória maior, para explorar o espaço de busca e evitar um convergência prematura, e o risco de estacionar em um ótimo local.</p>
+<p>É possível identificar também, se a população passou por um ótimo, sem convergir, neste caso uma pequena mutação direcional, pode auxiliar a convergir neste ótimo.</p>
+<p>Há casos em que a população converge por várias gerações em uma planície, neste caso o valor de aptidão não se altera muito, neste caso, o autor recomenda uma mutação aleatória em larga escala, para tentar retirar a solução desse linha.</p>
+<p>Foi proposto também neste estudo, o teste deste operador com 41 funções de benchmark conhecidas, tanto de maximização quanto de minimização. Foram utilizados vários operadores de mutação da literatura, nos mesmos contextos e nas mesmas condições de teste.</p>
+<p>Em comparação com os operadores de mutação testados (mutação aleatória, mutação polinomial, mutação não-uniforme e mutação não-uniforme múltipla) o ADM obteve melhorias significantes ao encontrar soluções de ótimos globais. Também foram feitos testes com outros algoritmos que propõem uma mutação adaptável, o CMA-ES e o HKY-GA, o ADM-RCGA também obteve resultados superiores a estes.</p>
+<h2>Slide</h2>
+<p><iframe src="http://www.slideshare.net/slideshow/embed_code/21285119" width="427" height="356" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC;border-width:1px 1px 0;margin-bottom:5px" allowfullscreen webkitallowfullscreen mozallowfullscreen> </iframe>
+<div style="margin-bottom:5px"> <strong> <a href="http://www.slideshare.net/pcollares/apresentao-site-21285119" title="Apresentação site" target="_blank" rel="noopener noreferrer">Apresentação site</a> </strong> from <strong><a href="http://www.slideshare.net/pcollares" target="_blank" rel="noopener noreferrer">pcollares</a></strong> </div>

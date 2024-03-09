@@ -1,0 +1,128 @@
+---
+title: Exemplo do Padrão de Projetos "Observador" em Java
+excerpt: Exemplo do Padrão de Projetos "Observador" em Java
+date: 2012-06-25 20:51:41.000000000 -03:00
+categories:
+- Programação
+tags:
+- java
+permalink: "/programacao/exemplo-do-padrao-de-projetos-observador-em-java/"
+---
+<p><a href="http://www.paulocollares.com.br/exemplo-do-padrao-de-projetos-observador-em-java/imagemsirene/" rel="attachment wp-att-407"><img class="alignnone size-full wp-image-407" title="imagemsirene" src="{{ site.baseurl }}/images/2012/06/imagemsirene.jpg" alt="" width="323" height="190" /></a></p>
+<p><strong>Padrões de Projeto</strong> ajudam e muito a vida dos desenvolvedores de software, afinal para que reinventar a roda, se ela já foi criada?</p>
+<p>Essa é a ideia dos Padrões de Projeto: <strong>reutilizar conceitos genéricos para propósitos concretos.</strong></p>
+<p>Este é um exemplo Padrão <strong>Observador</strong> feito em Java:</p>
+<p>Utilizei quatro classes: Soma.java, Par.java, Impar.java e Programa.java</p>
+<p>O padrão Observador parte do conceito de um Objeto <strong>Observável </strong>(Soma.java), onde a cada mudança de estado ele notifica aqueles que estão <strong>Observando</strong> sua instância (Par.java e Impar.java)</p>
+<p><strong>Soma.java</strong><br />
+Nesta classe, implemento outro padrão de projeto, o <strong>Singleton</strong>, onde eu possuo uma única instancia desta classe em todo meu projeto.</p>
+<p>Esta classe basicamente inicia um contador, dentro de uma <em>Thread</em>, incrementando a cada 1 segundo, e a cada mudança de valor todos os Objetos que estão observando este, são notificados.</p>
+<pre>package observador;
+
+import java.util.Observable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+public class Soma extends Observable implements Runnable {
+
+    private int num;
+    public static Soma instance = null;
+
+    private Soma() {
+        num = 0;
+    }
+
+    public static Soma getInstance() {
+        if (instance == null) {
+            instance = new Soma();
+            Thread t1 = new Thread(instance);
+            t1.start();
+        }
+        return instance;
+    }
+
+    public void setNum() {
+        num++;
+        setChanged(); // marca esse objeto observável como alterado  
+        notifyObservers(); // notifica todos os observadores que esse objeto foi alterado
+    }
+
+    public int getNum() {
+        return num;
+    }
+
+    private void somar() {
+
+        while (true) {
+            setNum();
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Soma.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+    }
+
+    @Override
+    public void run() {
+        somar();
+    }
+}</pre>
+<p><strong>Par.java</strong></p>
+<p>Esta classe é notificada, através do método <em>update(), </em>quando há alteração no valor em Soma.java, se for par, exibe na tela</p>
+<pre>package observador;
+
+import java.util.Observable;
+import java.util.Observer;
+
+public class Par implements Observer {
+
+    private Soma s = Soma.getInstance();
+
+    @Override
+    public void update(Observable o, Object arg) {
+
+        if (s.getNum() % 2 == 0) {
+            System.out.println(s.getNum() + " é Par");
+        }
+
+    }
+}</pre>
+<p><strong>Impar.java</strong></p>
+<p>Esta classe é notificada, através do método <em>update(), </em>quando há alteração no valor em Soma.java, se for impar, exibe na tela</p>
+<pre>package observador;
+
+import java.util.Observable;
+import java.util.Observer;
+
+public class Impar implements Observer {
+
+    private Soma s = Soma.getInstance();
+
+    @Override
+    public void update(Observable o, Object arg) {
+
+        if (s.getNum() % 2 == 1) {
+            System.out.println(s.getNum() + " é Ímpar");
+        }
+
+    }
+}</pre>
+<p><strong>Programa.java</strong></p>
+<p>Classe que inicia tudo! Detalhe que preciso adicionar minhas classes para serem observadoras de Soma, com o método<em> addObserver()</em></p>
+<pre>package observador;
+
+public class Programa {
+    public static void main(String[] args) {
+        Soma s = Soma.getInstance();
+
+        Par par = new Par();
+        Impar impar = new Impar();
+
+        s.addObserver(par);
+        s.addObserver(impar);       
+    }
+}</pre>
+<p>Adicionar ou remover outras classes fica fácil agora, basta implementar a interface <em>Observer</em> e adicionar a lista de Observadores.</p>
+<p>Espero que tenha sido útil esta dica. :D</p>

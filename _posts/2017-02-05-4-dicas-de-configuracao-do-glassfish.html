@@ -1,0 +1,25 @@
+---
+title: 4 dicas de configuração do Glassfish
+date: 2017-02-05 18:44:58.000000000 -03:00
+categories:
+- Infraestrutura
+tags:
+- glassfish
+permalink: "/infraestrutura/4-dicas-de-configuracao-do-glassfish/"
+excerpt: Algumas dicas úteis para se configurar o Glassfish
+---
+<p><a href="http://www.paulocollares.com.br/2017/02/5-dicas-de-configuracao-do-glassfish/glassfish_logo/" rel="attachment wp-att-1835"><img class="aligncenter size-large wp-image-1835" src="{{ site.baseurl }}/images/2017/02/glassfish_logo-1024x518.png" alt="" width="800" height="405" /></a></p>
+<p>Listo aqui algumas dicas úteis para se configurar o Glassfish:</p>
+<h2>Alterar da porta 8080 para 80</h2>
+<p>Navegar até 'Configurations &gt; server-config &gt; Network Config &gt; Network listeners &gt; http-listner-1' alterar a porta de 8080 para 80</p>
+<h2>Alterar da porta 8181 para 443 (https)</h2>
+<p>Navegar até 'Configurations &gt; server-config &gt; Network Config &gt; Network listeners &gt; http-listner-2' alterar a porta de 8181 para 443</p>
+<h2>Habilitar a compressão</h2>
+<p>Navegar até 'Configurations &gt; server-config &gt; Network Config &gt; Network listeners &gt; http-listner-x &gt; HTTP' colocar 'Compression' em 'force'</p>
+<h2>Habilitando a criação de links simbólicos (Linux)</h2>
+<p>Esta dica é útil para, por exemplo, disponibilizar um diretório de imagens muito grande dentro do servidor de aplicação. Para isso é necessário criar um link simbólico dentro do diretório 'docroot' apontando para o diretório real, basta habilitar essa opção no Glassfish:</p>
+<p>Navegar até 'Configurations &gt; server-config &gt; Virtual Servers &gt; server' adicionar em 'additional properties' a chave: allowLinking / valor: true</p>
+<p>E depois criar um link no diretório docroot apontando para a pasta de imagens:<br />
+ln -s /home/usuario/imagens /opt/glassfish-4.1/glassfish/domains/domain1/docroot/imagens</p>
+<p>&nbsp;</p>
+<p>[]'s</p>

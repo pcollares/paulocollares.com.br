@@ -1,0 +1,20 @@
+---
+title: No suitable driver found for jdbc:postgresql://localhost:5432/db [Resolvido]
+excerpt: No suitable driver found for jdbc:postgresql://localhost:5432/db [Resolvido]
+date: 2019-04-22 15:18:27.000000000 -03:00
+categories:
+- Programação
+tags:
+- java
+- postgres
+permalink: "/programacao/no-suitable-driver-found-for-jdbcpostgresql-localhost5432-db-resolvido/"
+---
+<p></p>
+<p>O driver JDBC 3 não carrega automaticamente, diferente do JDBC 4, para isso é necessário forçar o carregamento:</p>
+<p></p>
+<p></p>
+<p><code>Class.forName("org.postgresql.Driver");</code></p>
+<p></p>
+<p></p>
+<p>[]'s</p>
+<p></p>

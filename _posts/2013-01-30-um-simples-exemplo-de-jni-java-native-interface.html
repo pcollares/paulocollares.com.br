@@ -1,0 +1,66 @@
+---
+title: Um simples exemplo de JNI (Java Native Interface)
+date: 2013-01-30 07:26:12.000000000 -03:00
+categories:
+- Programação
+tags:
+- c
+- java
+permalink: "/programacao/um-simples-exemplo-de-jni-java-native-interface/"
+excerpt: |-
+  Java Native Interface (JNI) é um padrão para escrever métodos nativos em Java. Neste exemplo mostro como chamar um método no Java, escrito em C.
+  Neste exemplo mostro como chamar um método que escreve "Olá Mundo" implementado no C e chamado na Java.
+---
+<p>[caption id="attachment_772" align="aligncenter" width="630"]<a href="http://www.paulocollares.com.br/um-simples-exemplo-de-jni-java-native-interface/jni/" rel="attachment wp-att-772"><img class="size-full wp-image-772" alt="Java Native Interfac" src="{{ site.baseurl }}/images/2013/01/jni.png" width="630" /></a> Java Native Interfac[/caption]</p>
+<p>Java Native Interface (JNI) é um padrão para escrever métodos nativos em Java. Neste exemplo mostro como chamar um método no Java, escrito em C.</p>
+<p>Neste exemplo mostro como chamar um método que escreve "Olá Mundo" implementado no C e chamado na Java.</p>
+<p>Utilizei o Linux, com o Debian para este exemplo.</p>
+<h2>Criando a classe em Java</h2>
+<p>Primeiramente vamos criar a classe em Java: <strong>HelloWorld.java</strong></p>
+<pre>class HelloWorld {
+     private native void print();
+     public static void main(String[] args) {
+         new HelloWorld().print();
+     }
+     static {
+         System.loadLibrary("HelloWorld");
+     }
+ }</pre>
+<h2>Compilando a Classe</h2>
+<p>Use normalmente o <em>javac</em> para compilar a classe HelloWorld</p>
+<pre>javac HelloWorld.java</pre>
+<p>Este comando irá gerar o arquivo HelloWorld.class no mesmo diretório</p>
+<h2>Gerando o Arquivo de Cabeçalho do método nativo</h2>
+<p>Aqui usamos o <em>javah</em> para gerar o cabeçalho que será usado em nossa classe em C</p>
+<pre>javah -jni HelloWorld</pre>
+<p>Ira gerá o arquivo<em> HelloWorld.h</em> no mesmo diretório. A parte mais importante deste arquivo, é o protótipo de função <em>Java_HelloWorld_print</em>, que indica a função que implementa o método <em>HelloWorld().print();</em></p>
+<p><em> JNIEXPORT void JNICALL<br />
+Java_HelloWorld_print (JNIEnv *, jobject);</em></p>
+<h2>Escrevendo a implementação nativa</h2>
+<p>Crie um arquivo <em>HelloWorld.c</em>:</p>
+<pre> #include 
+ #include 
+ #include "HelloWorld.h"
+
+ JNIEXPORT void JNICALL 
+ Java_HelloWorld_print(JNIEnv *env, jobject obj)
+ {
+     printf("Olá Mundo\n");
+     return;
+ }</pre>
+<p>A função que você implementa está no padrão do arquivo de cabeçalho gerado <em>Java_HelloWorld_print</em></p>
+<h2>Compilando o Código em C e criando uma bibliteca nativa</h2>
+<p>Em nossa classe em Java é chamada a biblioteca <em>System.loadLibrary("HelloWorld");</em> geramos ela a partir da implementação em C.</p>
+<p>Considerando que sua JDK está instalada em <em>/opt/jdk1.6.0_31/</em>, rode este comando:</p>
+<pre>gcc -shared -fpic -o libHelloWorld.so -I/opt/jdk1.6.0_31/include -I/opt/jdk1.6.0_31/include/linux HelloWorld.c</pre>
+<p>Ele irá gerar um arquivo <em>libHelloWorld.so</em> no mesmo diretório, copie para a pasta de bibliotecas do JDK:</p>
+<pre>sudo cp libHelloWorld.so /opt/jdk1.6.0_31/jre/lib/amd64/</pre>
+<p>Agora execute normalmente a classe em Java:</p>
+<pre>java HelloWorld</pre>
+<p>Se tudo der certo, aparecerá na tela: <strong>"Olá Mundo"</strong>.</p>
+<p>Parabens, você fez sua primeira aplicação com JNI.</p>
+<p>Fiquem na Paz</p>
+<h2>Fontes</h2>
+<p><a href="http://192.9.162.55/docs/books/jni/html/start.html" target="_blank" rel="noopener noreferrer"> http://192.9.162.55/docs/books/jni/html/start.html</a><br />
+<a href="https://blogs.oracle.com/moonocean/entry/a_simple_example_of_jni" target="_blank" rel="noopener noreferrer">https://blogs.oracle.com/moonocean/entry/a_simple_example_of_jni</a><br />
+<a href="http://patriot.net/~tvalesky/jninative.html" target="_blank" rel="noopener noreferrer">http://patriot.net/~tvalesky/jninative.html</a></p>

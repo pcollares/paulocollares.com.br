@@ -1,0 +1,87 @@
+---
+title: Orientação a Objetos - Princípio do Mínimo Conhecimento, Acoplamento e Coesão
+excerpt: Orientação a Objetos - Princípio do Mínimo Conhecimento, Acoplamento e Coesão
+date: 2012-07-27 15:46:32.000000000 -03:00
+categories:
+- Programação
+tags:
+- java
+permalink: "/programacao/orientacao-a-objetos-principio-do-minimo-conhecimento-acoplamento-e-coesao/"
+---
+<p><a href="http://www.paulocollares.com.br/orientacao-a-objetos-principio-do-minimo-conhecimento-acoplamento-e-coesao/acoplamentocoesao/" rel="attachment wp-att-492"><img class="alignnone size-full wp-image-492" title="acoplamentoCoesao" src="{{ site.baseurl }}/images/2012/07/acoplamentoCoesao.jpg" alt="" width="650" height="300" /></a></p>
+<p>Todos sabemos que para uma boa aplicação OO precisamos obedecer a dois princípios básicos: <strong>Baixo Acoplamento</strong> e <strong>Alta Coesão.</strong></p>
+<h2>Acoplamento</h2>
+<p><strong>Acoplamento</strong> é quanto um elemento (Classe, objeto, métodos e Atributos) depende e conhece do outro. Elementos muito acoplados, dependem muito uns dos outros, assim, se você altera um deverá alterar o outro.</p>
+<p>Se você precisa 'entrar' (com o operador ponto) em várias classes para recuperar um método, por exemplo, sua aplicação está, provavelmente, com um Alto acoplamento.</p>
+<p><strong>Alto Acoplamento:</strong></p>
+<pre>public int getIdade(){
+return Util.getFuncoes.getFuncoesData.calculaIdade(nascimento);
+}</pre>
+<p><strong>Baixo Acoplamento:</strong></p>
+<pre>public int getIdade(){
+return Util.calculaIdade(nascimento);
+}</pre>
+<h2>Coesão</h2>
+<p><strong>Coesão</strong> é quantas tarefas estão atribuídas a um Elemento, ou seja, se uma classe faz mais do que ela deveria fazer, ela esta com uma coesão baixa.</p>
+<p><strong>Baixa Coesão:</strong></p>
+<pre>public class Aluno(){
+String nome;
+int[] notas;
+
+public void setNome(String nome){
+this.nome=nome;
+}
+
+public String getNome(){
+return nome;
+}
+
+public void setNotas(int[] notas){
+this.notas=notas;
+}
+
+public double calculaMedia(){
+//código para calcular média
+return media;
+}
+}</pre>
+<p><strong>Alta Coesão:</strong></p>
+<pre>public class Aluno(){
+String nome;
+
+public void setNome(String nome){
+this.nome=nome;
+}
+
+public String getNome(){
+return nome;
+}
+}
+
+public class Notas{
+
+Aluno aluno;
+int[] notas;
+
+public Notas(Aluno aluno){
+this.aluno=aluno;
+}
+
+public void setNotas(int[] notas){
+this.notas=notas;
+}
+
+public double calculaMedia(){
+//código para calcular média
+return media;
+}
+}</pre>
+<h2>Princípio do Mínimo Conhecimento</h2>
+<p>O <strong>Princípio do Mínimo Conhecimento</strong> se baseia muito no acoplamento, pois parte da ideia de realizar menos conexões possíveis, quanto menos classes souberam de outras melhor.</p>
+<p><strong>Sem o princípio:</strong></p>
+<pre>Date dataNascimento = pessoa.getDataNascimentoe();
+Util.calculaIdade(dataNascimento);</pre>
+<p><strong>Com o princípio:</strong></p>
+<pre>pessoa.calculaIdade();</pre>
+<p>No primeiro exemplo, você precisa saber a data de nascimento da pessoa para então calcular, no segundo não, está encapsulado dentro da Classe Pessoa, posso manter a data de nascimento privada, por exemplo.</p>
+<p>Abraços e fique em Paz.</p>

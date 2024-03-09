@@ -1,0 +1,56 @@
+---
+title: Script Linux para publica informações do sistema no MQTT
+date: 2019-04-16 14:32:06.000000000 -03:00
+categories:
+- Infraestrutura
+tags:
+- linux
+permalink: "/infraestrutura/script-linux-para-publica-informacoes-do-sistema-no-mqtt/"
+excerpt: Script simples que obtém informações do sistema operacional e publica em
+  um tópico MQTT.
+---
+<p></p>
+<p>Script simples que obtém informações do sistema operacional e publica em um tópico MQTT. Informações obtidas: Memória, carga do CPU e espaço em disco usado.</p>
+<p></p>
+<p></p>
+<p>Instale o mosquitto_clients para publicar as mensagens.</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code prettyprint"><code>#apt-get install mosquitto-clients</code></pre>
+<p></p>
+<p></p>
+<h2>Script</h2>
+<p></p>
+<p></p>
+<pre class="wp-block-code prettyprint"><code>#! /bin/bash
+
+SERVER=127.0.0.1
+HOST=$(hostname)
+TOPICO=system/$HOST
+
+#############
+
+LOAD=$(cat /proc/loadavg | sed -e 's/ .*//g')
+MEMORY=$(free -m | awk 'NR==2{printf "%.2f%%\t\t", $3*100/$2 }')
+DISK=$(df -h $0 | egrep -o '[0-9]+%')
+
+mosquitto_pub -h $SERVER -t $TOPICO/load -m $LOAD
+
+mosquitto_pub -h $SERVER -t $TOPICO/memory -m $MEMORY
+
+mosquitto_pub -h $SERVER -t $TOPICO/disk -m $DISK</code></pre>
+<p></p>
+<p></p>
+<h2>Referências</h2>
+<p></p>
+<p></p>
+<p>Saiba mais sobre o mosquitto e MQTT: <a href="http://www.steves-internet-guide.com/mosquitto-broker/" target="_blank" rel="noreferrer noopener" aria-label="http://www.steves-internet-guide.com/mosquitto-broker/ (abre numa nova aba)">http://www.steves-internet-guide.com/mosquitto-broker/</a></p>
+<p></p>
+<p></p>
+<p>Leia mais sobre mosquitto_clients: <a rel="noreferrer noopener" aria-label="http://www.steves-internet-guide.com/mosquitto_pub-sub-clients/ (abre numa nova aba)" href="http://www.steves-internet-guide.com/mosquitto_pub-sub-clients/" target="_blank">http://www.steves-internet-guide.com/mosquitto_pub-sub-clients/</a></p>
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+<p>[]'s</p>
+<p></p>

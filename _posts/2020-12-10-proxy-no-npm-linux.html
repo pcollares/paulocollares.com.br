@@ -1,0 +1,49 @@
+---
+title: Proxy no NPM (Linux)
+date: 2020-12-10 08:22:20.000000000 -03:00
+categories:
+- Infraestrutura
+- Programação
+tags:
+- linux
+permalink: "/programacao/proxy-no-npm-linux/"
+excerpt: Dica rápida de como definir ou remover a configuração de proxy no NPM
+---
+<p></p>
+<p>Dica rápida de como definir ou remover a configuração de proxy no NPM.</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>$ npm config set proxy "http://usuario:senha@host:porta"
+$ npm config set https-proxy "http://usuario:senha@host:porta"</code></pre>
+<p></p>
+<p></p>
+<p>Para verificar a configuração atual de proxy:</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>$ npm config get proxy
+$ npm config get https-proxy</code></pre>
+<p></p>
+<p></p>
+<p>Para remover uma configuração de proxy:</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>$ npm config delete proxy
+$ npm config delete https-proxy</code></pre>
+<p></p>
+<p></p>
+<h2>Problemas com a senha</h2>
+<p></p>
+<p></p>
+<p>O comando não aceita senhas com caracteres especiais, por isso é  necessário informar esses caracteres com o ‘%’ seguido do código  hexadecimal ASCII correspondente.</p>
+<p></p>
+<p></p>
+<p>Por exemplo, se sua senha for ‘senha@123’ deve informar<br />
+‘senha%40123’, ou se sua senha for ‘senha#123’ deve informar<br />
+‘senha%23123’.</p>
+<p></p>
+<p></p>
+<p>Confira os códigos hexadecimal dos caracteres aqui: <a href="https://ascii.cl/htmlcodes.htm" target="_blank" rel="noreferrer noopener" aria-label=" (abre numa nova aba)">https://ascii.cl/htmlcodes.htm</a></p>
+<p></p>
+<p></p>
+<p>[]'s</p>
+<p></p>

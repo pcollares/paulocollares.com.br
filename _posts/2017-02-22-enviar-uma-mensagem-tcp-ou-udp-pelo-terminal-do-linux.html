@@ -1,0 +1,41 @@
+---
+title: Enviar uma mensagem TCP ou UDP pelo terminal do Linux
+date: 2017-02-22 18:40:32.000000000 -03:00
+categories:
+- Infraestrutura
+tags:
+- linux
+permalink: "/infraestrutura/enviar-uma-mensagem-tcp-ou-udp-pelo-terminal-do-linux/"
+excerpt: É possível, apenas pelo terminal do Linux, enviar uma mensagem para qualquer
+  estação na rede.
+---
+<p><a href="http://www.paulocollares.com.br/2017/02/enviar-uma-mensagem-tcp-ou-udp-pelo-terminal-do-linux/network-switch-ethernet/" rel="attachment wp-att-1979"><img class="aligncenter size-large wp-image-1979" src="{{ site.baseurl }}/images/2017/02/network-switch-ethernet-1024x576.jpg" alt="" height="450" width="800" /></a></p>
+<p>É possível, apenas pelo terminal do Linux, enviar uma mensagem para qualquer estação na rede, deste modo:</p>
+<pre>echo "[MENSAGEM]" > /dev/[PROTOCOLO]/[HOST]/[PORTA]
+</pre>
+<h2>Exemplo UDP</h2>
+<pre>echo "teste" > /dev/udp/192.168.0.10/5478
+
+echo "teste" > /dev/udp/localhost/5478
+</pre>
+<h2>Exemplo TCP</h2>
+<pre>echo "teste" > /dev/tcp/localhost/5478
+</pre>
+<h2>Exemplo de teste de porta TCP aberta</h2>
+<pre>(echo >/dev/tcp/192.168.0.10/5478) &>/dev/null && echo "Porta 5478 aberta" || echo "Porta 5478 fechada"
+</pre>
+<h2>Script para procurar portas abertas</h2>
+<p>Esse script procura portas abertas em um determinado host, crie um arquivo chamado portscan.sh, por exemplo, copie o código abaixo e dê direito de execução.</p>
+<pre>#! /bin/bash
+
+echo "Procurando portas abertas em "$1" varrendo portas TCP de "$2" até "$3
+
+for ((p=$2; p<=$3;p++ ))
+do
+  (echo >/dev/tcp/$1/$p) >/dev/null 2>&1 && echo "Porta TCP $p aberta" 
+done
+</pre>
+<p>Chame o script, passando como parâmetros o host. a porta inicial e a final, nesta ordem, como no exemplo abaixo:</p>
+<p><a href="http://www.paulocollares.com.br/2017/02/enviar-uma-mensagem-tcp-ou-udp-pelo-terminal-do-linux/portscan/" rel="attachment wp-att-1978"><img class="size-full wp-image-1978 " src="{{ site.baseurl }}/images/2017/02/portscan.png" alt="" height="53" width="706" /></a></p>
+<p>&nbsp;</p>
+<p>[]'s</p>

@@ -1,0 +1,52 @@
+---
+title: Script simples para testes APIs
+date: 2021-08-11 19:33:18.000000000 -03:00
+categories:
+- Infraestrutura
+tags:
+- api
+- linux
+- shell script
+permalink: "/infraestrutura/script-simples-para-testes-apis/"
+excerpt: Um script simples para testar endpoints de uma API.
+---
+<p></p>
+<p>Um script simples para testar endpoints de uma API.</p>
+<p></p>
+<p></p>
+<p>O Código pode ser encontrado no meu Github:</p>
+<p></p>
+<p></p>
+<p><a href="https://github.com/pcollares/api-test">https://github.com/pcollares/api-test</a></p>
+<p></p>
+<p></p>
+<p>Este script basicamente acessa vários endpoints pelo curl e testa a sua disponibilidade, gerando um relatório ao final de quantos foram acessados com sucesso.</p>
+<p></p>
+<p></p>
+<p>O script testa apenas requisições GET.</p>
+<p></p>
+<p></p>
+<p>Altere a variável 'URL_BASE' para a URL base da sua API;</p>
+<p></p>
+<p></p>
+<p>O arquivo 'sample' deve ser editado com os endpoints que deseja testar. Ou criado outro arquivo com a mesma estrutura do sample.</p>
+<p></p>
+<p></p>
+<p>Exemplo de uso:</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>$ api-test.sh sample</code></pre>
+<p></p>
+<p><!-- wp:image {"id":3125,"sizeSlug":"full","linkDestination":"none"} --></p>
+<figure class="wp-block-image size-full"><img src="{{ site.baseurl }}/images/2021/08/api-test.png" alt="" class="wp-image-3125" /><br />
+<figcaption>Execução com todos os testes bem sucedidos</figcaption>
+</figure>
+<p></p>
+<p><!-- wp:image {"id":3124,"sizeSlug":"full","linkDestination":"none"} --></p>
+<figure class="wp-block-image size-full"><img src="{{ site.baseurl }}/images/2021/08/api-test-err.png" alt="" class="wp-image-3124" /><br />
+<figcaption>Execução com um teste mal sucedido</figcaption>
+</figure>
+<p></p>
+<p></p>
+<p>[]`s</p>
+<p></p>

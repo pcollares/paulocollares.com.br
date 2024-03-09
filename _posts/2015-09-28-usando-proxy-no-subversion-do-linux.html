@@ -1,0 +1,19 @@
+---
+title: Usando proxy no subversion do Linux
+date: 2015-09-28 10:54:00.000000000 -03:00
+categories:
+- Infraestrutura
+tags:
+- linux
+permalink: "/infraestrutura/usando-proxy-no-subversion-do-linux/"
+excerpt: Se você usa o subversion em uma rede que necessite de autenticação por proxy,
+  pode configurar o subversion para isso
+---
+<p>Se você usa o subversion em uma rede que necessite de autenticação por proxy, pode configurar o subversion para isso, edite o arquivo <em>/home/USUARIO/.subversion/servers</em>, com as configurações de seu proxy:<br />
+<code><br />
+[global]<br />
+http-proxy-exceptions =<br />
+http-proxy-host =<br />
+http-proxy-port =<br />
+http-proxy-username =<br />
+http-proxy-password =</code></p>

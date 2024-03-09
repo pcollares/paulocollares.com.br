@@ -1,0 +1,136 @@
+---
+title: 'Exemplo do Padrão de Projeto ''Comando'': Controle Remoto'
+excerpt: 'Exemplo do Padrão de Projeto ''Comando'': Controle Remoto'
+date: 2012-07-25 16:00:20.000000000 -03:00
+categories:
+- Programação
+tags:
+- java
+permalink: "/programacao/exemplo-do-padrao-de-projeto-comando-controle-remoto/"
+---
+<p><a href="http://www.paulocollares.com.br/exemplo-do-padrao-de-projeto-comando-controle-remoto/designpatterncommand/" rel="attachment wp-att-460"><img class="alignnone size-full wp-image-460" title="DesignPatternCommand" src="{{ site.baseurl }}/images/2012/07/DesignPatternCommand.jpg" alt="" width="706" height="354" /></a></p>
+<p>Olá galera!</p>
+<p>Estudando um pouco mais sobre padrões de projeto, estava lendo sobre o padrão <strong>Command (Comando)</strong>, no livro <span style="text-decoration: underline;">Use a Cabeça - Padrões de Projeto</span>, muito bom por sinal, uma ótima fonte para que conhece pouco ou nada sobre o assunto.</p>
+<p>Este post nada mais é do que os exemplos do livro, com algumas incrementadas feitas por mim, como uma simples interface gráfica.</p>
+<h2>O que são os Padrões de Projetos (ou Design Pattern)?</h2>
+<p>Um <strong>Padrão de Projeto,</strong> descreve uma solução geral reutilizável para um problema recorrente no desenvolvimento de sistemas de <em>software</em> orientados a objetos. Não é um código final, é uma descrição ou modelo de como resolver o problema do qual trata, que pode ser usada em muitas situações diferentes. Os Padrões de Projeto normalmente definem as relações e interações entre as classes ou objetos, sem especificar os detalhes das classes ou objetos envolvidos, ou seja, estão num nível de generalidade mais alto.</p>
+<h2>O padrão Command</h2>
+<p>Segundo Freeman, no livro citado acima, o padrão command encapsula uma solicitação como um objeto, permitindo que você parametrize clientes com diferentes solicitações e implemente operações reversíveis.</p>
+<p>Ou seja, você leva a orientação a objetos a um outro nível, encapsulando implementações de classes, em que você não saiba como foram implementadas, ou não precisa saber.</p>
+<h2>Exemplo</h2>
+<p>O exemplo apresentado no livro, propõe a construção de um software, que gerencia um Controle Remoto para automação residencial, o controle é um dispositivo com 7 slots (cada slot representa um aparelho) com um botão de ligar, e outro de desligar associado a cada slot, além de um botão de desfazer a última ação, mais ou menos como a imagem abaixo:</p>
+<p><a href="http://www.paulocollares.com.br/exemplo-do-padrao-de-projeto-comando-controle-remoto/410tgswqsol-_sl500_aa300_/" rel="attachment wp-att-464"><img class="alignnone size-full wp-image-464" title="410tgswQsOL._SL500_AA300_" src="{{ site.baseurl }}/images/2012/07/410tgswQsOL._SL500_AA300_.jpg" alt="" width="300" height="300" /></a></p>
+<p><strong>Baixe o código completo <a href="http://www.paulocollares.com.br/arqs/projetos/DesignPatternCommand.zip">aqui</a></strong></p>
+<p>Temos várias classes que representam objetos da casa, como uma lâmpada:</p>
+<pre>public class Light {
+
+Status s = Status.getInstance();
+
+public void on(){
+s.addMensagem("Luz acesa");
+}
+
+public void off(){
+s.addMensagem("Luz apagada");
+}
+
+}</pre>
+<p>Foi proposta a criação de uma interface:</p>
+<pre>public interface Command {
+public void execute();
+public void undo();
+}</pre>
+<p>E de uma classe para cada comando:</p>
+<pre>public class LightOnComand implements Command{
+
+Light light;
+
+public LightOnComand(Light light){
+this.light=light;
+}
+
+@Override
+public void execute() {
+light.on();
+}
+
+@Override
+public void undo() {
+light.off();
+}
+
+}</pre>
+<p>E de uma classe RemoteControl, que gerencia os slots e as ações dos botões:</p>
+<pre>/**
+* @author Paulo Collares
+* www.paulocollares.com.br
+*/
+public class RemoteControl {
+
+Command[] onCommands;
+Command[] offCommands;
+Command undoCommand;
+String[] nomes;
+
+public RemoteControl(){
+
+onCommands = new Command[7];
+offCommands = new Command[7];
+nomes = new String[7];
+
+Command noCommand = new NoCommand();
+
+for (int i = 0; i &lt; 7; i++) {
+onCommands[i]=noCommand;
+offCommands[i]=noCommand;
+}
+undoCommand=noCommand;
+}
+
+public void setCommand(int slot, Command onCommand, Command offCommand, String nome){
+onCommands[slot]=onCommand;
+offCommands[slot]=offCommand;
+nomes[slot]=nome;
+}
+
+public void onButtonWasPushed(int slot){
+onCommands[slot].execute();
+undoCommand=onCommands[slot];
+}
+
+public void offButtonWasPushed(int slot){
+offCommands[slot].execute();
+undoCommand=offCommands[slot];
+}
+
+public void undoButtonWasPushed(){
+undoCommand.undo();
+}
+
+public Command getCommand(int slot){
+return onCommands[slot];
+}
+
+public String getNome(int slot){
+return nomes[slot];
+}
+}</pre>
+<p>Na aplicação então, instanciamos a classe RemoteControl e Light</p>
+<pre>RemoteControl remote = new RemoteControl();
+
+Light light = new Light();</pre>
+<p>E o comando para ligar a luz, por exemplo:</p>
+<pre>LightOnComand lightOn = new LightOnComand(light);</pre>
+<p>Alocamos este comando em um slot do nosso controle remoto:</p>
+<pre>remote.setCommand(0, lightOn, lightOff, "Luz");</pre>
+<p>e chamamos o comando:</p>
+<pre>remote.onButtonWasPushed(0);</pre>
+<p><strong>Baixe o código completo <a href="http://www.paulocollares.com.br/arqs/projetos/DesignPatternCommand.zip">aqui</a></strong></p>
+<p>Este é um exemplo simples, mas que serve bem para entendermos o funcionamento do padrão.</p>
+<p>Além do Padrão Command, utilizo também o Singleton, que força uma classe ter apenas uma instancia na aplicação, que neste caso é a janela de status.</p>
+<p>Na aplicação há dois slots vazios, tente criar mais dois objetos e adiciona-los ao controle remoto!</p>
+<p>Deixem seus comentários!</p>
+<p>Até a próxima!</p>
+<p><strong><em>Fontes:</em></strong></p>
+<p><em>Padrões de Projeto - Coleção Use a Cabeça! 2° Edição - Eric Freeman e Elisabeth Freeman</em></p>
+<p><em><a href="http://pt.wikipedia.org/wiki/Padr%C3%A3o_de_projeto_de_software">http://pt.wikipedia.org/wiki/Padr%C3%A3o_de_projeto_de_software</a></em></p>

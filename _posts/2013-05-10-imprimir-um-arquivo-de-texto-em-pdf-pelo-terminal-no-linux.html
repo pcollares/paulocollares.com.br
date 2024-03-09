@@ -1,0 +1,20 @@
+---
+title: Imprimir um arquivo de texto em PDF pelo terminal no Linux
+date: 2013-05-10 08:28:51.000000000 -03:00
+categories:
+- Infraestrutura
+tags:
+- linux
+permalink: "/infraestrutura/imprimir-um-arquivo-de-texto-em-pdf-pelo-terminal-no-linux/"
+excerpt: Este tutorial mostra como imprimir em PDF arquivos de texto pelo terminal
+  no Linux, util para imprimir códigos fontes por exemplo
+---
+<p>[caption id="attachment_820" align="aligncenter" width="600"]<a href="http://www.paulocollares.com.br/imprimir-um-arquivo-de-texto-em-pdf-pelo-terminal-no-linux/txttopdf/" rel="attachment wp-att-820"><img class="size-full wp-image-820" title="Imprimir um arquivo de texto em PDF pelo terminal no Linux" alt="Imprimir um arquivo de texto em PDF pelo terminal no Linux" src="{{ site.baseurl }}/images/2013/05/txtTopdf.png" width="600" height="351" /></a> Imprimir um arquivo de texto em PDF pelo terminal no Linux[/caption]</p>
+<p>Este tutorial mostra como imprimir em PDF arquivos de texto pelo terminal no Linux, util para imprimir códigos fontes por exemplo, foi o meu caso XD</p>
+<p>Primeiramente instalamos o pacote de PDF para o cups:</p>
+<pre>#apt-get install cups-pdf</pre>
+<p>Então é só passar este comando, onde <em>file</em> é o arquivo que você deseja imprimir</p>
+<pre>$lp -d PDF -o scaling=75 -o media=A4 file</pre>
+<p>O PDF será salvo em /home/usuario/PDF/</p>
+<p>Mais opções no próprio cups: <a href="http://localhost:631/help/options.html" target="_blank" rel="noopener noreferrer">http://localhost:631/help/options.html</a></p>
+<p>[]'s</p>

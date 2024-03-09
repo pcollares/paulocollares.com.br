@@ -1,0 +1,154 @@
+---
+title: Script para controle de usuário no Squid
+excerpt: Script para controle de usuário no Squid
+date: 2011-11-08 14:47:38.000000000 -03:00
+categories:
+- Programação
+tags:
+- linux
+- shell script
+permalink: "/programacao/script-para-controle-de-usuario-no-squid/"
+---
+<p>Esse é um script bem útil para controle de cadastro de usuários no squid, que guarda outras informações também, no meu caso o Nome, a Matrícula e o setor.</p>
+<p>Crie um diretório chamado 'info_user' em /etc/squid/ para guardar as informações dos usuários.</p>
+<pre>
+#!/bin/bash
+
+#################################################
+# Script para crar usuários no squid 1.2	#
+# Paulo Collares                                #
+# www.paulocollares.com.br			#
+# 31/08/2011		       			#
+#################################################
+
+squid="/etc/squid/passwd"
+squid_info="/etc/squid/info_user"
+IP=`ifconfig  | grep -E 'inet.[0-9]' | grep -v '127.0.0.1' | awk '{ print $2}'` ;
+
+#faz copia de segurança do arquivo
+cp $squid $squid"_bkp"
+cp $squid_info $squid_info"_bkp"
+
+
+############################
+#FUNÇÃO PRINCIPAL	
+############################
+principal() {
+    clear
+    echo "CONTROLAR USUÁRIOS DE INTERNET"
+    echo $IP
+    echo --------------------------------------------------
+    echo
+    echo "ESCOLHA A OPCAO"
+    echo "1. ADICIONAR E ALTERAR USUARIO"
+    echo "2. ADICIONAR INFORMAÇÕES DO USUARIO"
+    echo "3. LISTAR INFORMAÇÕES"
+    echo "0. SAIR "
+    echo -n "ENTRE COM A OPCAO DESEJADA ==> "
+    read opcao
+    echo
+    case $opcao in
+	1) Adicionar;;
+	2) AdicionarInfo;;
+	3) Listar;;
+	0) exit;;
+	*) "Opcao desconhecida. "; echo ; principal ;;
+    esac
+}
+
+############################
+#FUNÇÃO ADICIONAR
+############################
+Adicionar() {
+	echo "Digite o usuário: "
+	read USUARIO
+
+	if
+	find $squid -type f | xargs grep "$USUARIO"
+	    then
+	    while true
+	    do
+		echo "Usuario $USUARIO já existe. Deseja alterar a senha? [s/n] "
+		read op
+		if [ $op = "S" ] || [ $op = "s" ] || [ $op = "N" ] || [ $op = "n" ];
+		then
+		    if [ $op = "s" ] || [ $op = "S" ];
+		    then
+			htpasswd $squid $USUARIO
+			echo "[Senha atualizada para $USUARIO]"
+			read msg
+			break
+		    else [ $op = "n" ] || [ $op = "N" ];
+			break
+		    fi
+		fi
+	    done
+	    else
+		echo "Nome Completo: "
+		read NOME
+		echo "Matricula: "
+		read MAT
+		echo "Secretaria/setor: "
+		read SEC
+
+		htpasswd $squid $USUARIO
+
+
+		echo "$USUARIO::$NOME::$MAT::$SEC" >> /etc/squid/info_user
+		read msg
+	    fi
+	principal
+}
+
+############################
+#FUNÇÃO ADICIONARINFO
+############################
+AdicionarInfo() {
+	echo "Digite o usuário: "
+	read USUARIO
+	if
+	find $squid -type f | xargs grep "$USUARIO"
+	    then
+		if
+		    find $squid_info -type f | xargs grep "$USUARIO"::
+	    	then
+			echo "ESTE USUÁRIO JÁ TEM SUAS INFORMAÇÕES REGISTRADAS"
+			read msg
+			principal
+		fi
+
+		echo "Nome Completo: "
+		read NOME
+		echo "Matricula: "
+		read MAT
+		echo "Secretaria/setor: "
+		read SEC
+
+		echo "$USUARIO::$NOME::$MAT::$SEC" >> /etc/squid/info_user
+	else
+		echo "ESTE USUÁRIO NÃO EXISTE!"
+		read msg
+		principal
+	fi
+principal
+}
+
+############################
+#FUNÇÃO LISTAR	
+############################
+Listar() {
+	echo "Digite o usuário: "
+	read USUARIO
+
+	find $squid_info -type f | xargs grep "$USUARIO"
+
+	read msg
+	principal
+}
+
+
+############################
+#inicio
+############################
+principal
+</pre>

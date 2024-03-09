@@ -1,0 +1,48 @@
+---
+title: Script para baixar a foto do dia do APOD da Nasa e aplicar como papel de perde
+excerpt: Script para baixar a foto do dia do APOD da Nasa e aplicar como papel de perde
+  no Debian Linux
+date: 2017-03-28 09:38:27.000000000 -03:00
+categories:
+- Infraestrutura
+- Programação
+tags:
+- linux
+- shell script
+permalink: "/programacao/script-para-baixar-a-foto-do-dia-do-apod-da-nasa-e-aplicar-como-papel-de-perde-no-debian-linux/"
+---
+<p></p>
+<p>O site<a href="https://apod.nasa.gov/apod/astropix.html"> Astronomy Picture of the Day</a> é um site da Nasa que diariamente publica fotos do espaço e de assuntos relacionados a astronomia, são sempre fotos muito bonitas. Por isso fiz esse script que sempre que ligo o computador, ele baixa a foto do dia e define como papel de parede do meu computador.</p>
+<p></p>
+<p></p>
+<p>Quando executado, o script obtém o conteúdo da página inicial do APOD, e extrai do HTML a URL da imagem do dia, e salva em disco. Então define essa imagem como papel de parede do sistema. Para finalizar, baixa o texto que descreve a imagem em um arquivo .html, e abre no Firefox para leitura.</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>#!/bin/bash
+
+WP_DIR=/home/pcollares/Imagens/apod
+
+cd /tmp
+
+html=$(wget https://apod.nasa.gov/apod/astropix.html -q -O -)
+
+imagem="$(echo $html | grep -o '' | grep -o 'image.*jpg')"
+
+cd $WP_DIR
+
+filename=$(basename "$imagem")
+
+if &#91; -f "$WP_DIR/$filename" ]
+then
+	echo "arquivo $filename já existe"
+else
+	wget "https://apod.nasa.gov/apod/"$imagem
+fi
+
+
+gsettings set org.gnome.desktop.background picture-uri "file://$WP_DIR/$filename"
+gsettings set org.gnome.desktop.background picture-options zoom</code></pre>
+<p></p>
+<p></p>
+<p>Crie um arquivo apod.sh com o conteúdo acima, dê direito de execução, e coloque a chamada dele no Aplicativos de Sessão do Debian, por exemplo, para que seja chamado toda vez que o sistema iniciar.</p>
+<p></p>

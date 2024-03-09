@@ -1,0 +1,369 @@
+---
+title: Servidor proxy com Squid, Dansguardian e CBQ no CentOS
+excerpt: Servidor proxy com Squid, Dansguardian e CBQ no CentOS
+date: 2012-02-07 15:08:48.000000000 -03:00
+categories:
+- Infraestrutura
+tags:
+- linux
+permalink: "/infraestrutura/servidor-proxy-com-squid-dansguardian-e-cbq-no-centos/"
+---
+<p><center><img class="alignnone size-full wp-image-227" title="Servidor proxy com Squid, Dansguardian e CBQ no CentOS" src="{{ site.baseurl }}/images/2012/02/centosos-squid-dansguardian-iptables-cbq.jpg" /></center></p>
+<p>As vantagens de se usar um servidor Proxy dentro de uma empresa, ou até uma pequena rede são infinitas, vão desde a economia de banda, usando o cache até um decente filtro de conteúdo.</p>
+<p>Neste tutorial vou mostrar como configurar um proxy usando o CentOS.</p>
+<h2>Recursos utilizados</h2>
+<h3>Hardware</h3>
+<p>Em nosso caso específico, tive a sorte de possuir uma máquina bem parruda para implementar o proxy, um Xeon Quad, com 4Gb de Ram e discos SAS. Lembrando que o servidor tem que ter no mínimo 2 interfaces de rede.</p>
+<h3>Sistema</h3>
+<p>Usamos o CentOS 5.7 64bits. Atingiu muito bem nossas necessidades.</p>
+<h3>Squid</h3>
+<p>Usamos o Squid para controle de usuários e para cache.</p>
+<h3>Dansguardian</h3>
+<p>O dansguardian é nosso filtro de conteúdo, a grande vantagem dele é possuir filtros por heurística, que bloqueia sites baseado em palavras dentro das páginas.</p>
+<h3>Iptables</h3>
+<p>Utilizamos o iptables para controlar os IPs dos servidores, que não passam pelo squid/dansguardian</p>
+<h3>CBQ</h3>
+<p>Fazemos o controle de banda usando o CBQ, já existente no CentOS.</p>
+<h3>Instalação</h3>
+<h3>Instalando o Sistema</h3>
+<p>Baixe <a href="http://www.centos.org/modules/tinycontent/index.php?id=30" target="_blank" rel="noopener noreferrer">aqui</a> a versão mais nova do CentOS, lembre-se sempre de procurar um servidor no Brasil, o o mais próximo possível, há mais chances de ter uma velocidade maior. Dê preferência também ao DVD.</p>
+<p>Configure as interfaces de rede, uma apontando para a rede externa (em nosso caso a eth0) e a outra para a interna (eth1). Edite o resolv.conf para seu servidor DNS. Se o servidor estiver resolvendo nomes normalmente, vamos avançar para a próxima etapa.</p>
+<h3>Instalando o Squid</h3>
+<p>Nenhum mistério aqui, o squid já esta no repositório do CentOS:</p>
+<pre>yum install squid</pre>
+<h3>Instalando o Dansguardian</h3>
+<p>O Dansguardian não está no repositório do CentOS, portanta teremos que compila-lo na mão.</p>
+<p>Antes de instalar o dansguardian, trate algumas dependências:</p>
+<pre>yum install pkgconfig gcc gcc-c++ libstdc++-devel zlib-devel pcre-devel wget make bzip2-devel</pre>
+<p>Talvez seja necessário incluír a variável de ambiente do pkgconfig:</p>
+<pre>export PKG_CONFIG_PATH=/usr/lib/pkgconfig</pre>
+<p>Baixe a versão mais nova <a href="http://dansguardian.org/downloads/2/Stable/" target="_blank" rel="noopener noreferrer">aqui</a>, descompacte no seu servidor e compile:</p>
+<pre>tar xzfv dansguardian-2.10.1.1.tar.gz
+cd dansguardian-2.10.1.1
+./configure
+make
+make install</pre>
+<h2>Configurando o Squid</h2>
+<p>Abaixo esta a minha configuração do Squid (/etc/squid/squid.conf).  Já preparado para autenticação básica do squid direcionada no arquivo (/etc/squid/passwd). E com as configurações de cache (/var/squid/cache).</p>
+<pre>#NAME
+visible_hostname nome.dominio
+
+#PORT
+http_port 3128 transparent
+
+#CACHE MEMORY
+cache_mem 1024 MB
+maximum_object_size_in_memory 20 KB
+memory_replacement_policy heap GDSF
+
+#DISCK CACHE
+cache_dir ufs /var/squid/cache 5000 16 256
+cache_replacement_policy heap LFUDA
+minimum_object_size 15 KB
+maximum_object_size 5 MB
+cache_swap_low 90
+cache_swap_high 95
+
+#LOG
+access_log none
+cache_log /var/log/squid/cache.log
+
+#AUTH
+auth_param basic program /usr/lib64/squid/ncsa_auth /etc/squid/passwd
+auth_param basic children 8
+auth_param basic realm Insira seu Usuário e Senha
+auth_param basic credentialsttl 15 minute
+
+#ACLs
+acl all src 0.0.0.0/0.0.0.0
+acl manager proto cache_object
+acl localhost src 127.0.0.1/255.255.255.255
+acl to_localhost dst 127.0.0.0/8
+acl SSL_ports port 443
+acl Safe_ports port 80 # http
+acl Safe_ports port 21 # ftp
+acl Safe_ports port 443 # https
+acl Safe_ports port 70 # gopher
+acl Safe_ports port 210 # wais
+acl Safe_ports port 1025-65535 # unregistered ports
+acl Safe_ports port 280 # http-mgmt
+acl Safe_ports port 488 # gss-http
+acl Safe_ports port 591 # filemaker
+acl Safe_ports port 777 # multiling http
+acl CONNECT method CONNECT
+acl expediente time SMTWHFA 0:00-24:00
+acl autenticados proxy_auth REQUIRED
+
+#HTTP_ACCESES
+http_access allow autenticados expediente
+http_access allow manager localhost
+http_access deny manager
+http_access deny !Safe_ports
+http_access deny CONNECT !SSL_ports
+# And finally deny all other access to this proxy
+http_access allow localhost
+http_access deny all
+icp_access allow all
+
+#OTHERS
+hierarchy_stoplist cgi-bin ?
+access_log /var/log/squid/access.log squid
+acl QUERY urlpath_regex cgi-bin \?
+cache deny QUERY
+refresh_pattern ^ftp: 1440 20% 10080
+refresh_pattern ^gopher: 1440 0% 1440
+refresh_pattern . 0 20% 4320
+acl apache rep_header Server ^Apache
+broken_vary_encoding allow apache
+coredump_dir /var/spool/squid</pre>
+<p>Para iniciar o squid pela primeira vez execute o comando <em>squid -z</em>, para que ele crie os arquivos de cache, nas demais vezes basta chamar o comando <em>squid</em>.</p>
+<h2>Configurando o Dansguardian</h2>
+<p>Primeiramente vamos atualizar a lista de sites bloqueados, acesse este site (<a href="http://urlblacklist.com/?sec=download" target="_blank" rel="noopener noreferrer">URLBlacklist.com</a>) e baixe a versão mais nova. Descompacte dentro de /usr/local/etc/dansguardian/lists/blacklists.</p>
+<p>Vamos editar o arquivo de configuração do Dansguardian (/usr/local/etc/dansguardian/dansguardian.conf)</p>
+<pre>#REPORT
+reportinglevel = 3
+
+#IDIOMA
+languagedir = '/usr/local/share/dansguardian/languages'
+language = 'ptbrazilian'
+
+#LOGs
+loglevel = 3
+logexceptionhits = 2
+logfileformat = 3
+
+loglocation = '/usr/local/var/log/dansguardian/access.log'
+
+# Network Settings
+filterip =
+filterport = 8080
+proxyip = 127.0.0.1
+proxyport = 3128
+
+nonstandarddelimiter = on
+
+#IMAGENS BLOQUEADAS
+usecustombannedimage = on
+custombannedimagefile = '/usr/local/share/dansguardian/transparent1x1.gif'
+
+# Filter groups options
+filtergroups = 1
+filtergroupslist = '/usr/local/etc/dansguardian/lists/filtergroupslist'
+
+# Authentication files location
+bannediplist = '/usr/local/etc/dansguardian/lists/bannediplist'
+exceptioniplist = '/usr/local/etc/dansguardian/lists/exceptioniplist'
+
+#PALAVRAS - PESO
+showweightedfound = on
+weightedphrasemode = 2
+
+# Positive (clean) result caching for URLs
+urlcachenumber = 1000
+
+# Age before they are stale and should be ignored in seconds
+urlcacheage = 900
+
+# Clean cache for content (AV) scan results
+scancleancache = on
+
+#Smart, Raw and Meta/Title phrase content filtering options
+phrasefiltermode = 2
+
+# Lower casing options / 0 = force lower case (default)
+preservecase = 0
+
+# Hex decoding options
+hexdecodecontent = off
+
+# Force Quick Search rather than DFA search algorithm
+forcequicksearch = off
+
+# Reverse lookups for banned site and URLs.
+reverseaddresslookups = off
+
+# Reverse lookups for banned and exception IP lists.
+reverseclientiplookups = off
+
+# Perform reverse lookups on client IPs for successful requests.
+logclienthostnames = off
+
+# Build bannedsitelist and bannedurllist cache files.
+createlistcachefiles = on
+
+# POST protection (web upload and forms)
+maxuploadsize = -1
+
+# Max content filter size
+maxcontentfiltersize = 256
+
+# Max content ram cache scan size
+maxcontentramcachescansize = 2000
+
+# Max content file cache scan size
+maxcontentfilecachescansize = 20000
+
+# File cache dir
+filecachedir = '/tmp'
+
+# Delete file cache after user completes download
+deletedownloadedtempfiles = on
+
+# Initial Trickle delay
+initialtrickledelay = 20
+
+# Trickle delay
+trickledelay = 10
+
+# Download Managers
+downloadmanager = '/usr/local/etc/dansguardian/downloadmanagers/fancy.conf'
+downloadmanager = '/usr/local/etc/dansguardian/downloadmanagers/default.conf'
+
+# Content scanner timeout
+contentscannertimeout = 60
+
+# Content scan exceptions
+contentscanexceptions = off
+
+# Auth plugins
+authplugin = '/usr/local/etc/dansguardian/authplugins/proxy-basic.conf'
+authplugin = '/usr/local/etc/dansguardian/authplugins/ip.conf'
+
+# Re-check replaced URLs
+recheckreplacedurls = off
+
+# Misc settings
+forwardedfor = off
+usexforwardedfor = off
+logconnectionhandlingerrors = on
+
+# Fork pool options
+logchildprocesshandling = off
+maxchildren = 120
+minchildren = 8
+minsparechildren = 4
+preforkchildren = 6
+maxsparechildren = 32
+maxagechildren = 500
+
+# Sets the maximum number client IP addresses allowed to connect at once.
+maxips = 0
+
+# IPC filename
+ipcfilename = '/tmp/.dguardianipc'
+
+# URL list IPC filename
+urlipcfilename = '/tmp/.dguardianurlipc'
+
+# IP list IPC filename
+ipipcfilename = '/tmp/.dguardianipipc'
+
+# PID filename
+nodaemon = off
+
+# Disable logging process
+nologger = off
+
+# Enable logging of "ADs" category blocks
+logadblocks = on
+
+# Enable logging of client User-Agent
+loguseragent = off
+
+# Soft restart
+softrestart = off</pre>
+<p>Dois itens que são interessantes nesta configuração, são o arquivo de log de acesso (/usr/local/var/log/dansguardian/access.log) e o HTML editável de página bloqueada (/usr/local/share/dansguardian/languages) que pode ser personalizada.</p>
+<p>Para iniciar o dansguardian basta chamar o comando <em>dansguardian</em>, e para recarregar as regras: <em>dansguardian -r.</em></p>
+<h2>Iptables</h2>
+<p>Para o iptables criei um scrip para carregar as configurações, pois as regras deste devem ser carregadas quando o servodor for iniciado.</p>
+<p>Neste script:</p>
+<p>- Obrigo todas as conexões que chegam irem para a porta 8080 (dansguardian);</p>
+<p>- Libero IPs da rede para 'vazarem' assim não caem no dansguardian e no squid, ideal para os servidores da rede;</p>
+<p>- Bloqueio Ips;</p>
+<p>- Bloqueio contra Ping da morte e DoS;</p>
+<p>Salve este arquivo com o nome<em> iptables-load</em>, por exemplo e chame com o <em>sh iptables-load</em></p>
+<pre>#!/bin/bash
+
+#RESTAR iptables
+/etc/init.d/iptables restart
+
+#FUNCÕES
+libera_ip (){
+iptables -t nat -I PREROUTING -s $1 -j ACCEPT
+iptables -t nat -I POSTROUTING -s $1 -o eth0 -j MASQUERADE
+iptables -I FORWARD -s $1 -j ACCEPT
+}
+
+bloqueia_ip (){
+iptables -A INPUT -s $1 -j DROP
+}
+
+#################
+
+#BLOQUEIA IPs
+#bloqueia_ip "192.168.0.199"
+
+# CARREGA MODULOS IPTABLES
+echo 1 &gt; /proc/sys/net/ipv4/ip_forward
+modprobe iptable_nat
+
+# BLOQUEIA CONTRA PING DA MORTE E DoS
+iptables -A INPUT -p icmp --icmp-type echo-request -m limit --limit 1/s -j ACCEPT
+iptables -A INPUT -p icmp --icmp-type echo-reply -m limit --limit 1/s -j DROP
+
+# ABRE A CONEXO PARA A REDE LOCAL NA PORTA 8080
+iptables -A INPUT -i eth1 -p tcp --dport 8080 -j ACCEPT
+
+# LIBERA NAVEGAO SEM PROXY PARA SERVIDORES
+libera_ip "192.168.0.1" #serv1
+libera_ip "192.168.0.2" #serv2
+
+#termina
+echo "Iptables Pronto"</pre>
+<h2>CBQ</h2>
+<p>Com o CBQ faço o controle de banda da rede, primeiramente vá ao diretório /etc/sysconfig/cbq. Para cada regra crie um arquivo de <em>down</em> e outro de <em>up. </em>EX:<em> cbq-0002.geral-in </em>e<em> cbq-0002.geral-out.</em></p>
+<p>Para cada regra começa a numerar do 0002, e continue, lembrando que essa numeração é em hexadecimal.</p>
+<p>Veja meus exemplos:</p>
+<p><strong>cbq-0002.geral-in</strong></p>
+<pre>DEVICE=eth1,1000Mbit,100Mbit
+RATE=2Mb
+WEIGHT=200Kbit
+PRIO=5
+RULE=192.168.0.0
+BOUNDED=no
+ISOLATED=no</pre>
+<p><strong>cbq-0002.geral-out</strong></p>
+<pre>DEVICE=eth0,1000Mbit,100Mbit
+RATE=100Kbit
+WEIGHT=10Kbit
+PRIO=5
+RULE=192.168.0.0,
+BOUNDED=no
+ISOLATED=no</pre>
+<p>Compile o CBQ com o comando <em>cbq compile</em> e inicie com <em>cbd start</em>.</p>
+<p>Veja <a href="http://www.4shared.com/office/8He33z_x/Controle_de_banda_no_CentOS_us.html" target="_blank" rel="noopener noreferrer">nesse tutorial</a> mais informações sobre o CBQ.</p>
+<h2>Iniciando tudo</h2>
+<p>Para finalizar criei um scrip para iniciar todos os serviços necessários, apenas para facilitar:</p>
+<pre>#!/bin/bash
+
+squid
+echo "iniciando squid"
+
+dansguardian
+echo "iniciando dansguardian"
+
+sh /iptables-load
+echo "carregando iptables"
+
+cbq compile
+echo "compilando cbq"
+
+cbq start
+echo "iniciando cbq"
+
+echo "PRONTO"</pre>
+<h2>Adicionais</h2>
+<p>Para facilitar a administração do servidor, recomendo a instalação do <em>webmin </em>(uma interface web voltada para administração de servidores, já com o modulo do squid instalado, ótimo para a manutenção dos usuários) e o <em>sarg</em> junto com o <em>webalizer. </em>Para relatórios do log do dansguardian.</p>
+<h2>Finalizando</h2>
+<p>Espero que seja útil este artigo, claro que não responde todas as dúvidas, e cada instalação terá seus problemas particulares, mas espero que seja uma base para os administradores. Deixem seus comentários com dúvidas e sugestões.</p>
+<p>Obrigado pela visita e compartilhem esse post! :D</p>

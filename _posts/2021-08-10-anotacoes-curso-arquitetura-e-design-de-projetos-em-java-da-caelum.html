@@ -1,0 +1,363 @@
+---
+title: Anotações curso 'Arquitetura e design de projetos em Java' da caelum
+date: 2021-08-10 20:44:20.000000000 -03:00
+categories:
+- Programação
+- Textos
+tags:
+- java
+permalink: "/programacao/anotacoes-curso-arquitetura-e-design-de-projetos-em-java-da-caelum/"
+excerpt: Em 2018 fiz um curso na Caelum intitulado 'Arquitetura e design de projetos
+  em Java', acho que este curso nem esta mais disponível, pelo menos não com este
+  nome, mas me rendeu ótimos conhecimentos. Este post contém apenas notas simples
+  destas aulas, espero que seja útil para alguém.
+---
+<p></p>
+<p>Em 2018 fiz um curso na Caelum intitulado 'Arquitetura e design de projetos em Java', acho que este curso nem esta mais disponível, pelo menos não com este nome, mas me rendeu ótimos conhecimentos. Este post contém apenas notas simples destas aulas, espero que seja útil para alguém.</p>
+<p></p>
+<p></p>
+<h2>Plataforma Java</h2>
+<p></p>
+<p></p>
+<p><strong>Características do Java</strong></p>
+<p></p>
+<p></p>
+<ul>
+<li>Simples</li>
+<li>Orientado a Objetos</li>
+<li>Pacotes nativos para usar a rede</li>
+<li>Robusto (Se cair não impacta o SO)</li>
+<li>Interpretado (Java -> bytecode &lt;- JVM)</li>
+<li>Seguro</li>
+<li>Arquitetura neutra, ao compilar não precisa informar para qual arquitetura de processador</li>
+<li>Portabilidade, roda em qualquer SO que tem a JVM</li>
+<li>Performático, principalmente pelo JIT (Just in time) AKA hotspot</li>
+<li>Multthread, tem suporte nativo</li>
+<li>O java é opensource, porém há alguns recursos fechados pela Oracle, o JIT e o GC são um deles</li>
+</ul>
+<p></p>
+<p></p>
+<p><strong>JIT (just in time)</strong></p>
+<p></p>
+<p></p>
+<p>Recompila o código para otimizar ao longo do tempo.</p>
+<p></p>
+<p></p>
+<p>Aumentar a responsabilidade melhora a performance, pois o JIT precisa rodar muitas vezes um método para otimizá-lo, com a responsabilidade alta, há muito reaproveitamento.</p>
+<p></p>
+<p></p>
+<p>Os parâmetros <em>-server</em> ou <em>-client</em> devem ser passados para a JRE para melhorar o desempenho, em uma aplicação servidora é esperado que esta seja mais pesada, com o parâmetro -server o JIT demora mais para otimizar um método (por volta de 3000 vezes), já que não é esperado um retorno de desempenho alto logo no inicio do carregamento da aplicação. Diferente de uma aplicação do lado do cliente, que é desejável que o desempenho seja o mais rápido possível.</p>
+<p></p>
+<p></p>
+<p>O JIT recomeça toda vez que uma aplicação é iniciada, por isso há técnicas para 'esquentar' a execução, com rotinas que forcem a execução de métodos para usados para que o JIT já o otimize antes do usuário precisar.</p>
+<p></p>
+<p></p>
+<p>Por causa do JIT pode considerar que o Java é interpretado e compilada.</p>
+<p></p>
+<p></p>
+<p>Um das otimizações é o inline, que retira o conteúdo do método e coloca diretamente no corpo substituindo a chamada do método.</p>
+<p></p>
+<p></p>
+<p><strong>GC (garbage collector)</strong></p>
+<p></p>
+<p></p>
+<p>Quando o GC passa ocorre o 'stop de world', onde a aplicação para por uns instantes, como 95% dos objetos tem vida curta (hipótese das gerações) rapidamente seriam coletadas pelo GC, foi definida a divisão da memória heap entre young generational e old generational, deste modo, não é executado o 'full gc' constantemente.</p>
+<p></p>
+<p></p>
+<p>O GC passa constantemente na young e promove os objetos para a old, onde passa com menor frequência. Esse processo e chamado de 'generational copying'. Quando promovido, o objeto também é compactado.</p>
+<p></p>
+<p></p>
+<p>A heap mantém apenas objetos, as classes, classes anônimas, variáveis estáticas e o pool de Strings são mantidas na 'perm gem' (até o java7) ou metaspace (java8), fora da heap. As lambdas, mesmo sendo quase uma classe anônima, vai para a heap.</p>
+<p></p>
+<p></p>
+<p>Quando o&nbsp;metaspace enche, a JVM aloca espaço em disco.</p>
+<p></p>
+<p></p>
+<p>Geralmente é uma boa pratica deixar a JVM cuidar do GC, usar o System.gc() ou até o método finalize(), dificilmente vai ser mais eficiente que delegar essa responsabilidade.</p>
+<p></p>
+<p></p>
+<p><strong>Classloaders</strong></p>
+<p></p>
+<p></p>
+<p>Classloaders é o objeto responsável pelo carregamento de classes Java para a memória a partir de um array de bytes que contém seus bytecodes.</p>
+<p></p>
+<p></p>
+<p>Bootstrap (carrega o rt.jar) -&gt; ExtensionCL -&gt; AppCL (classpath)</p>
+<p></p>
+<p></p>
+<p>Quando uma aplicação tenta carregar uma classe, pede ao AppCL, ela antes de carregar verifica em sua cache se já foi carregada, se não, tenta carregar no extension, e este tenta ao bootstrap, ai desce a responsabilidade até alguém carregar.</p>
+<p></p>
+<p></p>
+<p>No tomcat por ex, ele cria um WebappCL para cada aplicação carregada, mas essa estende de bootstrap para garantir que não haja conflitos entre libs da aplicação.</p>
+<p></p>
+<p></p>
+<p>Toda classe é identificada pelo fully qualified name (pacote+nome) e o CL que a carregou, por isso a mesma classe, carregada de CL diferentes não são iguais.</p>
+<p></p>
+<p></p>
+<p>A URLCL quando passa null no 2 parâmetro indica que o pai é o bootstrap, se herdasse de AppCL, quanto tento carregar uma classe por ele, o AppCL responderia com a classe da aplicação (ex 3.4)</p>
+<p></p>
+<p></p>
+<p>Classloaders pode quebrar o Singleton, pois poderia carregar duas instâncias desse objeto com CL diferentes</p>
+<p></p>
+<p><!-- wp:pullquote --></p>
+<figure class="wp-block-pullquote">
+<blockquote>
+<p>A JVM é um poderoso executor de bytecode, não interessa de onde eles vêm, independente de onde estiverem rodando. É por esse motivo que muitos afirmam que a linguagem Java não é o componente mais importante da plataforma, mas, sim, a JVM e o bytecode</p>
+</blockquote>
+</figure>
+<p><!-- /wp:pullquote --></p>
+<p></p>
+<h2>Tópicos de Orientação a Objetos</h2>
+<p></p>
+<p></p>
+<p><strong>Objetos imutáveis</strong></p>
+<p></p>
+<p></p>
+<p>Classes final protege a classe pois ela vira imutável, assim ninguém pode especializar a classe e sobrescrever algum comportamento, atributos da classe devem se final, e objetos passados no construtor devem ser clonados para garantir a imutabilidade destes objetos, assim como os geters devem ser clonados.</p>
+<p></p>
+<p></p>
+<p><strong>Modelo anêmico</strong></p>
+<p></p>
+<p></p>
+<p>São classes de negocio sem comportamento, só com os getters e setters.</p>
+<p></p>
+<p></p>
+<p><strong>Herança</strong></p>
+<p></p>
+<p></p>
+<p>Se faz herança por causa do reuso (Composição [tem um]) ou Polimorfismo (é um).</p>
+<p></p>
+<p></p>
+<p>Quebra de encapsulamento ocorre quando, ao não conhecer a implementação da classe pai, inserimos um comportamento inconsistente.</p>
+<p></p>
+<p></p>
+<p>Prós    </p>
+<p></p>
+<p></p>
+<ul>
+<li>Reuso</li>
+<li>Polimorfismo</li>
+</ul>
+<p></p>
+<p></p>
+<p><em>Quando não tem esses dois motivos para usar a herança pode ser um problema para a aplicação, talvez valha a pena usar composição</em></p>
+<p></p>
+<p></p>
+<p>Contras</p>
+<p></p>
+<p></p>
+<ul>
+<li>Acoplamento
+<ul>
+<li>Semântico: Quando há uma alteração na classe mãe que não ocorre erro de compilação, como a alteração do comportamento de um método que afeta o resultado em tempo de execução do código, testes resolvem isso</li>
+<li>Sintático: quando há uma alteração na classe mãe que dá um erro de compilação como a alteração do nome de um método que é sobrescrito ou utilizado nas classes filhas</li>
+</ul>
+</li>
+</ul>
+<p></p>
+<p></p>
+<p><strong>Analise das classes 'Útil'</strong></p>
+<p></p>
+<p></p>
+<ul>
+<li>Baixa coesão</li>
+<li>Métodos estáticos se mentem no metaspace para sempre</li>
+<li>Não aderente a OO</li>
+<li>Não adere a SRP (Single Responsibility Principle)</li>
+</ul>
+<p></p>
+<p></p>
+<p><strong>SOLID</strong></p>
+<p></p>
+<p></p>
+<ul>
+<li><strong>S</strong>RP (Single Responsibility Principle)
+<ul>
+<li>Cada classe tem uma responsabilidade única</li>
+</ul>
+</li>
+<li><strong>O</strong>CP (Open closed Principle)
+<ul>
+<li>Sem alterar o código alterar o comportamento da classe, por interface pode-se criar novas especializações sem alterar o código dele, composição</li>
+</ul>
+</li>
+<li><strong>L</strong>SP (Liskov Subistitution Principle)
+<ul>
+<li>Não consegue substituir sua classe pela classe mãe, não consegue fazer polimorfismo</li>
+</ul>
+</li>
+<li><strong>I</strong>SP (Interface segregation Principle)
+<ul>
+<li>Diz que não deve ter herança de algo se você não vai usar, recomenda composição</li>
+</ul>
+</li>
+<li><strong>D</strong>IP (principio da inversão de dependências)
+<ul>
+<li>Em vez de depender de uma classe abstrata, depender de uma interface</li>
+</ul>
+</li>
+</ul>
+<p></p>
+<p></p>
+<h2>Decisões arquiteturais</h2>
+<p></p>
+<p></p>
+<p><strong>Requisitos não funcionais ou <em>*bilities</em></strong></p>
+<p></p>
+<p></p>
+<ul>
+<li>Escalabilidade
+<ul>
+<li>Loadbalance para adicionar mais instancias, etc</li>
+<li>Tipos:
+<ul>
+<li>Vertical: Hardware</li>
+<li>Horizontal: Mais maquinas</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Disponibilidade
+<ul>
+<li>Loadbalance para adicionar redundância, etc</li>
+</ul>
+</li>
+<li>Desempenho
+<ul>
+<li>Cache, no sql, ux, etc</li>
+</ul>
+</li>
+<li>Confiabilidade
+<ul>
+<li>Integridade com hashcode, etc</li>
+<li>Testes unitario, carga, stress, etc</li>
+</ul>
+</li>
+<li>Extensibilidade
+<ul>
+<li>Baixo acoplamento, alta coesão</li>
+</ul>
+</li>
+<li>Manutenção
+<ul>
+<li>Monitoramento</li>
+<li>ELK (Elasticsearch, logstash, kibana), etc</li>
+</ul>
+</li>
+<li>Gerenciabilidade
+<ul>
+<li>AWS, etc</li>
+</ul>
+</li>
+<li>Segurança
+<ul>
+<li>encriptação do canal de comunicação, auditoria, etc</li>
+</ul>
+</li>
+</ul>
+<p></p>
+<p></p>
+<p><strong>Arquiteturas</strong></p>
+<p></p>
+<p></p>
+<ul>
+<li>Standalone
+<ul>
+<li>1 nó</li>
+</ul>
+</li>
+<li>Cliente servidor
+<ul>
+<li>Desktop - > Persistência</li>
+</ul>
+</li>
+<li>3-tier (tier: camada física)
+<ul>
+<li>Navegador -> servidor -> persistência</li>
+</ul>
+</li>
+<li>n-tier
+<ul>
+<li>Navegador -> loadbalance -> servidor 1 ... servidor n -> persistência</li>
+</ul>
+</li>
+<li>Microserviços
+<ul>
+<li>Aplicações pequenas (em contexto) reutilizáveis</li>
+<li>Vantagens:
+<ul>
+<li>Resiliência</li>
+<li>Flexibilidade</li>
+<li></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p></p>
+<p></p>
+<h2>Testes</h2>
+<p></p>
+<p></p>
+<p><strong>Testes</strong></p>
+<p></p>
+<p></p>
+<p>TDD (Test Driven Development) - Criar os testes antes de desenvolver, assim você tem feedbacks curtos e constantes.</p>
+<p></p>
+<p></p>
+<p><em>“Quanto mais tempo se passa maior o custo para corrigir um bug.”</em></p>
+<p></p>
+<p></p>
+<p>Prós</p>
+<p></p>
+<p></p>
+<ul>
+<li>Serve de documentação para conhecer o sistema</li>
+<li>Segurança para o programador de fazer alterações no código sem medo de quebrar o sistema</li>
+<li>Força a manter o baixo acoplamento</li>
+</ul>
+<p></p>
+<p></p>
+<p>Contras</p>
+<p></p>
+<p></p>
+<ul>
+<li>Custo</li>
+<li>Difícil de criar e manter</li>
+</ul>
+<p></p>
+<p></p>
+<p><em>Código legado não é um código antigo, mas sim um código sem testes</em></p>
+<p></p>
+<p></p>
+<p><strong>Mock</strong></p>
+<p></p>
+<p></p>
+<p>Substitui um acoplamento complexo por esse objeto falso, por exemplo um DAO, o mock poder retornar um objeto ao invés de ir no banco</p>
+<p></p>
+<p></p>
+<p><strong>Tipos de testes</strong></p>
+<p></p>
+<p></p>
+<ul>
+<li>Teste unitário - Teste a menor unidade de código (métodos)</li>
+<li>Teste de integração - Componentes, testa a integração entre 2 ou mais componentes, por exemplo a conexão com o BD</li>
+<li>Teste de aceitação - Toda a aplicação, com as telas</li>
+</ul>
+<p></p>
+<p></p>
+<p><strong>Conceito de integração continua</strong></p>
+<p></p>
+<p></p>
+<p>O código deve ser constantemente testado, o <em>jenkins</em> por exemplo, executa os testes automaticamente</p>
+<p></p>
+<p></p>
+<p><strong>Conceito de deploy continuo</strong></p>
+<p></p>
+<p></p>
+<p>Sempre que fizer um commit é gerado uma versão para produção, o usuário tem atualizações mais rápido. Diminui custo de feedback.</p>
+<p></p>
+<p></p>
+<p>[]`s</p>
+<p></p>
+<p></p>

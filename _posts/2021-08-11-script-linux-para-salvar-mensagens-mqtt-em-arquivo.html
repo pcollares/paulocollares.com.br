@@ -1,0 +1,49 @@
+---
+title: Script linux para salvar mensagens MQTT em arquivo
+date: 2021-08-11 08:43:05.000000000 -03:00
+categories:
+- Infraestrutura
+tags:
+- linux
+- mqtt
+- shell script
+permalink: "/infraestrutura/script-linux-para-salvar-mensagens-mqtt-em-arquivo/"
+excerpt: Um script simples que salva em arquivo as mensagens publicadas no MQTT em um arquivo.
+---
+<p></p>
+<p>Um script simples que salva em arquivo as mensagens publicadas no MQTT em um arquivo.</p>
+<p></p>
+<p></p>
+<p>Para o funcionamento do script, é necessário a instalação do pacote mosquitto-clients para o uso do comando 'mosquitto_sub', responsável pela inscrição no broker via linha de comando.</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code># apt-get install mosquitto-clients</code></pre>
+<p></p>
+<p></p>
+<p>Após a instalação desta dependência, o script abaixo irá funcionar.</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>#! /bin/bash
+
+##########################################################
+# Script para salvar mensagens do MQTT em um arquivo
+# Paulo Collares
+# jul/2021
+##########################################################
+
+HOST=127.0.0.1
+PORT=1883
+USER=user
+PASSWORD=pass
+TOPIC=sensor/#
+FILE=mqtt.log
+
+#########################################################
+
+echo "Gravando mensagens do tópico MQTT '"$TOPIC"' no host '"$HOST":"$PORT"' para o arquivo '"$FILE"'"
+
+mosquitto_sub -h $HOST -p $PORT -t $TOPIC -u $USER -P $PASSWORD >> $FILE</code></pre>
+<p></p>
+<p></p>
+<p>[]`s</p>
+<p></p>

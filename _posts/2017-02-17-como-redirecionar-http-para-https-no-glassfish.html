@@ -1,0 +1,43 @@
+---
+title: Como redirecionar HTTP para HTTPS no Glassfish
+date: 2017-02-17 13:45:57.000000000 -03:00
+categories:
+- Infraestrutura
+tags:
+- glassfish
+permalink: "/infraestrutura/como-redirecionar-http-para-https-no-glassfish/"
+excerpt: Neste tutorial, vou mostrar como habilitar o https no seu Glassfish e redirecionar
+  todo acesso ao servidor para o endereço seguro.
+---
+<p><a href="http://www.paulocollares.com.br/2017/02/como-redirecionar-http-para-https-no-glassfish/https/" rel="attachment wp-att-1958"><img class="aligncenter size-large wp-image-1958" src="{{ site.baseurl }}/images/2017/02/https-1024x561.jpg" alt="" height="438" width="800" /></a></p>
+<p>Neste tutorial, vou mostrar como habilitar o https no seu Glassfish e redirecionar todo acesso ao servidor para o endereço seguro.</p>
+<h2>Alterando as portas</h2>
+<p>Como mostrei em outra postagem, <a href="http://www.paulocollares.com.br/2017/02/4-dicas-de-configuracao-do-glassfish/">clique aqui</a>, uma boa prática é alterar as portas padrões dos ouvintes http do Glassfish para as que são usadas por padrão nos navegadores (http: 80 e https: 443):</p>
+<p style="padding-left: 30px;"><em>Navegar até ‘Configurations &gt; server-config &gt; Network Config &gt; Network listeners &gt; http-listner-1’ alterar a porta de 8080 para 80</em></p>
+<p style="padding-left: 30px;"><em>Navegar até ‘Configurations &gt; server-config &gt; Network Config &gt; Network listeners &gt; http-listner-2’ alterar a porta de 8181 para 443</em></p>
+<h2>Criando um servidor virtual</h2>
+<p>O Glassfish trabalha com o conceito de servidor virtual, que agrupa configurações como de ouvintes http. Para que todo acesso http seja redirecionado para o https, vamos criar mais um servidor virtual que responde apenas ao ouvinte da porta 80 e, ao acessar este, será redirecionado para o https por meio de um arquivo html (explico mais a frente).</p>
+<p>Para criar um novo servidor virtual, navega até '<em>Configurations &gt; server-config &gt;Virtual Servers'&nbsp; </em>e crie um novo. As informações que devem ser preenchidas devem ser quase as mesmas do servidor que já vem criado, além no nome, obviamente, marque apenas o 'http-listener-1' em 'Network Listeners' e em 'Docroot' indique outro caminho.</p>
+<p>[caption id="attachment_1957" align="aligncenter" width="800"]<a href="http://www.paulocollares.com.br/2017/02/como-redirecionar-http-para-https-no-glassfish/virtualserver/" rel="attachment wp-att-1957"><img class="wp-image-1957 size-large" src="{{ site.baseurl }}/images/2017/02/virtualServer-1024x698.png" height="545" width="800" /></a> Criando um servidor virtual[/caption]</p>
+<p>Ou seja, este servidor virtual irá responder apenas no 'http-listener-1', que ouve na porta 80, e irá chamar o caminho do 'docroot' onde colocaremos um arquivo html para redirecionar para o endereço https.</p>
+<p>Edite o servidor virtual já criado, e mantenha apenas o 'http-listner-2' marcado, assim ele só irá responder na porta 443.</p>
+<p>Para finalizar essa sessão, edite o 'http-listener-1' em <em>‘Configurations &gt; server-config &gt; Network Config &gt; Network listeners &gt; http-listner-1 &gt; HTTP’ </em>e altere o<em> 'Default Virtual Server' </em>para o servidor virtual recém criado, ou seja, o que irá responder apenas na porta 80.</p>
+<p>[caption id="attachment_1956" align="aligncenter" width="800"]<a href="http://www.paulocollares.com.br/2017/02/como-redirecionar-http-para-https-no-glassfish/listner/" rel="attachment wp-att-1956"><img class="wp-image-1956 size-large" src="{{ site.baseurl }}/images/2017/02/listner-1024x577.png" height="451" width="800" /></a> Configurando o listener para responder ao novo servidor virtual[/caption]</p>
+<p>Verifique se a sua aplicação continua usando apenas o servidor virtual que responde ao https, em <em>'Applications &gt; [sua aplicação] &gt; Virtual Servers'.</em></p>
+<p>[caption id="attachment_1955" align="aligncenter" width="800"]<a href="http://www.paulocollares.com.br/2017/02/como-redirecionar-http-para-https-no-glassfish/aplicacao/" rel="attachment wp-att-1955"><img class="wp-image-1955 size-large" src="{{ site.baseurl }}/images/2017/02/aplicacao-1024x411.png" height="321" width="800" /></a> A sua aplicação deve responder apenas ao servidor virtual que usa o https[/caption]</p>
+<h2>Criando um arquivo no novo docroot</h2>
+<p>Em seu gerenciador de arquivos, navegue até 'glassfish/domains/domain1' lá já deve haver um diretório 'docroot' onde será redirecionado o acesso do servidor virtual que responde ao https, caso não chame a aplicação pelo caminho correto, apenas o IP, por exemplo. Crie um diretório com o mesmo nome indicado na criação do servidor virtual que responde apenas ao http, em nosso caso 'docroot80' e crie um arquivo index.html dentro dele, com o seguinte conteúdo:</p>
+<pre><!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html lang="pt">
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta http-equiv="Refresh" content="1;URL=https://x.x.x.x/sua_aplicacao/" />
+</head>
+<body>
+Redirecionando...
+</body>
+</html></pre>
+<p>Deste modo, quando o usuário acessar o endereço do servidor sem o https, o Glassfish irá, por meio do ouvinte da porta 80 e do servidor virtual que criamos, invocar esse index.html, que por sua vez irá redirecionar para o endereço com o https. Você também pode criar dentro desse novo docroot um diretório com o mesmo nome do endereço da sua aplicação, com o mesmo index.html dentro, assim se for acessado o endereço do servidor, com o caminho para a sua aplicação sem o https, também será redirecionado para a conexão segura.</p>
+<p>&nbsp;</p>
+<p>[]'s</p>

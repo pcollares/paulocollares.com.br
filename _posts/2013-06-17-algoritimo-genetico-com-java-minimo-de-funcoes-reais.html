@@ -1,0 +1,621 @@
+---
+title: Algoritmo Genético com Java - Mínimo de Funções Reais
+date: 2013-06-17 20:46:16.000000000 -03:00
+categories:
+- Programação
+tags:
+- java
+permalink: "/programacao/algoritimo-genetico-com-java-minimo-de-funcoes-reais/"
+excerpt: Foi proposto o desenvolvimento de uma aplicação para minimizar funções com
+  ótimos conhecidos utilizando Algorítimos Genéticos com uma abordagem clássica. Este
+  trabalho traz o resultado deste desenvolvimento.
+---
+<p>AG - Funções</p>
+<h2>Introdução</h2>
+<p>Já mencionei Algoritmos Genéticos em outra postagem, <a href="http://www.paulocollares.com.br/algoritimo-genetico-classico-em-java-hello-world/" target="_blank" rel="noopener noreferrer">veja aqui</a>, abaixo a introdução da mesma, se você já esta familiarizado com AGs ou já leu este post, vá para <strong>Descrição do Algoritmo.</strong></p>
+<p>Algoritmos Genéticos, AGs, são métodos de busca inspirados na evolução dos seres vivos, introduzidos por John Holland (1975) e popularizados por um de seus alunos, David Goldberg (1989), seguem o princípio da seleção natural e sobrevivência dos mais aptos, segundo Charles Darwin (1859). Ele propôs que quanto mais apto um indivíduo for de sobreviver em um meio ambiente, mais chances ele terá de se reproduzir e passar sua carga genética para seus descendentes.</p>
+<p>É nisto que se baseia os Algoritmos Genéticos, buscar boas soluções em um espaço de busca grande, em que uma busca pontual seria muito cara.</p>
+<p>Se quiser saber mais sobre AGs, leia este ótimo material: <a href="http://www.leca.ufrn.br/~estefane/metaheuristicas/ag.pdf" target="_blank" rel="noopener noreferrer">INTRODUÇÃO AOS ALGORITMOS GENÉTICOS (Estéfane G. M. de Lacerda e André Carlos P. L. F. de Carvalho)</a></p>
+<h2>Descrição do Algoritmo</h2>
+<p><a href="http://www.paulocollares.com.br/funcoes-ag/ag-funcoes/" rel="attachment wp-att-956"><img class="size-full wp-image-956" src="{{ site.baseurl }}/images/2013/06/ag-funcoes.png" alt="AG - Funções" width="600" height="324" /></a></p>
+<p>Foi proposto o desenvolvimento de uma aplicação para minimizar funções com ótimos conhecidos utilizando Algoritmos Genéticos com uma abordagem clássica. Este trabalho traz o resultado deste desenvolvimento.</p>
+<p>As funções foram retiradas do artigo: <a href="http://www.cs.bham.ac.uk/~xin/papers/published_tec_jul99.pdf" target="_blank" rel="noopener noreferrer">Evolutionary Programming Made Faster (Xin Yao, Senior Member, IEEE, Yong Liu, Student Member, IEEE, and Guangming Lin)</a>. Deste artigo foi apenas aproveitado as funções de teste e os parâmetros.</p>
+<p>Abaixo um resumo dos dados das funções utilizadas neste AG.</p>
+<p>[caption id="attachment_953" align="aligncenter" width="598"]<a href="http://www.paulocollares.com.br/funcoes-ag/funcoes_completo/" rel="attachment wp-att-953"><img class="size-full wp-image-953" src="{{ site.baseurl }}/images/2013/06/fun%C3%A7%C3%B5es_completo.jpg" alt="Funções de Teste do AG" width="598" height="241" /></a> Funções de Teste do AG[/caption]</p>
+<h2>Implementação</h2>
+<p>Para a codificação desta aplicação, foi utilizado como linguagem o Java (JDK 1.7), sistema operacional, Windows 8 e Linux Debian 6. Não foi utilizado nenhuma biblioteca externa para a codificação do AG.</p>
+<p>Há uma interface gráfica para facilitar a execução e parametrização das execuções, e a apresentação de um gráfico mostrando a evolução da população ao longo das gerações. Para isto foi utilizado a biblioteca jFreeChart.</p>
+<p>Utilizei representação real, através do tipo primitivo double (64 bits) do Java.</p>
+<p>Seleção foi obtida pelo método da seleção por torneio, sorteando 2 Indivíduos da população e selecionando o com maior aptidão.</p>
+<p>O crossover utilizado foi o crossover aritmético, com valor de beta = 0.3.</p>
+<p>[caption id="attachment_947" align="aligncenter" width="159"]<a href="http://www.paulocollares.com.br/funcoes-ag/crossover-aritimetico/" rel="attachment wp-att-947"><img class="size-full wp-image-947" title="Crossover aritimético" src="{{ site.baseurl }}/images/2013/06/crossover-aritimetico.png" alt="Crossover aritimético" width="159" height="77" /></a> Crossover aritimético[/caption]</p>
+<p>Seu funcionamento pode ser demonstrado abaixo:</p>
+<p>[caption id="attachment_948" align="aligncenter" width="636"]<img class="size-full wp-image-948" title="Crossover aritimético - Exemplo" src="{{ site.baseurl }}/images/2013/06/crossover-aritimetico2.png" alt="Crossover aritimético - Exemplo" width="636" height="132" /> Crossover aritimético - Exemplo[/caption]</p>
+<p>Este operador foi escolhido, pois foi o que melhor apresentou resultados, os outros operadores testados foram: o crossover linear, o crossover BLX-α, e o crossover de média geométrica.</p>
+<p>Para o operador de mutação, utilizei utilizei a mutação uniforme, que simplesmente substitui um gene por um número aleatório no espaço de busca.<br />
+Utilizo a biblioteca <a href="http://www.jfree.org/jfreechart/" target="_blank" rel="noopener noreferrer">JFreeChart</a> para apresentar um gráfico de convergência da população ao longo das gerações. Jars para importar: jcommon-1.0.17.jar e jfreechart-1.0.14.jar.</p>
+<p>[caption id="attachment_957" align="aligncenter" width="600"]<a href="http://www.paulocollares.com.br/funcoes-ag/ag-funcoes-grafico/" rel="attachment wp-att-957"><img class="size-full wp-image-957" src="{{ site.baseurl }}/images/2013/06/ag-funcoes-grafico.png" alt="AG - Funções - Gráfico de Convergência" width="600" height="323" /></a> AG - Funções - Gráfico de Convergência[/caption]</p>
+<h2>Parâmetros</h2>
+<p>Os melhores resultados foram obtidos com uma taxa de crossover de 90% e mutação de 3%, o tamanho da população de 500 indivíduos, e um número máximo de gerações definidas para cada função.</p>
+<h2>Resultados</h2>
+<p>O algoritmo atingiu bons resultados, apesar de, não tão bons usando os valores do artigo, com o número de gerações máximas do artigo, em poucas funções obteve-se o mínimo dela, já aumentando este valor ou diminuindo a dimensão (N) o valor de mínimo é encontrado na maioria das funções.</p>
+<p>[caption id="attachment_958" align="aligncenter" width="600"]<a href="http://www.paulocollares.com.br/funcoes-ag/ag-funcoes2/" rel="attachment wp-att-958"><img class="size-full wp-image-958" src="{{ site.baseurl }}/images/2013/06/ag-funcoes2.png" alt="AG - Funções" width="600" height="323" /></a> AG - Funções[/caption]</p>
+<h2>Código fonte</h2>
+<p>Você pode baixar o código fonte completo <a href="http://www.paulocollares.com.br/arqs/projetos/funcoes-ag.zip">aqui</a>, abaixo apenas demonstrações de algumas das classes do projeto ou veja no meu Github: <a href="https://github.com/pcollares/exemplos-blog/tree/master/AG-Funcoes" target="_blank" rel="noopener noreferrer">https://github.com/pcollares/exemplos-blog/tree/master/AG-Funcoes</a></p>
+<p><strong>Algoritimo.java</strong></p>
+<pre>package operacao;
+
+import dominio.Funcoes;
+import dominio.Individuo;
+import dominio.Populacao;
+import java.util.Random;
+
+/**
+ * Classe que mantém dados do algorítimo, com taxa de crossover e mutação,
+ * função e população corrente ...
+ *
+ * @author pcollares
+ */
+public class Algoritimo {
+
+    private static double taxaDeCrossover;
+    private static double taxaDeMutacao;
+    private static Funcoes funcao;
+    private static Populacao populacaoAtual;
+    public static int N = 30;
+
+    public static Populacao novaGeracao(Populacao populacao, int geracao, boolean elitismo) {
+        Random r;
+        Populacao novaPopulacao = new Populacao(populacao.getTamPopulacao(), false);
+
+        if (elitismo) {
+            novaPopulacao.setIndividuo(populacao.getIndivduo(0));
+        }
+
+        while (novaPopulacao.getNumIndividuos() &lt; novaPopulacao.getTamPopulacao()) {
+            Individuo[] pais = new Individuo[2];
+            pais[0] = selecaoTorneio(populacao);
+            pais[1] = selecaoTorneio(populacao);
+
+            Individuo[] filhos;
+
+            r = new Random();
+            if (r.nextDouble() &lt;= taxaDeCrossover) {
+                filhos = crossover(pais);
+                filhos[0].setGeracao(geracao);
+                filhos[1].setGeracao(geracao);
+                novaPopulacao.setIndividuo(filhos[0]);
+                novaPopulacao.setIndividuo(filhos[1]);
+            } else {
+                novaPopulacao.setIndividuo(pais[0]);
+                novaPopulacao.setIndividuo(pais[1]);
+            }
+        }
+
+        double aptidaoMedia = novaPopulacao.getMediaAptidao();
+        for (int i = 0; i &lt; novaPopulacao.getTamPopulacao(); i++) {
+            novaPopulacao.getIndivduo(i).aplicaMutacao(aptidaoMedia);
+        }
+
+        novaPopulacao.ordenaPopulacao();
+        return novaPopulacao;
+    }
+
+    public static Individuo selecaoTorneio(Populacao populacao) {
+        int n = 2;
+        Random r;
+        Populacao populacaoIntermediaria = new Populacao(n, false);
+
+        r = new Random();
+        for (int i = 0; i &lt; n; i++) {
+            int pos = r.nextInt(populacao.getTamPopulacao());
+            populacaoIntermediaria.setIndividuo(populacao.getIndivduo(pos));
+        }
+        populacaoIntermediaria.ordenaPopulacao();
+
+        return populacaoIntermediaria.getIndivduo(0);
+    }
+
+    public static Individuo[] crossover(Individuo pais[]) {
+
+        Individuo filhos[] = new Individuo[2];
+
+        double geneFilho1[] = new double[Algoritimo.N];
+        double geneFilho2[] = new double[Algoritimo.N];
+
+        for (int i = 0; i &lt; Algoritimo.N; i++) {
+            geneFilho1[i] = crossoverAritimetico(pais[0].getGene()[i], pais[1].getGene()[i], 1);
+            geneFilho2[i] = crossoverAritimetico(pais[0].getGene()[i], pais[1].getGene()[i], 2);
+        }
+
+        filhos[0] = new Individuo(geneFilho1);
+        filhos[1] = new Individuo(geneFilho2);
+
+        return filhos;
+    }
+
+    public static double crossoverAritimetico(double gene1, double gene2, int parte) {
+
+        double beta = 0.3;
+        double geneFilho;
+
+        if (parte == 1) {
+            geneFilho = beta * gene1 + (1 - beta) * gene2;
+        } else {
+            geneFilho = (1 - beta) * gene1 + beta * gene2;
+        }
+
+        return geneFilho;
+    }
+
+    public static double getTaxaDeCrossover() {
+        return taxaDeCrossover;
+    }
+
+    public static void setTaxaDeCrossover(double taxaDeCrossover) {
+        Algoritimo.taxaDeCrossover = taxaDeCrossover;
+    }
+
+    public static double getTaxaDeMutacao() {
+        return taxaDeMutacao;
+    }
+
+    public static void setTaxaDeMutacao(double taxaDeMutacao) {
+        Algoritimo.taxaDeMutacao = taxaDeMutacao;
+    }
+
+    public static Funcoes getFuncao() {
+        return funcao;
+    }
+
+    public static void setFuncao(Funcoes funcao) {
+        Algoritimo.funcao = funcao;
+    }
+
+    public static Populacao getPopulacaoAtual() {
+        return populacaoAtual;
+    }
+
+    public static void setPopulacaoAtual(Populacao populacaoAtual) {
+        Algoritimo.populacaoAtual = populacaoAtual;
+    }
+}
+</pre>
+<p><strong>Populacao.java</strong></p>
+<pre>package dominio;
+
+/**
+ * Classe que define uma população
+ *
+ * @author pcollares
+ */
+public class Populacao {
+
+    private Individuo[] individuos;
+    private int tamPopulacao;
+
+    public Populacao(int tamPop, boolean geraPopulacaoAleatoria) {
+        tamPopulacao = tamPop;
+        individuos = new Individuo[tamPop];
+
+        for (int i = 0; i &lt; individuos.length; i++) {
+            if (geraPopulacaoAleatoria) {
+                individuos[i] = new Individuo();
+            } else {
+                individuos[i] = null;
+            }
+        }
+    }
+
+    public void ordenaPopulacao() {
+        boolean trocou = true;
+        while (trocou) {
+            trocou = false;
+            for (int i = 0; i &lt; individuos.length - 1; i++) {
+                if (individuos[i].getAptidao() &gt; individuos[i + 1].getAptidao()) {
+                    Individuo temp = individuos[i];
+                    individuos[i] = individuos[i + 1];
+                    individuos[i + 1] = temp;
+                    trocou = true;
+                }
+            }
+        }
+    }
+
+    public int getNumIndividuos() {
+        int num = 0;
+        for (int i = 0; i &lt; individuos.length; i++) {
+            if (individuos[i] != null) {
+                num++;
+            }
+        }
+        return num;
+    }
+
+    public int getTamPopulacao() {
+        return tamPopulacao;
+    }
+
+    public Individuo getIndivduo(int pos) {
+        return individuos[pos];
+    }
+
+    public void setIndividuo(Individuo individuo, int posicao) {
+        individuos[posicao] = individuo;
+    }
+
+    public void setIndividuo(Individuo individuo) {
+        for (int i = 0; i &lt; individuos.length; i++) {
+            if (individuos[i] == null) {
+                individuos[i] = individuo;
+                return;
+            }
+        }
+    }
+
+    public double getMediaAptidao() {
+        double media = getSomaDaAptidao() / getNumIndividuos();
+        return media;
+    }
+
+    public double getSomaDaAptidao() {
+        double total = 0;
+        for (int i = 0; i &lt; individuos.length; i++) {
+            if (individuos[i] != null) {
+                total += individuos[i].getAptidao();
+            }
+        }
+        return total;
+    }
+}
+</pre>
+<p><strong>Individuo.java</strong></p>
+<pre>package dominio;
+
+import java.util.Random;
+import operacao.Algoritimo;
+
+/**
+ * Classe que define um indivíduo
+ *
+ * @author pcollares
+ */
+public class Individuo {
+
+    private double gene[] = new double[Algoritimo.N];
+    private double aptidao;
+    private int geracao;
+
+    public Individuo(double[] gene) {
+        this.gene = gene;
+        aptidao = Algoritimo.getFuncao().resolve(gene);
+    }
+
+    public Individuo() {
+
+        for (int i = 0; i &lt; gene.length; i++) {
+            double g = geneAleatorio();
+            this.gene[i] = g;
+        }
+        aptidao = Algoritimo.getFuncao().resolve(gene);
+    }
+
+    public void aplicaMutacao(double aptidaoMedia) {
+        Random r = new Random();
+        double taxaMutacao = Algoritimo.getTaxaDeMutacao();
+
+        //Melhores indivíduos tem menos chances de sofrerem mutação
+        if (aptidao &lt; aptidaoMedia) {
+            taxaMutacao = taxaMutacao / 10;
+        }
+
+        if (r.nextDouble() &lt;= taxaMutacao) {
+            r = new Random();
+            this.gene[r.nextInt(gene.length)] = geneAleatorio();
+            aptidao = Algoritimo.getFuncao().resolve(gene);
+        }
+    }
+
+    public double[] getGene() {
+        return gene;
+    }
+
+    public double getAptidao() {
+        return aptidao;
+    }
+
+    private double geneAleatorio() {
+        Random r = new Random();
+        double v = r.nextDouble();
+        double diff = Algoritimo.getFuncao().getMax() - Algoritimo.getFuncao().getMin();
+        double valor = Algoritimo.getFuncao().getMin() + v * diff;
+        return valor;
+    }
+
+    public int getGeracao() {
+        return geracao;
+    }
+
+    public void setGeracao(int geracao) {
+        this.geracao = geracao;
+    }
+
+    @Override
+    public String toString() {
+        String s = "[ ";
+        for (int i = 0; i &lt; gene.length; i++) {
+            s += gene[i] + " ";
+        }
+        s += " ]";
+        return s;
+    }
+}
+</pre>
+<p><strong>Funcoes.java</strong></p>
+<pre>package dominio;
+
+import java.util.Random;
+
+/**
+ * Classe que define as funções usadas no AG
+ *
+ * @author pcollares
+ */
+public class Funcoes {
+
+    private int numFuncao;
+    private int maximoGeracoes;
+    private double min;
+    private double max;
+    private int incremento;
+    private double incrementoGrafico;
+    private double minimoDaFuncao;
+
+    public Funcoes(int numFuncao, double min, double max, int maximoGeracoes) {
+        this.numFuncao = numFuncao;
+        this.min = min;
+        this.max = max;
+
+        this.setMaximoGeracoes(maximoGeracoes);
+
+        if (numFuncao == 8) {
+            minimoDaFuncao = -12569.5;
+        } else {
+            minimoDaFuncao = 0;
+        }
+
+        incrementoGrafico = (Math.abs(min) + max) / 30;
+
+    }
+
+    public double resolve(double x[]) {
+        double resultado = 0;
+        switch (numFuncao) {
+            case 1:
+                resultado = f1(x);
+                break;
+            case 2:
+                resultado = f2(x);
+                break;
+            case 3:
+                resultado = f3(x);
+                break;
+            case 4:
+                resultado = f4(x);
+                break;
+            case 5:
+                resultado = f5(x);
+                break;
+            case 6:
+                resultado = f6(x);
+                break;
+            case 7:
+                resultado = f7(x);
+                break;
+            case 8:
+                resultado = f8(x);
+                break;
+            case 9:
+                resultado = f9(x);
+                break;
+            case 10:
+                resultado = f10(x);
+                break;
+            case 11:
+                resultado = f11(x);
+                break;
+        }
+        return resultado;
+    }
+
+    private double f1(double x[]) {
+        double resultado = 0;
+
+        for (int i = 0; i &lt; x.length; i++) {
+            resultado += Math.pow(x[i], 2);
+        }
+
+        return resultado;
+    }
+
+    private double f2(double x[]) {
+        double somatorio = 0;
+        double produtorio = 0;
+        double resultado = 0;
+
+        for (int i = 0; i &lt; x.length; i++) {
+            somatorio += Math.abs(x[i]);
+        }
+        for (int i = 0; i &lt; x.length; i++) {
+            if (i == 0) {
+                produtorio = Math.abs(x[i]);
+            } else {
+                produtorio *= Math.abs(x[i]);
+            }
+        }
+        resultado = somatorio + produtorio;
+
+        return resultado;
+    }
+
+    private double f3(double x[]) {
+        double somatorio1 = 0;
+
+        for (int i = 0; i &lt; x.length; i++) {
+            double somatorio2 = 0;
+            for (int j = 0; j &lt; i; j++) {
+                somatorio2 += x[i];
+            }
+            somatorio1 += Math.pow(somatorio2, 2);
+        }
+
+        return somatorio1;
+    }
+
+    private double f4(double x[]) {
+
+        for (int i = 0; i &lt; x.length; i++) {
+            x[i] = Math.abs(x[i]);
+        }
+
+        double maximo = x[0];
+
+        for (int i = 0; i &lt; x.length; i++) {
+            if (x[i] &gt; maximo) {
+                maximo = x[i];
+            }
+        }
+
+        return maximo;
+    }
+
+    private double f5(double x[]) {
+        double resultado = 0;
+
+        for (int i = 0; i &lt; x.length - 1; i++) {
+            resultado += 100 * Math.pow((x[i + 1] - Math.pow(x[i], 2)), 2) + (Math.pow(x[i] - 1, 2));
+        }
+
+        return resultado;
+    }
+
+    private double f6(double x[]) {
+        double resultado = 0;
+
+        for (int i = 0; i &lt; x.length; i++) {
+            resultado += Math.pow(x[i] + 0.5, 2);
+        }
+
+        return resultado;
+    }
+
+    private double f7(double x[]) {
+        double resultado = 0;
+
+        Random r = new Random();
+
+        for (int i = 0; i &lt; x.length; i++) {
+            resultado += (i + 1) * Math.pow(x[i], 4) + r.nextDouble();
+        }
+
+        return resultado;
+    }
+
+    private double f8(double x[]) {
+        double resultado = 0;
+
+        for (int i = 0; i &lt; x.length; i++) {
+            resultado += (x[i] * -1) * Math.sin(Math.sqrt(Math.abs(x[i])));
+        }
+
+        return resultado;
+    }
+
+    private double f9(double x[]) {
+        double resultado = 0;
+
+        for (int i = 0; i &lt; x.length; i++) {
+            resultado += Math.pow(x[i], 2) - 10 * Math.cos(2 * Math.PI * x[i]) + 10;
+        }
+
+        return resultado;
+    }
+
+    private double f10(double x[]) {
+        double sum1 = 0.0;
+        double sum2 = 0.0;
+
+        for (int i = 0; i &lt; x.length; i++) {
+            sum1 += (x[i] * x[i]);
+            sum2 += (Math.cos(2 * Math.PI * x[i]));
+        }
+
+        return (-20.0 * Math.exp(-0.2 * Math.sqrt(sum1 / ((double) x.length)))
+                - Math.exp(sum2 / ((double) x.length)) + 20.0 + Math.E);
+    }
+
+    private double f11(double x[]) {
+        double resultado;
+        double somatorio = 0;
+        double produtorio = 0;
+
+        for (int i = 0; i &lt; x.length; i++) {
+            somatorio += Math.pow(x[i], 2);
+        }
+
+        for (int i = 0; i &lt; x.length; i++) {
+            if (i == 0) {
+                produtorio = Math.cos(x[i] / Math.sqrt(i + 1));
+            } else {
+                produtorio = produtorio * (Math.cos(x[i] / Math.sqrt(i + 1)));
+            }
+        }
+
+        resultado = (((1 / 4000) * somatorio) - produtorio) + 1;
+
+        return resultado;
+    }
+
+    public double getMin() {
+        return min;
+    }
+
+    public double getMax() {
+        return max;
+    }
+
+    public int getIncremento() {
+        return incremento;
+    }
+
+    public int getMaximoGeracoes() {
+        return maximoGeracoes;
+    }
+
+    public void setMaximoGeracoes(int maximoGeracoes) {
+        this.maximoGeracoes = maximoGeracoes;
+        incremento = maximoGeracoes / 20;
+    }
+
+    public double getMinimoDaFuncao() {
+        return minimoDaFuncao;
+    }
+
+    public double getIncrementoGrafico() {
+        return incrementoGrafico;
+    }
+
+    public int getNumFuncao() {
+        return numFuncao;
+    }
+
+    @Override
+    public String toString() {
+        return "F" + numFuncao + "(x) :: [" + min + "," + max + "] :: fmin=" + minimoDaFuncao;
+    }
+}
+</pre>
+<h2>Conclusão</h2>
+<p>Foi possível atingir alguns ótimos de algumas funções, observado que são funções caras, tanto calcular suas aptidões quanto a convergência são tarefas relativamente demoradas.</p>
+<p>Porém o objetivo foi cumprido, e a experiência de otimizar minha própria aplicação foi proveitosa.<br />
+[]'s</p>

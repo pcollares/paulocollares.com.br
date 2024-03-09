@@ -1,0 +1,60 @@
+---
+title: Script Linux para ler as linhas de um arquivo e enviar  pela rede
+date: 2019-04-22 16:16:21.000000000 -03:00
+categories:
+- Infraestrutura
+- Programação
+tags:
+- linux
+- shell script
+permalink: "/programacao/script-linux-para-ler-as-linhas-de-um-arquivo-e-enviar-pela-rede/"
+excerpt: Script Linux que realiza a leitura de um arquivo de texto e envia cada linha
+  pela rede, por UDP, respeitando um tempo determinado.
+---
+<p></p>
+<p>Script Linux que realiza a leitura de um arquivo de texto e envia cada linha pela rede, por UDP, respeitando um tempo determinado.</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code prettyprint"><code>#! /bin/bash
+
+if [ "$#" -ne 4 ]; then
+    echo "Faltam alguns argumentos"
+    echo "uso: leitor.sh [arquivo] [ip] [porta] [frequencia em segundos]"
+    exit
+fi
+
+ARQUIVO=$1
+IP=$2
+PORTA=$3
+SLEEP=$4
+
+echo "enviando '"$ARQUIVO"' para "$IP":"$PORTA
+
+while true; do
+	while read line; do    
+		echo $line
+		echo $line > /dev/udp/$IP/$PORTA
+		sleep $SLEEP
+	done &lt; $ARQUIVO
+echo "Reiniciando arquivo"
+done</code></pre>
+<p></p>
+<p></p>
+<h2>Como usar</h2>
+<p></p>
+<p></p>
+<pre class="wp-block-preformatted">$leitor.sh [arquivo] [ip] [porta] [frequencia em segundos]</pre>
+<p></p>
+<p></p>
+<h2>Post relacionado</h2>
+<p></p>
+<p><!-- wp:embed {"url":"https://www.paulocollares.com.br/programacao/script-linux-para-ler-as-linhas-de-um-arquivo-e-publicar-em-um-topico-mqtt/","type":"rich","providerNameSlug":"paulo-collares","className":""} --></p>
+<figure class="wp-block-embed is-type-rich is-provider-paulo-collares">
+<div class="wp-block-embed__wrapper">
+https://www.paulocollares.com.br/programacao/script-linux-para-ler-as-linhas-de-um-arquivo-e-publicar-em-um-topico-mqtt/
+</div>
+</figure>
+<p><!-- /wp:embed --></p>
+<p></p>
+<p>[]'s</p>
+<p></p>

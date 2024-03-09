@@ -1,0 +1,28 @@
+---
+title: Script para backup de sites, e das bases do mySQL
+excerpt: Script para backup de sites, e das bases do mySQL
+date: 2011-11-08 15:15:29.000000000 -03:00
+categories:
+- Infraestrutura
+- Programação
+tags:
+- linux
+- shell script
+permalink: "/programacao/script-para-backup-de-sites-e-das-bases-do-mysql/"
+---
+<p>Esse é um script bem simples para fazer backup do seu site, e das bases de dados do mySQL</p>
+<pre>#! /bin/bash
+
+################################
+# Script de backup do site	#
+# Paulo Collares                #
+# www.paulocollares.com.br      #
+# 04/04/2011		       	#
+################################
+
+##Backup do mysql
+mysqldump -u root -pSENHA_DO_MYSQL NOME_DA_BASE_DE_DADOS &gt; /backup/NOME_DO_ARQUIVO.sql
+
+##Backup do diretorio /var/www
+tar -cvf /backup/www.tar /var/www/*
+</pre>

@@ -1,0 +1,36 @@
+---
+title: JRE/JDK com horário de verão incorreto
+date: 2020-12-10 08:32:57.000000000 -03:00
+categories:
+- Infraestrutura
+tags:
+- java
+permalink: "/infraestrutura/jre-jdk-com-horario-de-verao-incorreto/"
+excerpt: A JRE/JDK mantém uma lista com os fusos e horários de verão dos países. Se
+  estiver usando uma JDK antiga, essa lista pode estar desatualizada de acordo com
+  os últimos decretos sobre o fim do horário de verão
+---
+<p></p>
+<p>A JRE/JDK mantém uma lista com os fusos e horários de verão dos países. Se estiver usando uma JDK antiga, essa lista pode estar desatualizada de acordo com os últimos decretos sobre o fim do horário de verão, para corrigir esse problema, devemos atualizar esta lista  conforme descreve os passos a seguir:</p>
+<p></p>
+<p></p>
+<p>1. Efetue o download da última versão do banco de dados de TimeZone: <a href="https://www.iana.org/time-zones" target="_blank" rel="noreferrer noopener" aria-label=" (abre numa nova aba)">https://www.iana.org/time-zones</a> (Data Only Distribution)</p>
+<p></p>
+<p></p>
+<p>2. Efetue o download da ferramenta de atualização dessas informações: <a href="https://www.oracle.com/technetwork/java/javase/downloads/tzupdater-download-513681.html" target="_blank" rel="noreferrer noopener" aria-label="https://www.oracle.com/technetwork/java/javase/downloads/tzupdater-download-513681.html (abre numa nova aba)">https://www.oracle.com/technetwork/java/javase/downloads/tzupdater-download-513681.html</a> (Java SE TZUpdater)</p>
+<p></p>
+<p></p>
+<p>3. Extraia do arquivo compactado o arquivo tzupdater-2.3.2.zip</p>
+<p></p>
+<p></p>
+<p>4. Copie os arquivos tzupdater.jar e o tzdata2020d.tar.gz para um diretório temporário qualquer</p>
+<p></p>
+<p></p>
+<p>5. Execute: java -jar tzupdater.jar -v -f -l file:tzdata2020d.tar.gz</p>
+<p></p>
+<p></p>
+<p>[]'s</p>
+<p></p>
+<p></p>
+<p>Fonte: <a rel="noreferrer noopener" aria-label="https://centraldeatendimento.totvs.com/hc/pt-br/articles/360018657791-DS-TEC-Java-com-hor%C3%A1rio-de-ver%C3%A3o-incorreto (abre numa nova aba)" href="https://centraldeatendimento.totvs.com/hc/pt-br/articles/360018657791-DS-TEC-Java-com-hor%C3%A1rio-de-ver%C3%A3o-incorreto" target="_blank">https://centraldeatendimento.totvs.com/hc/pt-br/articles/360018657791-DS-TEC-Java-com-hor%C3%A1rio-de-ver%C3%A3o-incorreto</a></p>
+<p></p>

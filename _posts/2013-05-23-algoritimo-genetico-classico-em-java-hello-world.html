@@ -1,0 +1,508 @@
+---
+title: Algoritmo Genético Clássico em Java - Hello World
+date: 2013-05-23 20:24:41.000000000 -03:00
+categories:
+- Destaques
+- Programação
+tags:
+- java
+permalink: "/programacao/algoritimo-genetico-classico-em-java-hello-world/"
+excerpt: |-
+  Algorítimos Genéticos, AGs, são métodos de busca inspirados na evolução dos seres vivos, introduzidos por John Holland (1975) e popularizados por um de seus alunos, David Goldberg (1989), seguem o princípio da seleção natural e sobrevivência dos mais aptos, segundo Charles Darwin (1859). Ele propôs que quanto mais apto um indivíduo for de sobreviver em um meio ambiente, mais chances ele terá de se reproduzir e passar sua carga genética para seus descendentes.
+  Neste exemplo uso como função objetivo, encontrar um gene pré definido por uma frase em uma String.
+---
+<h2>Introdução</h2>
+<p>Algorítimos Genéticos, AGs, são métodos de busca inspirados na evolução dos seres vivos, introduzidos por John Holland (1975) e popularizados por um de seus alunos, David Goldberg (1989), seguem o princípio da seleção natural e sobrevivência dos mais aptos, segundo Charles Darwin (1859). Ele propôs que quanto mais apto um indivíduo for de sobreviver em um meio ambiente, mais chances ele terá de se reproduzir e passar sua carga genética para seus descendentes.</p>
+<p>É nisto que se baseia os Algoritmos Genéticos, buscar boas soluções em um espaço de busca grande, em que uma busca pontual seria muito cara.</p>
+<p>Se quiser saber mais sobre AGs, leia este ótimo material:  <a href="http://www.leca.ufrn.br/~estefane/metaheuristicas/ag.pdf" target="_blank" rel="noopener noreferrer">INTRODUÇÃO AOS ALGORITMOS GENÉTICOS (Estéfane G. M. de Lacerda e André Carlos P. L. F. de Carvalho)</a></p>
+<h2>Algoritmo Genético Clássico</h2>
+<p>É um modelo de AG simples, para soluções simples. Pode ser exemplificado no pseudo-código abaixo:</p>
+<pre>Seja S(t) a população de cromossomos na geração t.
+t ← 0
+inicializar S(t)
+avaliar S(t)
+enquanto o critério de parada não for satisfeito faça
+ t ← t+ 1
+ selecionar S(t) a partir de S(t- 1)
+ aplicar crossover sobre S(t)
+ aplicar mutação sobre S(t)
+ avaliar S(t)
+fim enquanto</pre>
+<h2>Detalhes da Aplicação</h2>
+<p>Neste exemplo uso como função objetivo, encontrar um gene pré definido por uma frase em uma String, por exemplo:</p>
+<pre>Olá Mundo</pre>
+<p>A população inicial será criada com 50 indivíduos aleatórios, com genes de mesmo comprimento que a solução, a <strong>aptidão</strong> será calculada pelo número de letras iguais a solução, por exemplo se a solução fosse 'ola', o gene 'olq' teria aptidão 2 e o gene 'qlw' teria aptidão 1.</p>
+<p>O <strong>critério de parada</strong> será a solução encontrada, ou até chegar um número máximo de gerações definida na aplicação.</p>
+<p>Implementei a <strong>seleção por torneio</strong>, onde são sorteados 3 indivíduos, destes os 2 com maior aptidão são selecionados para o crossover.</p>
+<p>Utilizei uma <strong>taxa de corssover de 60%</strong>, que pode ser alterada, e um<strong> crossover de 1 ponto</strong>, exemplo:</p>
+<pre>| = ponto de corte aleatório
+
+p1: shw|jakw
+
+p2: wjd|jwke
+
+f1: shw|jwke
+
+f2: wjd|jakw
+</pre>
+<p>Defini uma <strong>taxa de mutação de 3%</strong>, também podendo ser alterada, que substitui um gene por outro aleatório, por exemplo:</p>
+<pre>oaa muwdp -&gt; oaa mpwdp
+</pre>
+<p>Mesmo não fazendo parte de um AG clássico, utilizo o <strong>elitismo</strong>, que copia o melhor indivíduo para a próxima geração.</p>
+<h2>Código</h2>
+<p>Há quatro classes neste exemplo:<br />
+<strong>HelloWorldAG.java</strong> (Classe Main com a execução do algorítimo);<br />
+<strong>Algoritimo.java</strong> (Métodos e variáveis estáticas para controle do AG, crossover, seleção...);<br />
+<strong>Populacao.java</strong> (Classe de domínio que define uma população, contém uma lista de indivíduos);<br />
+<strong>Individuo.java</strong> (Classe de domínio que representa um indivíduo, contém seus genes e valor de aptidão).</p>
+<p>Baixe o projeto <a href="http://www.paulocollares.com.br/arqs/projetos/AGclassico.zip" target="_blank" rel="noopener noreferrer">aqui</a>, ou confira o código abaixo.</p>
+<h3>HelloWorldAG.java</h3>
+<pre>package helloWorldAG;
+
+public class AGhelloWorld {
+
+    public static void main(String[] args) {
+
+        //Define a solução
+        Algoritimo.setSolucao("Olá Mundo");
+        //Define os caracteres existentes
+        Algoritimo.setCaracteres("!,.:;?áÁãÃâÂõÕôÔóÓéêÉÊíQWERTYUIOPASDFGHJKLÇZXCVBNMqwertyuiopasdfghjklçzxcvbnm1234567890 ");
+        //taxa de crossover de 60%
+        Algoritimo.setTaxaDeCrossover(0.6);
+        //taxa de mutação de 3%
+        Algoritimo.setTaxaDeMutacao(0.3);
+        //elitismo
+        boolean eltismo = true;
+        //tamanho da população
+        int tamPop = 100;
+        //numero máximo de gerações
+        int numMaxGeracoes = 10000;
+
+        //define o número de genes do indivíduo baseado na solução
+        int numGenes = Algoritimo.getSolucao().length();
+
+        //cria a primeira população aleatérioa
+        Populacao populacao = new Populacao(numGenes, tamPop);
+
+        boolean temSolucao = false;
+        int geracao = 0;
+
+        System.out.println("Iniciando... Aptidão da solução: "+Algoritimo.getSolucao().length());
+        
+        //loop até o critério de parada
+        while (!temSolucao &amp;&amp; geracao &lt; numMaxGeracoes) {
+            geracao++;
+
+            //cria nova populacao
+            populacao = Algoritimo.novaGeracao(populacao, eltismo);
+
+            System.out.println("Geração " + geracao + " | Aptidão: " + populacao.getIndivduo(0).getAptidao() + " | Melhor: " + populacao.getIndivduo(0).getGenes());
+            
+            //verifica se tem a solucao
+            temSolucao = populacao.temSolocao(Algoritimo.getSolucao());
+        }
+
+        if (geracao == numMaxGeracoes) {
+            System.out.println("Número Maximo de Gerações | " + populacao.getIndivduo(0).getGenes() + " " + populacao.getIndivduo(0).getAptidao());
+        }
+
+        if (temSolucao) {
+            System.out.println("Encontrado resultado na geração " + geracao + " | " + populacao.getIndivduo(0).getGenes() + " (Aptidão: " + populacao.getIndivduo(0).getAptidao() + ")");
+        }
+    }
+}
+</pre>
+<h3>Algoritimo.java</h3>
+<pre>package helloWorldAG;
+
+import java.util.Random;
+
+public class Algoritimo {
+
+    private static String solucao;
+    private static double taxaDeCrossover;
+    private static double taxaDeMutacao;
+    private static String caracteres;
+
+    public static Populacao novaGeracao(Populacao populacao, boolean elitismo) {
+        Random r = new Random();
+        //nova população do mesmo tamanho da antiga
+        Populacao novaPopulacao = new Populacao(populacao.getTamPopulacao());
+
+        //se tiver elitismo, mantém o melhor indivíduo da geração atual
+        if (elitismo) {
+            novaPopulacao.setIndividuo(populacao.getIndivduo(0));
+        }
+
+        //insere novos indivíduos na nova população, até atingir o tamanho máximo
+        while (novaPopulacao.getNumIndividuos() &lt; novaPopulacao.getTamPopulacao()) {
+            //seleciona os 2 pais por torneio
+            Individuo[] pais = selecaoTorneio(populacao);
+
+            Individuo[] filhos = new Individuo[2];
+
+            //verifica a taxa de crossover, se sim realiza o crossover, se não, mantém os pais selecionados para a próxima geração
+            if (r.nextDouble() &lt;= taxaDeCrossover) {
+                filhos = crossover(pais[1], pais[0]);
+            } else {
+                filhos[0] = new Individuo(pais[0].getGenes());
+                filhos[1] = new Individuo(pais[1].getGenes());
+            }
+
+            //adiciona os filhos na nova geração
+            novaPopulacao.setIndividuo(filhos[0]);
+            novaPopulacao.setIndividuo(filhos[1]);
+        }
+
+        //ordena a nova população
+        novaPopulacao.ordenaPopulacao();
+        return novaPopulacao;
+    }
+
+    public static Individuo[] crossover(Individuo individuo1, Individuo individuo2) {
+        Random r = new Random();
+
+        //sorteia o ponto de corte
+        int pontoCorte1 = r.nextInt((individuo1.getGenes().length()/2) -2) + 1;
+        int pontoCorte2 = r.nextInt((individuo1.getGenes().length()/2) -2) + individuo1.getGenes().length()/2;
+
+        Individuo[] filhos = new Individuo[2];
+
+        //pega os genes dos pais
+        String genePai1 = individuo1.getGenes();
+        String genePai2 = individuo2.getGenes();
+
+        String geneFilho1;
+        String geneFilho2;
+
+        //realiza o corte, 
+        geneFilho1 = genePai1.substring(0, pontoCorte1);
+        geneFilho1 += genePai2.substring(pontoCorte1, pontoCorte2);
+        geneFilho1 += genePai1.substring(pontoCorte2, genePai1.length());
+        
+        geneFilho2 = genePai2.substring(0, pontoCorte1);
+        geneFilho2 += genePai1.substring(pontoCorte1, pontoCorte2);
+        geneFilho2 += genePai2.substring(pontoCorte2, genePai2.length());
+
+        //cria o novo indivíduo com os genes dos pais
+        filhos[0] = new Individuo(geneFilho1);
+        filhos[1] = new Individuo(geneFilho2);
+
+        return filhos;
+    }
+
+    public static Individuo[] selecaoTorneio(Populacao populacao) {
+        Random r = new Random();
+        Populacao populacaoIntermediaria = new Populacao(3);
+
+        //seleciona 3 indivíduos aleatóriamente na população
+        populacaoIntermediaria.setIndividuo(populacao.getIndivduo(r.nextInt(populacao.getTamPopulacao())));
+        populacaoIntermediaria.setIndividuo(populacao.getIndivduo(r.nextInt(populacao.getTamPopulacao())));
+        populacaoIntermediaria.setIndividuo(populacao.getIndivduo(r.nextInt(populacao.getTamPopulacao())));
+
+        //ordena a população
+        populacaoIntermediaria.ordenaPopulacao();
+
+        Individuo[] pais = new Individuo[2];
+
+        //seleciona os 2 melhores deste população
+        pais[0] = populacaoIntermediaria.getIndivduo(0);
+        pais[1] = populacaoIntermediaria.getIndivduo(1);
+
+        return pais;
+    }
+
+    public static String getSolucao() {
+        return solucao;
+    }
+
+    public static void setSolucao(String solucao) {
+        Algoritimo.solucao = solucao;
+    }
+
+    public static double getTaxaDeCrossover() {
+        return taxaDeCrossover;
+    }
+
+    public static void setTaxaDeCrossover(double taxaDeCrossover) {
+        Algoritimo.taxaDeCrossover = taxaDeCrossover;
+    }
+
+    public static double getTaxaDeMutacao() {
+        return taxaDeMutacao;
+    }
+
+    public static void setTaxaDeMutacao(double taxaDeMutacao) {
+        Algoritimo.taxaDeMutacao = taxaDeMutacao;
+    }
+
+    public static String getCaracteres() {
+        return caracteres;
+    }
+
+    public static void setCaracteres(String caracteres) {
+        Algoritimo.caracteres = caracteres;
+    }
+    
+    
+}
+</pre>
+<h3>Populacao.java</h3>
+<pre>package helloWorldAG;
+
+public class Populacao {
+
+    private Individuo[] individuos;
+    private int tamPopulacao;
+
+    //cria uma população com indivíduos aleatória
+    public Populacao(int numGenes, int tamPop) {
+        tamPopulacao = tamPop;
+        individuos = new Individuo[tamPop];
+        for (int i = 0; i &lt; individuos.length; i++) {
+            individuos[i] = new Individuo(numGenes);
+        }
+    }
+
+    //cria uma população com indivíduos sem valor, será composto posteriormente
+    public Populacao(int tamPop) {
+        tamPopulacao = tamPop;
+        individuos = new Individuo[tamPop];
+        for (int i = 0; i &lt; individuos.length; i++) {
+            individuos[i] = null;
+        }
+    }
+
+    //coloca um indivíduo em uma certa posição da população
+    public void setIndividuo(Individuo individuo, int posicao) {
+        individuos[posicao] = individuo;
+    }
+
+    //coloca um indivíduo na próxima posição disponível da população
+    public void setIndividuo(Individuo individuo) {
+        for (int i = 0; i &lt; individuos.length; i++) {
+            if (individuos[i] == null) {
+                individuos[i] = individuo;
+                return;
+            }
+        }
+    }
+
+    //verifoca se algum indivíduo da população possui a solução
+    public boolean temSolocao(String solucao) {
+        Individuo i = null;
+        for (int j = 0; j &lt; individuos.length; j++) {
+            if (individuos[j].getGenes().equals(solucao)) {
+                i = individuos[j];
+                break;
+            }
+        }
+        if (i == null) {
+            return false;
+        }
+        return true;
+    }
+
+    //ordena a população pelo valor de aptidão de cada indivíduo, do maior valor para o menor, assim se eu quiser obter o melhor indivíduo desta população, acesso a posição 0 do array de indivíduos
+    public void ordenaPopulacao() {
+        boolean trocou = true;
+        while (trocou) {
+            trocou = false;
+            for (int i = 0; i &lt; individuos.length - 1; i++) {
+                if (individuos[i].getAptidao() &lt; individuos[i + 1].getAptidao()) {
+                    Individuo temp = individuos[i];
+                    individuos[i] = individuos[i + 1];
+                    individuos[i + 1] = temp;
+                    trocou = true;
+                }
+            }
+        }
+    }
+
+    //número de indivíduos existentes na população
+    public int getNumIndividuos() {
+        int num = 0;
+        for (int i = 0; i &lt; individuos.length; i++) {
+            if (individuos[i] != null) {
+                num++;
+            }
+        }
+        return num;
+    }
+
+    public int getTamPopulacao() {
+        return tamPopulacao;
+    }
+
+    public Individuo getIndivduo(int pos) {
+        return individuos[pos];
+    }
+}
+</pre>
+<h3>Individuo.java</h3>
+<pre>package helloWorldAG;
+
+import java.util.Random;
+
+public class Individuo {
+
+    private String genes = "";
+    private int aptidao = 0;
+
+    //gera um indivíduo aleatório
+    public Individuo(int numGenes) {
+        genes = "";
+        Random r = new Random();
+        
+        String caracteres = Algoritimo.getCaracteres();
+        
+        for (int i = 0; i &lt; numGenes; i++) {
+            genes += caracteres.charAt(r.nextInt(caracteres.length()));
+        }
+        
+        geraAptidao();        
+    }
+
+    //cria um indivíduo com os genes definidos
+    public Individuo(String genes) {    
+        this.genes = genes;
+        
+        Random r = new Random();
+        //se for mutar, cria um gene aleatório
+        if (r.nextDouble() &lt;= Algoritimo.getTaxaDeMutacao()) {
+            String caracteres = Algoritimo.getCaracteres();
+            String geneNovo="";
+            int posAleatoria = r.nextInt(genes.length());
+            for (int i = 0; i &lt; genes.length(); i++) {
+                if (i==posAleatoria){
+                    geneNovo += caracteres.charAt(r.nextInt(caracteres.length()));
+                }else{
+                    geneNovo += genes.charAt(i);
+                }
+                
+            }
+            this.genes = geneNovo;   
+        }
+        geraAptidao();
+    }
+
+    //gera o valor de aptidão, será calculada pelo número de bits do gene iguais ao da solução
+    private void geraAptidao() {
+        String solucao = Algoritimo.getSolucao();
+        for (int i = 0; i &lt; solucao.length(); i++) {
+            if (solucao.charAt(i) == genes.charAt(i)) {
+                aptidao++;
+            }
+        }
+    }
+
+    public int getAptidao() {
+        return aptidao;
+    }
+
+    public String getGenes() {
+        return genes;
+    }
+}
+</pre>
+<h2>Execução</h2>
+<p>Exemplo de uma execução com um gene pequeno como solução 'Olá Mundo', só para demostrar :)</p>
+<pre>Iniciando... Aptidão da solução: 9
+Geração 1 | Aptidão: 1 | Melhor: óÁá7ãxIãK
+Geração 2 | Aptidão: 1 | Melhor: óÁá7ãxIãK
+Geração 3 | Aptidão: 1 | Melhor: óÁá7ãxIãK
+Geração 4 | Aptidão: 2 | Melhor: OÁá7VqUj5
+Geração 5 | Aptidão: 2 | Melhor: OÁá7VqUj5
+Geração 6 | Aptidão: 2 | Melhor: OÁá7VqUj5
+Geração 7 | Aptidão: 2 | Melhor: OÁá7VqUj5
+Geração 8 | Aptidão: 3 | Melhor: uÔr M2ZDo
+Geração 9 | Aptidão: 3 | Melhor: uÔr M2ZDo
+Geração 10 | Aptidão: 3 | Melhor: uÔr M2ZDo
+Geração 11 | Aptidão: 3 | Melhor: uÔr M2ZDo
+Geração 12 | Aptidão: 3 | Melhor: uÔr M2ZDo
+Geração 13 | Aptidão: 3 | Melhor: uÔr M2ZDo
+Geração 14 | Aptidão: 3 | Melhor: uÔr M2ZDo
+Geração 15 | Aptidão: 3 | Melhor: uÔr M2ZDo
+Geração 16 | Aptidão: 3 | Melhor: uÔr M2ZDo
+Geração 17 | Aptidão: 3 | Melhor: uÔr M2ZDo
+Geração 18 | Aptidão: 4 | Melhor: OwáuM2ZÉo
+Geração 19 | Aptidão: 4 | Melhor: OwáuM2ZÉo
+Geração 20 | Aptidão: 4 | Melhor: OwáuM2ZÉo
+Geração 21 | Aptidão: 4 | Melhor: OwáuM2ZÉo
+Geração 22 | Aptidão: 4 | Melhor: OwáuM2ZÉo
+Geração 23 | Aptidão: 4 | Melhor: OwáuM2ZÉo
+Geração 24 | Aptidão: 4 | Melhor: OwáuM2ZÉo
+Geração 25 | Aptidão: 4 | Melhor: OwáuM2ZÉo
+Geração 26 | Aptidão: 4 | Melhor: OwáuM2ZÉo
+Geração 27 | Aptidão: 4 | Melhor: OwáuM2ZÉo
+Geração 28 | Aptidão: 4 | Melhor: OwáuM2ZÉo
+Geração 29 | Aptidão: 4 | Melhor: OwáuM2ZÉo
+Geração 30 | Aptidão: 4 | Melhor: OwáuM2ZÉo
+Geração 31 | Aptidão: 4 | Melhor: OwáuM2ZÉo
+Geração 32 | Aptidão: 4 | Melhor: OwáuM2ZÉo
+Geração 33 | Aptidão: 4 | Melhor: OwáuM2ZÉo
+Geração 34 | Aptidão: 4 | Melhor: OwáuM2ZÉo
+Geração 35 | Aptidão: 4 | Melhor: OwáuM2ZÉo
+Geração 36 | Aptidão: 4 | Melhor: OwáuM2ZÉo
+Geração 37 | Aptidão: 4 | Melhor: OwáuM2ZÉo
+Geração 38 | Aptidão: 4 | Melhor: OwáuM2ZÉo
+Geração 39 | Aptidão: 4 | Melhor: OwáuM2ZÉo
+Geração 40 | Aptidão: 4 | Melhor: OwáuM2ZÉo
+Geração 41 | Aptidão: 4 | Melhor: OwáuM2ZÉo
+Geração 42 | Aptidão: 4 | Melhor: OwáuM2ZÉo
+Geração 43 | Aptidão: 5 | Melhor: uwá M2cdo
+Geração 44 | Aptidão: 5 | Melhor: uwá M2cdo
+Geração 45 | Aptidão: 5 | Melhor: uwá M2cdo
+Geração 46 | Aptidão: 5 | Melhor: uwá M2cdo
+Geração 47 | Aptidão: 5 | Melhor: uwá M2cdo
+Geração 48 | Aptidão: 5 | Melhor: uwá M2cdo
+Geração 49 | Aptidão: 5 | Melhor: uwá M2cdo
+Geração 50 | Aptidão: 5 | Melhor: uwá M2cdo
+Geração 51 | Aptidão: 6 | Melhor: O5á MuiÉo
+Geração 52 | Aptidão: 6 | Melhor: O5á MuiÉo
+Geração 53 | Aptidão: 6 | Melhor: O5á MuiÉo
+Geração 54 | Aptidão: 6 | Melhor: O5á MuiÉo
+Geração 55 | Aptidão: 6 | Melhor: O5á MuiÉo
+Geração 56 | Aptidão: 6 | Melhor: O5á MuiÉo
+Geração 57 | Aptidão: 6 | Melhor: O5á MuiÉo
+Geração 58 | Aptidão: 6 | Melhor: O5á MuiÉo
+Geração 59 | Aptidão: 6 | Melhor: O5á MuiÉo
+Geração 60 | Aptidão: 6 | Melhor: O5á MuiÉo
+Geração 61 | Aptidão: 6 | Melhor: O5á MuiÉo
+Geração 62 | Aptidão: 6 | Melhor: O5á MuiÉo
+Geração 63 | Aptidão: 6 | Melhor: O5á MuiÉo
+Geração 64 | Aptidão: 6 | Melhor: O5á MuiÉo
+Geração 65 | Aptidão: 7 | Melhor: Olá MujÉo
+Geração 66 | Aptidão: 7 | Melhor: Olá MujÉo
+Geração 67 | Aptidão: 7 | Melhor: Olá MujÉo
+Geração 68 | Aptidão: 7 | Melhor: Olá MujÉo
+Geração 69 | Aptidão: 7 | Melhor: Olá MujÉo
+Geração 70 | Aptidão: 7 | Melhor: Olá MujÉo
+Geração 71 | Aptidão: 7 | Melhor: Olá MujÉo
+Geração 72 | Aptidão: 7 | Melhor: Olá MujÉo
+Geração 73 | Aptidão: 8 | Melhor: Olá MunÉo
+Geração 74 | Aptidão: 8 | Melhor: Olá MunÉo
+Geração 75 | Aptidão: 8 | Melhor: Olá MunÉo
+Geração 76 | Aptidão: 8 | Melhor: Olá MunÉo
+Geração 77 | Aptidão: 8 | Melhor: Olá MunÉo
+Geração 78 | Aptidão: 8 | Melhor: Olá MunÉo
+Geração 79 | Aptidão: 8 | Melhor: Olá MunÉo
+Geração 80 | Aptidão: 8 | Melhor: Olá MunÉo
+Geração 81 | Aptidão: 8 | Melhor: Olá MunÉo
+Geração 82 | Aptidão: 8 | Melhor: Olá MunÉo
+Geração 83 | Aptidão: 8 | Melhor: Olá MunÉo
+Geração 84 | Aptidão: 8 | Melhor: Olá MunÉo
+Geração 85 | Aptidão: 8 | Melhor: Olá MunÉo
+Geração 86 | Aptidão: 8 | Melhor: Olá MunÉo
+Geração 87 | Aptidão: 8 | Melhor: Olá MunÉo
+Geração 88 | Aptidão: 8 | Melhor: Olá MunÉo
+Geração 89 | Aptidão: 8 | Melhor: Olá MunÉo
+Geração 90 | Aptidão: 8 | Melhor: Olá MunÉo
+Geração 91 | Aptidão: 9 | Melhor: Olá Mundo
+Encontrado resultado na geração 91 | Olá Mundo (Aptidão: 9)
+</pre>
+<h2>Conclusão</h2>
+<p>Este é um exemplo bem básico de um AG, use-o para estudar, modifique as variáveis, os operadores e veja o que acontece, brique com isso, só assim entenderemos como funciona o mundo do Algorítimo Genético</p>
+<p>[]'s</p>
+<h2>Referências</h2>
+<p><a href="http://www.leca.ufrn.br/~estefane/metaheuristicas/ag.pdf" target="_blank" rel="noopener noreferrer">INTRODUÇÃO AOS ALGORITMOS GENÉTICOS (Estéfane G. M. de Lacerda e André Carlos P. L. F. de Carvalho)</a></p>

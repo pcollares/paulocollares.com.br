@@ -1,0 +1,103 @@
+---
+title: Iniciar uma aplicação no boot do Linux
+date: 2019-04-26 09:42:19.000000000 -03:00
+categories:
+- Infraestrutura
+tags:
+- linux
+permalink: "/infraestrutura/iniciar-uma-aplicacao-no-boot-do-linux/"
+excerpt: Este artigo demonstra como criar um script de inicialização no Linux.
+---
+<p></p>
+<p>Este artigo demonstra como criar um script de inicialização no Linux. Neste script demonstro como iniciar uma aplicação Java, mas que pode ser subsistida por qualquer outra.</p>
+<p></p>
+<p></p>
+<p>Crie um arquivo com o nome da sua aplicação no diretório<em>/etc/init.d/</em> :</p>
+<p></p>
+<p><!-- wp:code {"className":""} --></p>
+<pre class="wp-block-code"><code># nano /etc/init.d/ app</code></pre>
+<p></p>
+<p></p>
+<p>Copie o conteúdo abaixo substituindo pelo nome da sua aplicação e fazendo as alterações necessárias para iniciar a mesma.</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code prettyprint"><code>#!/bin/bash
+#/etc/init.d/app
+
+### BEGIN INIT INFO
+# Provides:          app
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Iniciando o app no boot
+# Description:       Iniciando o app.
+### END INIT INFO
+
+###########################################
+# Script para executar o app
+###########################################
+
+# Variáveis de configuração
+DIRETORIO="/opt/app/"
+JAVA_HOME="/opt/java/bin/java"
+EXECUTAVEL="app.jar"
+PARAMETROS_JVM="-server -Xms6g -Xmx6g -jar"
+
+# Abre o diretório do executável
+cd $DIRETORIO
+
+case "$1" in
+
+ start)
+        echo "Iniciando o app"
+        nohup $JAVA_HOME $PARAMETROS_JVM $EXECUTAVEL &amp;
+     ;;
+ restart)
+        $0 stop
+        $0 start
+    ;;
+ stop)
+        echo "Parando o app"     
+        pkill -9 -f $EXECUTAVEL
+    ;;
+
+  *)
+    echo "Uso: /etc/init.d/app {start|stop|restart}"
+    exit 1
+    ;;
+esac
+
+exit 0</code></pre>
+<p></p>
+<p></p>
+<p>Conceda permissão de execução para esse script:</p>
+<p></p>
+<p><!-- wp:code {"className":""} --></p>
+<pre class="wp-block-code"><code># chmod +x /etc/init.d/app</code></pre>
+<p></p>
+<p></p>
+<p>Adicione na rotina de inicialização do sistema:</p>
+<p></p>
+<p><!-- wp:code {"className":""} --></p>
+<pre class="wp-block-code"><code># insserv /etc/init.d/app</code></pre>
+<p></p>
+<p></p>
+<p>O script será chamado na inicialização do sistema, e pode ser invocado como serviço</p>
+<p></p>
+<p><!-- wp:code {"className":""} --></p>
+<pre class="wp-block-code"><code># service app start
+# service app stop
+# service app restart</code></pre>
+<p></p>
+<p></p>
+<p>ou</p>
+<p></p>
+<p><!-- wp:code {"className":""} --></p>
+<pre class="wp-block-code"><code># /etc/init.d/app start
+# /etc/init.d/app stop
+# /etc/init.d/app restart</code></pre>
+<p></p>
+<p></p>
+<p>[]'s</p>
+<p></p>

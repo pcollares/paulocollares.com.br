@@ -1,0 +1,158 @@
+---
+title: Leitor de Arquivo de Propriedades (Chave/Valor) em Java
+excerpt: Leitor de Arquivo de Propriedades (Chave/Valor) em Java
+date: 2012-07-24 13:36:42.000000000 -03:00
+categories:
+- Programação
+tags:
+- java
+permalink: "/programacao/leitor-de-arquivo-de-propriedades-chavevalor-em-java/"
+---
+<p><a href="http://www.paulocollares.com.br/leitor-de-arquivo-de-propriedades-chavevalor-em-java/leitoraqriovo/" rel="attachment wp-att-440"><img src="{{ site.baseurl }}/images/2012/07/leitorAqriovo.jpg" alt="" title="Leitor Arquivo" width="550" height="200" class="alignnone size-full wp-image-440" /></a></p>
+<p>Pequena classe que realiza a leitura de um arquivo com propriedades, no formato [chave]=[valor].</p>
+<p>Baseado no Properties do Java, só que mais enxuto, com função apenas de leitura, a vantagem em relação ao Properties é sua simplicidade, ideal para sistemas de alto desempenho. </p>
+<p>O arquivo é lido apenas no construtor, evitando acesso ao disco, o leitor ignora linhas iniciadas com # e com a [chave] nula</p>
+<p><strong>Classe LeitorArquivo.java</strong></p>
+<pre>
+package leitorarquivo;
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Classe resposnsável por realizar a leitura dos arquivos de propriedades
+ * No construtor da classe deve ser passado o caminho do arquivo a ser lido
+ * O arquivo é lido apenas no construtor, evitando acesso ao disco, salvo se o método lerArquivo() for chamado novamente
+ * O arquivo de configuração deve estar neste formato: [chave]=[valor]
+ * O leitor ignora linhas iniciadas com # e com a [chave] nula
+ * @author Paulo Collares
+ */
+public class LeitorArquivo {
+
+    private Map map = new HashMap();
+    private String arquivo;
+    
+    /**
+     * No construtor da classe deve ser passado o caminho do arquivo a ser lido
+     * O arquivo é lido apenas no construtor, evitando acesso ao disco, salvo se o método lerArquivo() for chamado novamente
+     * @param arquivo 
+     */
+    public LeitorArquivo(String arquivo) {
+        lerArquivo(arquivo);
+    }
+
+    /**
+     * Força a releitura do arquivo
+     */
+    public void lerArquivo() {
+        leituraArquivo();
+    }
+    
+    /**
+     * Força a releitura do arquivo, passando como parâmetro um novo arquivo
+     * @param arquivo 
+     */
+    public void lerArquivo(String arquivo){
+        this.arquivo=arquivo;
+        leituraArquivo();
+    }
+    
+    /**
+     * Método que realiza a leitura do arquivo, verifica as linhas e salva na lista
+     */
+    private void leituraArquivo(){
+        
+        try {
+            FileReader fileReader = new FileReader(arquivo);
+            BufferedReader leitor = new BufferedReader(fileReader);
+            
+            String linha=null;
+            
+            while (leitor.ready()) {
+                 linha = leitor.readLine();
+                
+                if (!linha.contains("="))
+                    break;
+                
+                if (linha.charAt(0)=='#' || linha.charAt(0)=='=')
+                    break;
+                
+                String temp[] = linha.split("=");
+                                
+                map.put(formataChave(temp[0]), temp[1]);
+            }
+            
+            fileReader.close();
+            leitor.close();
+
+        } catch (FileNotFoundException e) {
+            
+        } catch (IOException e) {
+            
+        }
+        
+    }
+    
+    /**
+     * Formata a chave para minúsculo e sem espaços
+     */
+    private String formataChave(String chave){
+        
+        chave=chave.toLowerCase();
+        chave=chave.replaceAll(" ", "");
+        
+        return chave;
+    }
+    
+    /**
+     * Recupera um valor, passando a chave como parâmetro
+     * @param chave
+     * @return valor
+     */
+    public String get(String chave) {
+        return (String) map.get(formataChave(chave));
+    }
+    
+    /**
+     * Recupera um valor, passando a chave como parâmetro
+     * Retorna um valor padrão caso a chave não seja encontrada
+     * @param chave
+     * @param valor padrão
+     * @return valor
+     */
+    public String get(String chave, String padrao){
+        String r = get(chave);
+        
+        if (r==null)
+            r=padrao;
+        
+        return r;
+    }
+    
+    /*
+     * Recupera a lista completa
+     */
+    public Map getList(){
+        return map;
+    }
+}
+</pre>
+<h2>Exemplo de Utilização</h2>
+<p>Considerando um pequeno arquivo de leitura:</p>
+<pre>
+#teste.txt
+caminho=/etc/hosts
+usuario=admin
+senha=1234
+titulo=Ola Mundo
+</pre>
+<p>Podemos ler a chave título, por exemplo, deste modo:</p>
+<pre>
+LeitorArquivo leitorArquivo = new LeitorArquivo("/home/pcollares/teste.txt");
+System.out.println(leitorArquivo.get("titulo"));
+</pre>
+<p>Espero que seja útil, deixe sua opinião nos comentários, obrigado!</p>

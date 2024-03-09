@@ -1,0 +1,80 @@
+---
+title: Script Linux para ler as linhas de um arquivo e publicar em um tópico MQTT
+excerpt: Script Linux para ler as linhas de um arquivo e publicar em um tópico MQTT
+date: 2019-05-06 10:50:32.000000000 -03:00
+categories:
+- Infraestrutura
+- Programação
+tags:
+- linux
+- mqtt
+- shell script
+permalink: "/programacao/script-linux-para-ler-as-linhas-de-um-arquivo-e-publicar-em-um-topico-mqtt/"
+---
+<p></p>
+<p>Script Linux que realiza a leitura de um arquivo de texto e publica cada linha em um tópico MQTT, respeitando um tempo determinado.</p>
+<p></p>
+<p></p>
+<h2>Dependências</h2>
+<p></p>
+<p></p>
+<ul>
+<li>mosquitto</li>
+<li>mosquitto_pub</li>
+</ul>
+<p></p>
+<p></p>
+<p>Para instalar o <em>mosquitto</em> e o <em>mosquitto_pub</em>:</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>#apt-get install mosquitto mosquitto-clients</code></pre>
+<p></p>
+<p></p>
+<h2>Script</h2>
+<p></p>
+<p></p>
+<pre class="wp-block-code prettyprint"><code>#! /bin/bash
+
+if [ "$#" -ne 3 ]; then
+    echo "Faltam alguns argumentos"
+    echo "uso: leitor.sh [arquivo] [topico] [frequencia em segundos]"
+    exit
+fi
+
+ARQUIVO=$1
+TOPICO=$2
+SLEEP=$3
+
+echo "publicando '"$ARQUIVO"' em "$TOPICO
+
+while true; do
+	while read line; do    
+		echo $line
+		mosquitto_pub -t $TOPICO -m $line
+		sleep $SLEEP
+	done &lt; $ARQUIVO
+echo "Reiniciando arquivo"
+done</code></pre>
+<p></p>
+<p></p>
+<pre class="wp-block-preformatted"><strong>OBS:</strong> O script publica em um broker local. Para se conectar em um broker remoto, adicione o parâmetro -h seguido do host no comando mosquitto_pub.</pre>
+<p></p>
+<p></p>
+<h2>Como usar</h2>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>$leitor.sh [arquivo] [topico] [frequencia em segundos]</code></pre>
+<p></p>
+<p></p>
+<h2>Post relacionado</h2>
+<p></p>
+<p><!-- wp:embed {"url":"https://www.paulocollares.com.br/programacao/script-linux-para-ler-as-linhas-de-um-arquivo-e-enviar-pela-rede/","type":"rich","providerNameSlug":"paulo-collares","className":""} --></p>
+<figure class="wp-block-embed is-type-rich is-provider-paulo-collares">
+<div class="wp-block-embed__wrapper">
+https://www.paulocollares.com.br/programacao/script-linux-para-ler-as-linhas-de-um-arquivo-e-enviar-pela-rede/
+</div>
+</figure>
+<p><!-- /wp:embed --></p>
+<p></p>
+<p>[]'s</p>
+<p></p>

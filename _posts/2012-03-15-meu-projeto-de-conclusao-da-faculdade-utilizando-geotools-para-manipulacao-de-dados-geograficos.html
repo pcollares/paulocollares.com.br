@@ -1,0 +1,110 @@
+---
+title: 'Meu Projeto de Conclusão da Faculdade: "Utilizando GeoTools para Manipulação
+excerpt: 'Meu Projeto de Conclusão da Faculdade: "Utilizando GeoTools para Manipulação
+  de Dados Geográficos"'
+date: 2012-03-15 20:52:22.000000000 -03:00
+categories:
+- Programação
+tags:
+- java
+permalink: "/programacao/meu-projeto-de-conclusao-da-faculdade-utilizando-geotools-para-manipulacao-de-dados-geograficos/"
+---
+<p><a href="http://www.paulocollares.com.br/wp-content/uploads/2012/03/img.png"><img class="alignnone size-large wp-image-291" title="img" src="{{ site.baseurl }}/images/2012/03/img-1024x608.png" alt="" width="590" height="350" /></a></p>
+<p>No ano de 2009, como projeto de conclusão do curso em Bacharel em Sistemas de Informações pela Unigranrio, eu e Gustavo Matos, apresentamos este projeto.</p>
+<p>Para que sirva de inspiração e fonte para trabalhos semelhantes, compartilho abaixo, todo o projeto.</p>
+<h2>Resumo</h2>
+<p>A partir da necessidade de controle de dados georreferenciados construir-se-á um aplicativo para atender as funcionalidades de um sistema SIG para Java desktop, ou seja, um aplicativo para leitura e manipulação de dados geográficos. Será possível o acesso a shapefiles ou a bancos de dados, pois o aplicativo oferece essas duas funcionalidades. O aplicativo desenvolvido disponibiliza um conjunto de ferramentas que auxilia na manipulação dos mapas. De acordo com os objetivos do atual projeto, conclui-se que o aplicativo será de grande utilidade na manipulação de dados geográficos.</p>
+<h2>Apresentação</h2>
+<p><object id="__sse12026140" width="425" height="355" classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,40,0"><param name="allowFullScreen" value="true" /><param name="allowScriptAccess" value="always" /><param name="wmode" value="transparent" /><param name="src" value="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=apresentaopf2-120315183140-phpapp01&amp;stripped_title=utilizando-geotools-para-manipulao-de-dados-geogrficos-12026140&amp;userName=pcollares" /><param name="allowscriptaccess" value="always" /><param name="allowfullscreen" value="true" /><embed id="__sse12026140" width="425" height="355" type="application/x-shockwave-flash" src="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=apresentaopf2-120315183140-phpapp01&amp;stripped_title=utilizando-geotools-para-manipulao-de-dados-geogrficos-12026140&amp;userName=pcollares" allowfullscreen="true" allowscriptaccess="always" wmode="transparent" /></object></p>
+<h2>Destaques do projeto</h2>
+<p><a href="http://www.paulocollares.com.br/arqs/pf/utilizando-geotools-para-manipulacao-de-dados-geograficos.pdf"><br />
+Clique aqui para baixar o pdf completo do projeto</a><br />
+<img id="__sse12026184" src="{{ site.baseurl }}/images/2012/03/trans.gif" alt="" width="477" height="510" data-mce-json="{'video':{},'params':{'allowFullScreen':'true','allowScriptAccess':'always','wmode':'transparent','src':'http://static.slidesharecdn.com/swf/doc_player.swf?doc=utilizando-geotools-para-manipulacao-de-dados-geograficos-120315183418-phpapp01&amp;stripped_title=utilizando-geotools-para-manipulao-de-dados-geogrficos-12026184&amp;userName=pcollares','allowscriptaccess':'always','allowfullscreen':'true'}}" /></p>
+<h3>Introdução</h3>
+<p>GIS<em> </em>(<em>Geographic Information Systems</em> ou Sistemas de Informações Geográficas) são aplicativos que tratam de informações com representação no espaço geográfico dispostas em camadas (“<em>layers</em>”), as quais são combinadas para a criação de mapas. Uma camada contém várias feições espaciais (entidades que representam pontos, linhas ou polígonos).</p>
+<p>Este projeto descreve o desenvolvimento de um <em>software desktop GIS </em>que viabilize a utilização de<em> shapefiles </em>para a manipulação de dados georreferenciados<em>.</em></p>
+<p>A partir do que foi exposto, o principal objetivo deste trabalho é estudar o desenvolvimento de uma aplicação SIG com enfoque na disponibilização de dados, sendo desenvolvida através da linguagem de programação Java com o auxílio da biblioteca GeoTools.</p>
+<p>É importante ressaltar a utilização de tecnologias livres, programas com código fonte aberto, representa uma grande vantagem no desenvolvimento de uma aplicação SIG, pois possibilita a redução do valor final do aplicativo.</p>
+<p>No mundo tecnológico atual, a aquisição de equipamentos, tais como computadores, <em>PDAs</em>, <em>notebooks, </em>e GPS estão ao alcance de qualquer ser humano que busca conhecimentos científicos para seu crescimento profissional. Sendo assim, com um pequeno investimento, o pesquisador desta área poderá se beneficiar com a facilidade e comodidade que o geoprocessamento oferece ao seu usuário.</p>
+<h3>Shapefiles</h3>
+<p>De acordo com as especificações do <em>shapefile</em> da ESRI (1998), um <em>shapefile</em> é um formato de armazenamento digital para dados georreferenciados, voltado para utilização em softwares de sistemas de informações geográficas e atributos associados. Foi desenvolvido pela empresa ESRI, especializada em tecnologia GIS, sendo introduzido no mercado na década de 90 com o ArcView GIS. Hoje, o arquivo <em>shapefile</em> está mais popular, e já é possível ler e escrever este arquivo através de uma variedade de programas.</p>
+<p><em>Shapefiles</em> espacialmente representam geometrias: pontos, linhas, polígonos abertos e polígonos fechados. Um ponto, por exemplo, poderia representar poços de água, um polígono aberto poderia representar rios e lagos, respectivamente.</p>
+<p>Estas representações geométricas são de uso limitado, sem atributos que especifiquem o que elas representam. Portanto, uma tabela de registros fará o armazenamento de suas propriedades, atributos para cada formato primitivo no <em>shapefile</em>. Os <em>shapes</em> (formas geométricas), unidos a esses atributos geram uma grande quantidade de representações em dados geográficos. Representações que possibilitam cálculos de precisão.</p>
+<p>Na sua forma mais simples um <em>shapefile</em> é composto de três arquivos individuais obrigatórios para o armazenamento de dados que compreende um <em>shapefile</em>, são as extensões .shp, .shx e .dbf, que serão mencionados adiante. Existem mais oito arquivos opcionais, principalmente voltados para um melhor desempenho.</p>
+<p>Os arquivos obrigatórios são:</p>
+<ul>
+<li><strong>Shp</strong>: Os principais dados estão armazenados nesse arquivo, ou seja, os dados de referências geográficas.</li>
+<li><strong>Shx</strong>: É um arquivo de índice utilizado para percorrer os pontos do <em>shapefile</em>.</li>
+<li><strong>Dbf</strong>: Onde são registrados os atributos para cada forma, sendo armazenados no formato dBase, ou o opcional xBase que é variação do formato original dBase.</li>
+</ul>
+<p>Opcionais:</p>
+<ul>
+<li><strong>Sbn</strong>: Este é um arquivo binário de índice espacial de formato não documentado, sendo somente utilizado pelo software da ESRI. Uma vez que o arquivo shp contém todas as informações que necessita para a análise de dados, o arquivo sbn não é necessário.</li>
+<li><strong>Prj</strong>: Utiliza um arquivo texto para descrever as projeções usadas. Esse texto é fundamental para entender as informações contidas no shp.</li>
+<li><strong>Fbn</strong>: Índice espacial, unicamente de leitura de recursos para <em>shapefile</em>.</li>
+<li><strong>Ain</strong>: Tabela de atributos de um tema ou índice de atributo para um campo ativo na tabela.</li>
+<li><strong>Ixs</strong>: Índice de geocodificação para leitura e escrita de <em>shapefile</em>.</li>
+<li><strong>Mxs</strong>: Índice de geocodificação para leitura e escrita de <em>shapefile</em> no formato Odb.</li>
+<li><strong>Atx</strong>: Índice de atributo para o arquivo dbf na forma de <em>shapefile</em>.</li>
+<li><strong>Cpg</strong>: Especifica páginas de código dbf, identificando a codificação de caracteres a se utilizado. Os arquivos obrigatórios (.shp,.shx,.dbf), seguem uma sequência, isto é, o primeiro arquivo shp, corresponde ao primeiro registro no shx e no dbf e assim por diante.</li>
+</ul>
+<h3>Geotools - Como Surgiu</h3>
+<p>Segundo Hall (2008), GeoTools é uma biblioteca open source codificada em Java. Essa biblioteca fornece métodos para manipulação de dados geoespaciais, que são utilizados na implementação de Sistemas de Informação Geográfica (SIG).</p>
+<p>A Sun lançou a primeira versão pública de Java em 1995 (HALL,2008), no mesmo ano em que o desenvolvedor do GeoTools, James Macgill, iniciou seu mestrado em SIG na Universidade de Leeds, no Reino Unido. Em 1996, tornou-se evidente que a libertação do Java, estava vindo para mudar a face da navegação na Web. Contudo, a plataforma também estava sendo utilizado por Macgill para visualizar resultados na detecção de cluster espacial. Com um crescente número de projetos no Centro de recém-formados pela Center for Computational Geography (CCG) da Universidade de Leeds, tornou-se necessário o mapeamento, o espectador Macgill, que simplesmente o havia construído visando o sucesso na conclusão de seu doutoramento, a pesquisa foi ampliada e o projeto GeoTools nasceu.</p>
+<p>Uma das áreas de interesse inicial na investigação do CCG foi a detecção de cluster espacial. Este é o processo onde um programa é executado para determinar se a contaminação de uma forma específica de câncer, por exemplo, se é agrupado no espaço ou não. No início foram utilizados métodos como a máquina de análise geográfica (GAM). Eram relativamente fáceis de usar, os métodos mais complexos com base em flocagem boids estavam sendo investigadas. Isso levou Macgill a desenvolver um sistema de mapeamento básico em Java que pode ler e exibir shapefiles representados geograficamente, e ao mesmo tempo ser capaz de mover representações geométricas sobre a superfície do mapa com rapidez e facilidade.</p>
+<p>Desde o início do projeto GeoTools, os desenvolvedores consideraram a fonte do código, algo que deve ser desenvolvido e compartilhado abertamente. O GeoTools nasceu em um ambiente universitário, e como as universidades da Grã-Bretanha na década de 1990 focaram-se estreitamente nas comercializações de pesquisas, o licenciamento de software real teve inúmeras implicações legais e administrativas. Assim, foi decidido dar ao GeoTools uma comunidade de desenvolvimento livre, permitindo-lhe atingir seu potencial sem ser envolvido em burocracia.</p>
+<p>O interesse principal foi, e continua a sendo, produzir resultados consideráveis. Isto era extremamente difícil de conseguir no campo emergente da ciência computacional, na geografia geral e computacionais, em particular durante a década de 1990. GeoTools foi escrito em parte para evitar este problema, permitindo que todos baseiem suas experiências no mesmo código.</p>
+<h2>Código fonte</h2>
+<p>Construímos uma aplicação de exemplo utilizando a IDE Eclipse, <a href="http://www.paulocollares.com.br/arqs/pf/projetos-eclipse.tar">baixe aqui</a> os fontes.</p>
+<p>A aplicação desenvolvida baseia-se em exibir mapas carregados tanto de um <em>shapefile </em>quanto de um banco de dados PostGIS. Foi utilizada a biblioteca do GeoTools<em> </em>para fazer a manipulação dos dados geográficos.</p>
+<p><a href="http://www.paulocollares.com.br/wp-content/uploads/2012/03/Imagem1.png"><img title="Imagem1" src="{{ site.baseurl }}/images/2012/03/Imagem1-1024x608.png" alt="" width="590" height="350" /></a></p>
+<h2>Conclusão</h2>
+<p>Desde o início deste projeto, nossa vontade era abordar um tema atual para que pudéssemos aplicar de forma prática os conhecimentos adquiridos neste curso, então a partir de pesquisas para a escolha do tema, nos deparamos como o geoprocessamento, tecnologia que vem trazendo comodidade ao nosso dia-a-dia, optamos, então, pelo desenvolvimento de um aplicativo em Java, já que a intenção inicial e a única certeza, mesmo quando o tema do projeto ainda não estava definido, era a de trabalhar no desenvolvimento de um projeto que envolvesse esta linguagem de programação. Então, surgira a oportunidade de envolver o geoprocessamento no projeto que manteria o objetivo inicial de trabalhar na área de desenvolvimento e ao mesmo tempo abordar este assunto , que  tem grande destaque neste projeto, já que a mesclagem dos dois assuntos originariam num SIG.</p>
+<p>Aplicam-se os conceitos introdutórios de geoprocessamento, para os assuntos que envolvem a utilização do mesmo, como cartografia, posicionamento global, <em>datuns</em> entre outros, o que aborda informações geográficas para facilidade na manipulação de dados geográficos. Também aborda o GeoTools, complemento a linguagem de programação Java, além de <em>shapefiles</em> e PostGIS, tecnologias que armazenam dados georreferenciados.</p>
+<p>Observados todos os assuntos e tecnologias apresentadas, conclui-se que o aplicativo desenvolvido atinge os objetivos para o qual foi projetado e abre margens para implantação de projetos mais sofisticados na área de Tecnologia da Informação, visando maior aplicabilidade na representação e manipulação de dados geográficos.</p>
+<h2>Tópicos Abordados</h2>
+<ul>
+<li>1 - Introdução.</li>
+<li>1.1 - Motivação.</li>
+<li>1.2 - Objetivos e escopo do trabalho.</li>
+<li>1.3 - Organização do Trabalho.</li>
+<li>2 - Conceitos Introdutórios de Geoprocessamento.</li>
+<li>2.1 - Cartografia.</li>
+<li>2.1.1 - Elipsóide.</li>
+<li>2.2 - Coordenadas geográficas.</li>
+<li>2.3 - Datum.</li>
+<li>3 - Geoprocessamento.</li>
+<li>3.1 - Histórico.</li>
+<li>3.2 - Definição.</li>
+<li>3.3 - SIG.</li>
+<li>4 - Shapefiles.</li>
+<li>5 - PostGIS.</li>
+<li>5.1 - Instalação.</li>
+<li>5.2 - Geração de scripts SQL para carga de dados presentes nos Shapefiles.</li>
+<li>5.3 - Criando um novo banco para armazenar dados geográficos.</li>
+<li>5.4 - Função AddGeometryColumn.</li>
+<li>6 - GeoTools.</li>
+<li>6.1 - Como surgiu.</li>
+<li>6.2 - Código aberto.</li>
+<li>6.2.1 - Open Standards.</li>
+<li>6.2.2 - Open Source.</li>
+<li>6.2.3 - Open Science.</li>
+<li>6.3 - OGC.</li>
+<li>7 - Exemplo de implementação com GeoTools.</li>
+<li>7.1 - Dependências.</li>
+<li>7.1.1 - GeoTools.</li>
+<li>7.1.2 - JAI.</li>
+<li>7.1.3 - PostGIS.</li>
+<li>7.2 - MapContex.</li>
+<li>7.3 - FeatureSource.</li>
+<li>7.3.1 - Importando de um Shapefile.</li>
+<li>7.3.2 - Importando do Banco de dados.</li>
+<li>7.4 - CQL.</li>
+<li>7.5 - Style.</li>
+<li>7.6 - JMapFrame.</li>
+<li>8 - Conclusão.</li>
+<li>8.1 - Trabalhos Futuros.</li>
+</ul>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>

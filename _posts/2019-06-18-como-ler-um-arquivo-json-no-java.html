@@ -1,0 +1,166 @@
+---
+title: Como ler um arquivo JSON no Java
+date: 2019-06-18 16:23:10.000000000 -03:00
+categories:
+- Programação
+tags:
+- java
+permalink: "/programacao/como-ler-um-arquivo-json-no-java/"
+excerpt: Forma muito simples de se ler um arquivo JSON no Java e transformar em um
+  objeto, muito útil para criar arquivos de configuração para seu sistema.
+---
+<p></p>
+<p>Forma muito simples de se ler um arquivo JSON no Java e transformar em um objeto, muito útil para criar arquivos de configuração para seu sistema.</p>
+<p></p>
+<p></p>
+<h2>Dependências</h2>
+<p></p>
+<p></p>
+<p>A única dependência será o <em>Gson</em>, para a conversão do JSON para objetos Java.</p>
+<p></p>
+<p></p>
+<h2>Código</h2>
+<p></p>
+<p></p>
+<p>Vamos criar um arquivo chamado <em>config.json</em> na raiz do nosso projeto, ele irá conter o JSON que será lido.</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code prettyprint"><code>{
+    "nome": "paulo",
+    "idade": 31,
+    "lista": ["Item 1", "Item 2", "Item 3"],
+    "cidade":{
+        "nome":"Rio de janeiro",
+        "estado": "RJ"
+    }
+}</code></pre>
+<p></p>
+<p></p>
+<p>Vamos criar um arquivo <em>Cidade.java</em> para encapsular esse objeto. Servirá para demonstrar a capacidade de trabalharmos com objetos dentro do arquivo JSON.</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code prettyprint"><code>public class Cidade {
+
+    private String nome;
+    private String estado;
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+}</code></pre>
+<p></p>
+<p></p>
+<p>E vamos criar também um arquivo <em>Config.java</em>, para receber o conteúdo principal do arquivo.</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code prettyprint"><code>public class Config {
+
+    private String nome;
+    private int idade;
+    private List&lt;String> lista;
+    private Cidade cidade;
+
+    public Config() {
+        cidade = new Cidade();
+        lista = new ArrayList&lt;>();
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public int getIdade() {
+        return idade;
+    }
+
+    public void setIdade(int idade) {
+        this.idade = idade;
+    }
+
+    public List&lt;String> getLista() {
+        return lista;
+    }
+
+    public void setLista(List&lt;String> lista) {
+        this.lista = lista;
+    }
+
+    public Cidade getCidade() {
+        return cidade;
+    }
+
+    public void setCidade(Cidade cidade) {
+        this.cidade = cidade;
+    }
+
+}</code></pre>
+<p></p>
+<p></p>
+<p>Por fim, em nossa classe <em>main</em>, vamos realizar a leitura do arquivo e guardar em uma String o seu conteúdo:</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code prettyprint"><code> String json
+                = String.join(" ",
+                        Files.readAllLines(
+                                Paths.get("./config.json"),
+                                StandardCharsets.UTF_8)
+                );</code></pre>
+<p></p>
+<p></p>
+<p>Logo em seguida, desserializamos o conteúdo em um novo objeto <em>Config</em>, usando o método <em>fromJson</em> do <em>Gson</em>:</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code prettyprint"><code>Config config = new Gson().fromJson(json, Config.class);</code></pre>
+<p></p>
+<p></p>
+<p>A classe completa ficará assim:</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code prettyprint"><code>public class Main {
+
+    public static void main(String[] args) throws IOException {
+
+        String json
+                = String.join(" ",
+                        Files.readAllLines(
+                                Paths.get("./config.json"),
+                                StandardCharsets.UTF_8)
+                );
+
+        Config config = new Gson().fromJson(json, Config.class);
+
+        System.out.println(config.getNome());
+        System.out.println(config.getIdade());
+        System.out.println(config.getLista());
+        System.out.println("");
+        System.out.println(config.getCidade().getNome());
+        System.out.println(config.getCidade().getEstado());
+
+    }
+}</code></pre>
+<p></p>
+<p></p>
+<p>Saída da execução dessa aplicação:</p>
+<p></p>
+<p></p>
+<pre class="wp-block-preformatted">paulo<br />31<br />[Item 1, Item 2, Item 3]<br /><br />Rio de janeiro<br />RJ</pre>
+<p></p>
+<p></p>
+<p>[]'s</p>
+<p></p>

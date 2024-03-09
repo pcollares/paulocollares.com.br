@@ -1,0 +1,50 @@
+---
+title: 9 dicas de filtros para usar no Wireshark
+date: 2017-02-05 18:33:54.000000000 -03:00
+categories:
+- Infraestrutura
+tags: []
+permalink: "/infraestrutura/9-dicas-de-filtros-para-usar-no-wireshark/"
+excerpt: Wireshark é uma ferramenta incrível para visualizar pacotes que trafegam
+  em sua rede, listo aqui algumas dicas de filtros para melhorar a visualizações das
+  informações que deseja obter.
+---
+<p><a href="http://www.paulocollares.com.br/2017/02/9-dicas-de-filtros-para-usar-no-wireshark/wireshark/" rel="attachment wp-att-1829"><img class="aligncenter wp-image-1829 size-large" src="{{ site.baseurl }}/images/2017/02/wireshark-1024x576.jpg" width="800" height="450" /></a></p>
+<p>Wireshark é uma ferramenta incrível para visualizar pacotes que trafegam em sua rede, abaixo algumas dicas de filtros para melhorar a visualizações das informações que deseja obter.</p>
+<h2>Filtrar por IP de origem:</h2>
+<p><code>ip.src==192.168.1.5</code></p>
+<h2>&nbsp;</h2>
+<h2>Filtrar por IP de destino:</h2>
+<p><code>ip.dst==192.168.1.7</code></p>
+<h2>&nbsp;</h2>
+<h2>Filtrar por requisições GET do http:</h2>
+<p><code>http.request.method == "GET"</code></p>
+<h2>&nbsp;</h2>
+<h2>Filtrar por requisições POST do http:</h2>
+<p><code>http.request.method == "POST"</code></p>
+<h2>&nbsp;</h2>
+<h2>Filtrar por GET e POST:</h2>
+<p><code>http.request</code></p>
+<h2>&nbsp;</h2>
+<h2>Filtrar pelo host do http:</h2>
+<p><code>http.host=="192.168.10.11"</code></p>
+<h2>&nbsp;</h2>
+<h2>Filtrar pela URI:</h2>
+<p><code>http.request.uri=="/app/login.xhtml"</code></p>
+<h2>&nbsp;</h2>
+<h2>Filtrar pela porta TCP:</h2>
+<p><code>tcp.port==443</code></p>
+<h2>&nbsp;</h2>
+<h2>Filtrar pela porta UDP:</h2>
+<p><code>tcp.port==4562</code></p>
+<h2>&nbsp;</h2>
+<h2>Exemplo:</h2>
+<p>Com alguns filtros ´você é capaz de por exemplo visualizar um usuário e senha digitados em uma página de login de um serviço rodando sem o https, mostra a importancia de trafegar dados sensíveis de forma segura:<br />
+http.request.method == "POST" &amp;&amp; http.host=="192.168.10.11" &amp;&amp; http.request.uri=="/app/login.xhtml"</p>
+<h2>&nbsp;</h2>
+<h2>Dicas:</h2>
+<p>O Wireshark vai monitorar todo o tráfego que passa por alguma interface de sua máquina, lembrando que em uma rede cabeado atual, você só conseguira ver os pacotes que saem de sua maquina ou que chegam, já que o switch de sua rede é inteligente o bastante para não te mandar pacotes que não são para você.</p>
+<p>Já em uma rede wifi, sua placa de rede recebe tudo que trafega nessa rede, o Wireshark veem por padrão com essa opção desabilitada, você pode alterar em:<br />
+Capure Options &gt; duplo clique na wlan &gt; habilitar 'Capture packets in monitor mode'</p>
+<p>&nbsp;</p>
+<p>[]'s</p>

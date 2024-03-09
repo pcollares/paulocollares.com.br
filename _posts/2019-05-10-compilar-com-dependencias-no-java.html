@@ -1,0 +1,104 @@
+---
+title: Compilar com dependências no Java
+date: 2019-05-10 09:12:55.000000000 -03:00
+categories:
+- Programação
+tags:
+- java
+permalink: "/programacao/compilar-com-dependencias-no-java/"
+excerpt: Esta post explicará como compilar uma projeto Java encapsulando as dependências
+  em um único jar.
+---
+<p></p>
+<p>Esta post explicará como compilar uma projeto Java encapsulando as dependências em um único jar.</p>
+<p></p>
+<p></p>
+<p>Quando se constrói um projeto Java, sem um controle de dependências, como o Maven ou o Gradle, é necessário adicionar as bibliotecas manualmente, e assim, quando o projeto é compilado, um diretório 'lib' é criado e deve ser carregado junto com o jar principal.</p>
+<p></p>
+<p></p>
+<p>Com essa simples solução, todas essas bibliotecas do diretório 'lib' são  copiadas para o .jar principal, sendo apenas necessário esse para execução.</p>
+<p></p>
+<p></p>
+<p>Para isso, edite o arquivo build.xml e adicione a tag &lt;target> descrita abaixo, dentro da tag &lt;project>, apenas substituindo [NOME_JAR_PROJETO] pelo nome do jar principal do seu projeto.</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code prettyprint"><code>&lt;target name="-post-jar">
+      
+        &lt;property name="store.jar.name" value="[NOME_JAR_PROJETO]"/>
+
+        &lt;property name="store.dir" value="dist"/>
+        &lt;property name="temp.dir" value="temp"/>
+        &lt;property name="store.jar" value="${store.dir}/${store.jar.name}.jar"/>
+
+        &lt;echo message="Packaging ${application.title} into a single JAR at ${store.jar}"/>
+
+        &lt;delete dir="${temp.dir}"/>
+        &lt;mkdir dir="${temp.dir}"/>
+
+        &lt;jar destfile="${temp.dir}/temp_final.jar" filesetmanifest="skip">
+            &lt;zipgroupfileset dir="dist" includes="*.jar"/>
+            &lt;zipgroupfileset dir="dist/lib" includes="*.jar"/>
+            &lt;manifest>
+                &lt;attribute name="Main-Class" value="${main.class}"/>
+            &lt;/manifest>
+        &lt;/jar>
+
+        &lt;delete dir="${store.dir}"/>
+
+        &lt;zip destfile="${store.jar}">
+            &lt;zipfileset src="${temp.dir}/temp_final.jar"
+                        excludes="META-INF/*.SF, META-INF/*.DSA, META-INF/*.RSA"/>
+        &lt;/zip>
+
+        &lt;delete dir="${temp.dir}"/>
+    &lt;/target></code></pre>
+<p></p>
+<p></p>
+<p>Seu build.xml deve ficar assim:</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code prettyprint"><code>&lt;?xml version="1.0" encoding="UTF-8"?>
+
+&lt;project name="meu_projeto" default="default" basedir=".">
+    &lt;description>Builds, tests, and runs the project meu_projeto.&lt;/description>
+    &lt;import file="nbproject/build-impl.xml"/>
+   
+    &lt;target name="-post-jar">
+      
+        &lt;property name="store.jar.name" value="meu_projeto"/>
+
+        &lt;property name="store.dir" value="dist"/>
+        &lt;property name="temp.dir" value="temp"/>
+        &lt;property name="store.jar" value="${store.dir}/${store.jar.name}.jar"/>
+
+        &lt;echo message="Packaging ${application.title} into a single JAR at ${store.jar}"/>
+
+        &lt;delete dir="${temp.dir}"/>
+        &lt;mkdir dir="${temp.dir}"/>
+
+        &lt;jar destfile="${temp.dir}/temp_final.jar" filesetmanifest="skip">
+            &lt;zipgroupfileset dir="dist" includes="*.jar"/>
+            &lt;zipgroupfileset dir="dist/lib" includes="*.jar"/>
+            &lt;manifest>
+                &lt;attribute name="Main-Class" value="${main.class}"/>
+            &lt;/manifest>
+        &lt;/jar>
+
+        &lt;delete dir="${store.dir}"/>
+
+        &lt;zip destfile="${store.jar}">
+            &lt;zipfileset src="${temp.dir}/temp_final.jar"
+                        excludes="META-INF/*.SF, META-INF/*.DSA, META-INF/*.RSA"/>
+        &lt;/zip>
+
+        &lt;delete dir="${temp.dir}"/>
+    &lt;/target>
+    
+&lt;/project></code></pre>
+<p></p>
+<p></p>
+<p>Fonte: <a href="https://www.oracle.com/technetwork/java/javamail/single-jar-141905.html" target="_blank" rel="noreferrer noopener" aria-label="https://www.oracle.com/technetwork/java/javamail/single-jar-141905.html (abre numa nova aba)">https://www.oracle.com/technetwork/java/javamail/single-jar-141905.html</a></p>
+<p></p>
+<p></p>
+<p>[]'s</p>
+<p></p>

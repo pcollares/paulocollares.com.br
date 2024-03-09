@@ -1,0 +1,22 @@
+---
+title: Habilitar o teclado virtual nativo no JavaFX
+date: 2016-09-06 10:21:34.000000000 -03:00
+categories:
+- Programação
+tags:
+- java
+- javafx
+permalink: "/programacao/habilitar-o-teclado-virtual-nativo-no-javafx/"
+excerpt: O JavaFX tem nativamente um recurso para habilitar o teclado virtual nativo,
+  assim é possível construir aplicações para instalações sem teclado e mouse em uma
+  tela sensível ao toque, por exemplo
+---
+<p>[caption id="attachment_1645" align="aligncenter" width="1920"]<a href="http://www.paulocollares.com.br/2016/09/habilitar-o-teclado-virtual-nativo-no-javafx/habilitar-o-teclado-virtual-nativo-no-javafx-2/" rel="attachment wp-att-1645"><img src="{{ site.baseurl }}/images/2016/09/habilitar-o-teclado-virtual-nativo-no-javafx.png" alt="Habilitar o teclado virtual nativo no JavaFX" width="1920" height="242" class="size-full wp-image-1645" /></a> Habilitar o teclado virtual nativo no JavaFX[/caption]</p>
+<p>O JavaFX tem nativamente um recurso para habilitar o teclado virtual nativo, assim é possível construir aplicações para instalações sem teclado e mouse em uma tela sensível ao toque, por exemplo. Para isso basta adicionar o seguinte parâmetro na execução do java:</p>
+<pre>
+-Dcom.sun.javafx.virtualKeyboard=javafx
+</pre>
+<p>Também é recomendável habilitar o suporte ao touch, deste modo um painel com scroll pode ser rolado arrastando seu conteúdo por exemplo:</p>
+<pre>
+-Dcom.sun.javafx.touch=true
+</pre>

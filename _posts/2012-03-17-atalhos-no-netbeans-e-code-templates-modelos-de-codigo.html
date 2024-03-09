@@ -1,0 +1,129 @@
+---
+title: Atalhos e Modelos de Código (Code Templates) no Netbeans
+excerpt: Atalhos e Modelos de Código (Code Templates) no Netbeans
+date: 2012-03-17 12:00:55.000000000 -03:00
+categories:
+- Infraestrutura
+tags: []
+permalink: "/infraestrutura/atalhos-no-netbeans-e-code-templates-modelos-de-codigo/"
+---
+<p><a href="http://www.paulocollares.com.br/wp-content/uploads/2011/12/4.png"><img class="alignnone size-full wp-image-163" title="4" src="{{ site.baseurl }}/images/2012/03/4.png" alt="" width="445" height="452" /></a></p>
+<p>Todo programador sabe, que fazer tarefas repetidas é muito chato, para isso as IDEs facilitam nossas vidas com os atalhos, abaixo alguns exemplos do NetBeans:</p>
+<h2>Atalhos</h2>
+<p><strong>Gerar o Construtor, o Getter e Setter:</strong></p>
+<ul>
+<li><em>Alt+Insert</em></li>
+</ul>
+<p><strong>Formatar (identar) o código:</strong></p>
+<ul>
+<li><em>Alt+F</em></li>
+</ul>
+<p><strong>Correção dos Imports:</strong></p>
+<ul>
+<li><em>Ctrl+Shift+I</em></li>
+</ul>
+<p><strong>Ver sugestões de correção:</strong></p>
+<ul>
+<li><em>Alt+Enter</em></li>
+</ul>
+<p><strong>Duplicar as linhas:</strong></p>
+<ul>
+<li><em>Ctrl+Shift+Seta para Baixo</em></li>
+</ul>
+<p><strong>Mostra os argumentos de um método:</strong></p>
+<ul>
+<li><em>Ctrl+P</em></li>
+</ul>
+<p><strong>Adiciona um ';' no final da linha:</strong></p>
+<ul>
+<li><em>Ctrl+;</em></li>
+</ul>
+<p><strong>Auto completa com a próxima/anterior palavra compatível:</strong></p>
+<ul>
+<li><em>Ctrl+K</em></li>
+</ul>
+<div></div>
+<div><span style="font-size: x-small;"><em><br />
+</em></span></div>
+<h2>Code Templates (Modelos de código)</h2>
+<p>Modelos de códigos comumente usados, basta digitar a palavra chave e pressionar <em>Tab</em>.<br />
+É possível ver todos os templates existentes e adicionar outros, em <em>Ferramentas -&gt; Opções -&gt; Editor -&gt; Modelos de Código</em>.<br />
+Abaixo alguns exemplos:</p>
+<p>&nbsp;</p>
+<p><strong>System.out.println:</strong></p>
+<ul>
+<li><em>sout</em></li>
+</ul>
+<p>Exemplo:</p>
+<pre>System.out.println(“”);</pre>
+<p>&nbsp;</p>
+<p><strong>Cria um método main (<strong>p</strong>ublic <strong>s</strong>tatic <strong>v</strong>oid <strong>m</strong>ain):</strong></p>
+<ul>
+<li><em>psvm</em></li>
+</ul>
+<p>Exemplo:</p>
+<pre> public static void main(String[] args) {
+}</pre>
+<p>&nbsp;</p>
+<p><strong>Laço Estendido:</strong></p>
+<ul>
+<li><em>fore</em></li>
+</ul>
+<p>Exemplo:</p>
+<pre> for (Integer integer : intArray) {
+}</pre>
+<p>&nbsp;</p>
+<p><strong>Incremental For:</strong></p>
+<ul>
+<li><em>for</em></li>
+</ul>
+<p>Exemplo:</p>
+<pre>for (int i = 0; i &lt; 10; i++) {
+}</pre>
+<p><strong>Condicional Case:</strong></p>
+<ul>
+<li><em>cs</em></li>
+</ul>
+<p>Exemplo:</p>
+<pre>case what:
+break;</pre>
+<p>&nbsp;</p>
+<p><strong>Cria um módulo Try catch:</strong></p>
+<ul>
+<li><em>2do</em></li>
+</ul>
+<p>Exemplo:</p>
+<pre>try {
+          DataObject dob = DataObject.find(iterator);
+} catch (DataObjectNotFoundException ex) {
+          .printStackTrace(ex);
+}</pre>
+<p><strong>Outros</strong></p>
+<ul>
+<li><em>Pf</em> - public final</li>
+<li><em>Pfm</em> - public final void method() {}</li>
+<li><em>Pm</em> - public void method() { }</li>
+<li><em>Ps</em> - public static</li>
+<li><em>Psf</em> - public static final</li>
+<li><em>St</em> - String</li>
+<li><em>do</em> - do { } while (true);</li>
+<li><em>dowhile</em> - do { } while (exp);</li>
+<li><em>if</em> - if (true) { }</li>
+<li><em>ife</em> - if (true) { } else { }</li>
+<li><em>wh</em> - while (true) { }</li>
+</ul>
+<p><strong>JavaDocs</strong></p>
+<p>Você pode criar seus próprios modelos de código, muito útil para o JavaDoc. Escolha no menu linguagens, Javadoc, e clique em novo, escreva a abreviação, que será o que você precisará escrever antes do TAB, e monte seu template, veja o meu:</p>
+<pre>${descricao}
+
+@author Paulo Collares
+@since ${dia}/${mes}/2012</pre>
+<p>Os valores entre ${} são variáveis, útil para lembrar, e facilitar o preenchimento:</p>
+<p><img title="netbeans-code-template-javadocs" src="{{ site.baseurl }}/images/2012/03/netbeans-code-template-javadocs.jpg" alt="" width="340" height="130" /></p>
+<p></p>
+<p>Espero que tenha sido útil.</p>
+<p>&nbsp;</p>
+<p><em>Fontes:</em></p>
+<p><em> <a href="http://fabiocesar.wordpress.com/2007/07/06/atalhos-no-netbeans/" target="_blank" rel="noopener noreferrer">http://fabiocesar.wordpress.com/2007/07/06/atalhos-no-netbeans/</a></em></p>
+<p><em> <a href="http://hipercodigo.blogspot.com.br/2009/08/atalhos-extremamente-uteis-para-o.html" target="_blank" rel="noopener noreferrer">http://hipercodigo.blogspot.com.br/2009/08/atalhos-extremamente-uteis-para-o.html</a></em></p>
+<p>&nbsp;</p>

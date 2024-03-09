@@ -1,0 +1,162 @@
+---
+title: 5 funções úteis em PHP
+excerpt: 5 funções úteis em PHP
+date: 2011-11-09 11:11:09.000000000 -03:00
+categories:
+- Programação
+tags:
+- php
+permalink: "/programacao/5-funcoes-uteis-em-php/"
+---
+<p>Separei várias funções muito úteis que criei para o <a href="http://www.gospel10.com" target="_blank" rel="noopener noreferrer">Gospel 10</a>, são funções que estão implementadas no site, e estou compartilhando, espero que sejam úteis.</p>
+<h3>1. Gerador de keywords</h3>
+<p>Esta função prepara um texto para usar na metatag keyword do header, retira algumas palavras que não precisam ir para lá e coloca no máximo 10 tags.</p>
+<pre>
+function keywords($t){
+
+$t.=", ";
+
+$espaco_palavras = array(" de "," a "," e "," da "," do "," um "," uma "," e "," das "," dos "," ou "," com "," o "," u "," "," para "," em ",". "," se "," ir "," para ");
+$t=str_replace($espaco_palavras," ",$t);
+
+$t=str_replace(",","+",$t);
+$t=replace_accents($t);
+$t=strtolower($t);
+$t=str_replace("+","+",$t);
+$t=str_replace("_","+",$t);
+$t=str_replace(" ","+",$t);
+$t=ereg_replace("[^a-zA-Z0-9+]", "", strtr($t, "áàãâéêíóôõúüçÁÀÃÂÉÊÍÓÔÕÚÜÇ ", "aaaaeeiooouucAAAAEEIOOOUUC_"));
+$t=str_replace("+",",",$t);
+$t=str_replace("  "," ",$t);
+$t=str_replace(" ",", ",$t);
+$t=str_replace(", ",",",$t);
+$t=str_replace(" ,",",",$t);
+$t=str_replace(",,",",",$t);
+$t=str_replace(",,",",",$t);
+
+$ex=explode(",",$t);
+
+if (count($ex)>10){
+$t="";
+for ($i=0;$i<=10;$i++){
+	if ($i!=0)
+		$t.=",";
+	$t.=$ex[$i];
+}
+}
+return trim($t,",");
+}
+</pre>
+<p><strong>Como usar:</strong></p>
+<pre><meta name="keywords" content="<?=keywords("texto para as keywords")?>" /></pre>
+<h3>2. Gerador de descriptions</h3>
+<p>Essa prepara um texto para ser usado na metatag description, removendo aspas, quebras de linhas e limitando a 200 caracteres;</p>
+<pre>
+function description($t){
+	$t=substr($t,0,200);
+	$t=addslashes($t);
+	$t=strip_tags($t);
+	$t=str_replace("
+"," ",$t);
+	$t=str_replace("\n"," ",$t);
+	
+	return $t;
+}
+</pre>
+<p><strong>Como usar:</strong></p>
+<pre><meta name="description" content="<?=description("Texto para o description")?>" /></pre>
+<h3>3. Gerador de URL</h3>
+<p>Essa função prepara um texto para ser usado como URL, neste formato: </p>
+<pre>
+createLink("Bíblia em anime é sucesso entre crianças norte-americanas");
+//biblia-em-anime-e-sucesso-entre-criancas-norte-americanas
+</pre>
+<p>Esta função precisa de outra que eu criei que retira os acentos:</p>
+<pre>
+function replace_accents($s){
+$s = eregi_replace(",", "", $s);
+$s = eregi_replace(":", "", $s);	
+$s = htmlentities($s);
+$s = preg_replace ('/&([a-zA-Z])(uml|acute|grave|circ|tilde|cedil|ring);/', '$1', $s);
+$s = html_entity_decode($s);
+return $s;
+}
+
+function createLink($t){
+$t = trim($t);
+$t=strtolower($t);
+$t=str_replace(" & "," e ",$t);	
+$t=str_replace("+","+",$t);
+$t=str_replace("_","+",$t);
+$t=str_replace(" ","+",$t);
+$t=ereg_replace("[^a-zA-Z0-9_+-]", "", strtr($t, "áàãâéêíóôõúüçÁÀÃÂÉÊÍÓÔÕÚÜÇ ", "aaaaeeiooouucAAAAEEIOOOUUC_"));
+$t=str_replace("+","-",$t);
+$t=str_replace("--","-",$t);	
+$t=str_replace("---","-",$t);
+$t=str_replace("--","-",$t);	
+$t=trim($t,"-");
+$t=strtolower($t);
+return $t;
+}
+</pre>
+<h3>4. Função que retorna o Mês e o Dia da semana de acordo com o número</h3>
+<p>Duas funções simples que retornam o Mês e o Dia da Semana em extenso passando o número do mês/dia como parâmetro</p>
+<pre>
+function mostraMes($m){
+switch($m){
+	case 01: case 1: $mes="Janeiro"; break;
+	case 02: case 2: $mes="Fevereiro"; break;
+	case 03: case 3: $mes="Março"; break;
+	case 04: case 4: $mes="Abril"; break;
+	case 05: case 5: $mes="Maio"; break;
+	case 06: case 6: $mes="Junho"; break;
+	case 07: case 7: $mes="Julho"; break;
+	case 08: case 8: $mes="Agosto"; break;
+	case 09: case 9: $mes="Setembro"; break;
+	case 10: $mes="Outubro"; break;
+	case 11: $mes="Novembro"; break;
+	case 12: $mes="Dezembro"; break;
+}
+return $mes;
+}
+
+function diaDaSemana($dia){
+switch ($dia){
+	case 0: $diaSemana="Domingo"; break;
+	case 1: $diaSemana="Segunda"; break;
+	case 2: $diaSemana="Terça"; break;
+	case 3: $diaSemana="Quarta"; break;
+	case 4: $diaSemana="Quinta"; break;
+	case 5: $diaSemana="Sexta"; break;
+	case 6: $diaSemana="Sábado"; break;
+}
+</pre>
+<h3>5. Mostra a idade</h3>
+<p>Esta função retorna a idade de acordo com a data de nascimento passada como parâmetro</p>
+<pre>
+function idade($data){
+	$todo=explode('-',$data);
+	$dia=$todo[2];
+	$mes=$todo[1];
+	$ano=$todo[0];
+	$todo=explode('-',date("Y-m-d"));
+	$diaHoje=$todo[2];
+	$mesHoje=$todo[1];
+	$anoHoje=$todo[0];
+	$anos= $anoHoje - $ano;
+	if($mes > $mesHoje) //verifica se o mês de nascimento é maior que o mês atual
+	{
+	$anos--; //tira um ano, já que ele não fez aniversário ainda
+	}
+	elseif($mes == $mesHoje && $dia > $diaHoje) //verifica se o dia de hoje é maior que o dia do aniversário
+	{
+	$anos--; //tira um ano se não fez aniversário ainda
+	}
+	return $anos;
+}
+</pre>
+<p><strong>Como usar:</strong></p>
+<pre>
+<?php echo idade("18-08-1987");
+?>
+</pre>

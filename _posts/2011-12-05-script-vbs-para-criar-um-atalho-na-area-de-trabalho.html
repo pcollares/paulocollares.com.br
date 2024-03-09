@@ -1,0 +1,27 @@
+---
+title: Script vbs para criar um atalho para um site na área de trabalho de todos os
+excerpt: Script vbs para criar um atalho para um site na área de trabalho de todos os
+  usuários
+date: 2011-12-05 15:25:58.000000000 -03:00
+categories:
+- Infraestrutura
+tags:
+- windows
+permalink: "/infraestrutura/script-vbs-para-criar-um-atalho-na-area-de-trabalho/"
+---
+<p>Esse Script é muito útil para se você quiser divulgar um link na área de trabalho das estações do seu domínio, ele cria um atalho com a possibilidade de um ícone personalizado, que abre uma página na Internet, ou na Intranet no navegador padrão da máquina.</p>
+<p><strong>Dependências:</strong><br />
+<a href="http://www.paulocollares.com.br/chamar-scripts-vbs-no-logon-do-usuario-no-ad-do-windows-server">Um script .bat configurado para chamar esse arquivo, sendo executado no logon do usuário.</a></p>
+<p><strong>Código</strong></p>
+<pre>
+set WshShell = WScript.CreateObject("WScript.Shell")
+strDesktop = WshShell.SpecialFolders("Desktop")
+
+set oUrlLink = WshShell.CreateShortcut(strDesktop & "\NOME DO LINK.lnk")
+
+oUrlLink.TargetPath = "http://www.sua_url.com"
+
+oUrlLink.IconLocation = "CAMINHO PARA UM .ico"
+
+oUrlLink.Save
+</pre>

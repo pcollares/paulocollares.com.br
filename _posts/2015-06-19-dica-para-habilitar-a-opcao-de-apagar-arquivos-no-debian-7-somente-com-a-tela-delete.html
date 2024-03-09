@@ -1,0 +1,22 @@
+---
+title: Dica para habilitar a opção de apagar arquivos no debian 7 somente com a tela
+  'Delete'
+date: 2015-06-19 08:23:52.000000000 -03:00
+categories:
+- Infraestrutura
+tags:
+- windows
+permalink: "/infraestrutura/dica-para-habilitar-a-opcao-de-apagar-arquivos-no-debian-7-somente-com-a-tela-delete/"
+excerpt: No Debian 7 para remover um arquivo do nautilus, a tecla delete não funciona
+  por padrão, fazendo-se necessário clicar com o botão direito no arquivo desejado,
+  e então em 'Mover para a lixeira', esta dica mostra como habilitar o comando pela
+  tecla delete.
+---
+<p>No Debian 7 para remover um arquivo do nautilus, a tecla delete não funciona por padrão, fazendo-se necessário clicar com o botão direito no arquivo desejado, e então em 'Mover para a lixeira', esta dica mostra como habilitar o comando pela tecla delete.</p>
+<p>1. Tecle Alt+F2 e digite dconf-editor;<br />
+2. Localize o esquema org > gnome > desktop > interface e marque a opção "can-change-accels" (não feche o dconf-editor);<br />
+3. Abra o Nautilus, selecione um arquivo que possa ser removido (por segurança), acesse o menu Editar, posicione o mouse sobre a opção "Mover para a lixeira" (sem clicar!) e pressione duas vezes a tecla Delete;<br />
+3.1. Note que, após pressionar duas vezes a tecla Delete, o atalho do teclado é modificado de "Ctrl+Delete" para "Delete";<br />
+4. Volte para a janela do dconf-editor e desmarque a opção "can-change-accels"<br />
+5. Feche o dconf-editor.</p>
+<p>ufa... </p>

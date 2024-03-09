@@ -1,0 +1,108 @@
+---
+title: Como fazer uma requisição GET de uma API REST em Java e transformar o JSON
+  em um objeto
+date: 2019-06-05 11:02:51.000000000 -03:00
+categories:
+- Programação
+tags:
+- java
+permalink: "/programacao/como-fazer-uma-requisicao-get-de-uma-api-rest-em-java-e-transformar-o-json-em-um-objeto/"
+excerpt: Como realizar uma simples leitura de uma API REST que disponibiliza um JSON
+  como resposta de uma requisição GET.
+---
+<p></p>
+<p>Como realizar uma simples leitura de uma API REST que disponibiliza um JSON como resposta de uma requisição GET.</p>
+<p></p>
+<p></p>
+<p>Nossa única dependência será a biblioteca GSON do Google, para desserializar o JSON em um objeto Java.</p>
+<p></p>
+<p></p>
+<p>Para nosso exemplo irei obter os dados de aeronaves disponibilizados por um serviço gratuito, o <a href="https://opensky-network.org">OpenSky</a>, a documentação de sua API pode ser encontrada aqui: <a href="https://opensky-network.org/apidoc/rest.html">https://opensky-network.org/apidoc/rest.html</a></p>
+<p></p>
+<p></p>
+<p>Primeiramente vamos criar uma classe com os mesmos campos e tepos da resposta JSON da API que será consultada:</p>
+<p></p>
+<p></p>
+<p><strong>Dados.java</strong></p>
+<p></p>
+<p></p>
+<pre class="wp-block-code prettyprint"><code>public class Dados {
+
+        private String time;
+        private String[][] states;
+
+        public String getTime() {
+            return time;
+        }
+
+        public void setTime(String time) {
+            this.time = time;
+        }
+
+        public String[][] getStates() {
+            return states;
+        }
+
+        public void setStates(String[][] states) {
+            this.states = states;
+        }
+
+    }</code></pre>
+<p></p>
+<p></p>
+<p>Agora, nossa classe principal, onde é feita uma requisição HTTP da url definida e seu conteúdo é lido pelo BufferedReader.</p>
+<p></p>
+<p></p>
+<p>Depois simplesmente passo o conteúdo JSON para a biblioteca GSON, onde irá desserializar no objeto 'Dados'.</p>
+<p></p>
+<p></p>
+<p><strong>Main.java</strong></p>
+<p></p>
+<p></p>
+<pre class="wp-block-code prettyprint"><code>public class APIRest {
+
+    public static void main(String[] args) {
+        try {
+            String url = "https://opensky-network.org/api/states/all?lamin=45.8389&amp;lomin=5.9962&amp;lamax=47.8229&amp;lomax=10.5226";
+
+            HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Accept", "application/json");
+
+            if (conn.getResponseCode() != 200) {
+                System.out.println("Erro " + conn.getResponseCode() + " ao obter dados da URL " + url);
+            }
+
+            BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
+
+            String output = "";
+            String line;
+            while ((line = br.readLine()) != null) {
+                output += line;
+            }
+
+            conn.disconnect();
+
+            Gson gson = new Gson();
+            Dados dados = gson.fromJson(new String(output.getBytes()), Dados.class);
+
+            System.out.println("TIME: " + dados.getTime());
+            System.out.println("STATES: " + Arrays.toString(dados.getStates()[0]));
+
+        } catch (IOException ex) {
+            Logger.getLogger(APIRest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+}</code></pre>
+<p></p>
+<p></p>
+<p>A saída será algo assim:</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>TIME: 1559738039
+STATES: [3c6671, DLH1153 , Germany, 1559738039, 1559738039, 6.6706, 46.3694, 10363.2, false, 259.33, 5.24, 0.33, null, 10599.42, 5507, false, 0]</code></pre>
+<p></p>
+<p></p>
+<p>[]'s</p>
+<p></p>

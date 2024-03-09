@@ -1,0 +1,154 @@
+---
+title: Worship4J - Sistema de apresentação e projeção para igrejas - Gratuito e livre
+date: 2019-04-14 16:06:40.000000000 -03:00
+categories:
+- Destaques
+- Programação
+tags:
+- java
+- javafx
+permalink: "/programacao/worship4j-sistema-de-apresentacao-e-projecao-para-igrejas-gratuito-e-livre/"
+excerpt: Alguns anos atrás comecei a desenvolver esse sistema para auxiliar nas projeções
+  da minha igreja, não consegui finalizar e decidimos por uma solução comercial. Decidi
+  então, disponibilizar o código para quem quiser usar, pode ser usado sem restrições
+  e modificado.
+---
+<p></p>
+<p>Alguns anos atrás comecei a desenvolver esse sistema para auxiliar nas projeções da minha igreja, não consegui finalizar e decidimos por uma solução comercial. </p>
+<p></p>
+<p></p>
+<p>Decidi então, disponibilizar o código para quem quiser usar , está hospedado no <a rel="noreferrer noopener" aria-label="Github (abre numa nova aba)" href="https://github.com/pcollares/Worship4j" target="_blank">Github</a>, pode ser usado sem restrições e modificado.</p>
+<p></p>
+<p><!-- wp:button {"backgroundColor":"vivid-green-cyan","textColor":"very-dark-gray","className":"is-style-outline"} --></p>
+<div class="wp-block-button is-style-outline"><a class="wp-block-button__link has-text-color has-very-dark-gray-color has-background has-vivid-green-cyan-background-color" href="https://github.com/pcollares/Worship4j">Faça download ou clone no Github<br /></a></div>
+<p><!-- /wp:button --></p>
+<p></p>
+<h2>Tecnologia utilizada</h2>
+<p></p>
+<p></p>
+<ul>
+<li>Java + JavaFX</li>
+<li></li>
+</ul>
+<p></p>
+<p></p>
+<h2>Funcionalidades</h2>
+<p></p>
+<p><!-- wp:image {"id":2225} --></p>
+<figure class="wp-block-image"><img src="{{ site.baseurl }}/images/2019/04/worship4j7-1024x288.png" alt="" class="wp-image-2225" /><br />
+<figcaption> Do lado esquerdo a apresentação no datashow, do lado direito o controle do operador </figcaption>
+</figure>
+<p></p>
+<p></p>
+<ul>
+<li>Apresentar músicas</li>
+<li>Exibir Bíblias completas</li>
+<li>Exibir vídeos</li>
+<li>Preparar o cronograma do culto</li>
+<li>Exibir a logo da igreja, sobrepondo qualquer apresentação</li>
+<li>Exibir um fundo preto, sobrepondo qualquer apresentação </li>
+<li></li>
+</ul>
+<p></p>
+<p></p>
+<h2>Como usar</h2>
+<p></p>
+<p></p>
+<p>Basta executar o projeto, algumas configurações devem ser modificadas manualmente no arquivo config.properties.</p>
+<p></p>
+<p></p>
+<p>O diretório <em>recursos </em>deve conter os videos, fundos, logos, músicas e bíblia. Detalhes de cada recurso são descritos abaixo:</p>
+<p></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3>Bíblias</h3>
+<p></p>
+<p></p>
+<p>No repositório contém a Almeida Atualizada como exemplo, deve ser descompactada no diretório de bíblias dentro de recursos.</p>
+<p></p>
+<p></p>
+<p>Cada Bíblia deverá ter seu próprio diretório, e dentro dele, um diretório para cada livro, e dentro deste, arquivos de texto nomeados com os números dos capítulos. Cada arquivo de capítulo contém uma linha para cada versículo.</p>
+<p></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3>Fundos</h3>
+<p></p>
+<p></p>
+<p>O diretório de fundos contem os arquivos de vídeo que será apresentado como fundo das letras das músicas e da Bíblia. No arquivo config.properties é possível informar qual arquivo de fundo será usado para a Bíblia e para as músicas.</p>
+<p></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3>Imagens</h3>
+<p></p>
+<p></p>
+<p>Não implementado nessa versão.</p>
+<p></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3>Logos</h3>
+<p></p>
+<p></p>
+<p>O diretório de logos contem os arquivos de vídeo que será apresentado  como logo quando esse botão for pressionado no sistema. No arquivo  config.properties é possível informar qual arquivo de logo será usado.</p>
+<p></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3>Músicas</h3>
+<p></p>
+<p></p>
+<p>O diretório de músicas contem as músicas que serão apresentadas no sistema. Cada música deve estar em um arquivo de texto nomeado com o nome da mesma. Seu conteúdo deve seguir esse formado:</p>
+<p></p>
+<p></p>
+<p><em>TITULO = [Nome da música]<br />ARTISTA = [Autor da música]<br />FUNDO = [Nome do arquivo de fundo que será usado para apresentar a mesma]</p>
+<p>[Parágrafo 1]</p>
+<p>[Parágrafo 2] </p>
+<p>[Parágrafo n] </em></p>
+<p></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3>Vídeos</h3>
+<p></p>
+<p></p>
+<p>O diretório de vídeos contem os vídeos que podem ser apresentados no sistema.</p>
+<p></p>
+<p></p>
+<h2>Imagens</h2>
+<p></p>
+<p><!-- wp:gallery {"ids":[2218,2219,2221,2222,2223,2224,2225],"columns":1,"imageCrop":false,"linkTo":"media"} --></p>
+<ul class="wp-block-gallery columns-1">
+<li class="blocks-gallery-item">
+<figure><a href="http://www.paulocollares.com.br/wp-content/uploads/2019/04/worship4j1-1024x288.png" /><img src="{{ site.baseurl }}/images/2019/04/worship4j1-1024x288.png" alt="" data-id="2218" data-link="http://www.paulocollares.com.br/?attachment_id=2218" class="wp-image-2218" /><br />
+<figcaption>Apresentação da Bíblia</figcaption>
+</figure>
+</li>
+<li class="blocks-gallery-item">
+<figure><a href="http://www.paulocollares.com.br/wp-content/uploads/2019/04/worship4j2.png" /><img src="{{ site.baseurl }}/images/2019/04/worship4j2.png" alt="" data-id="2219" data-link="http://www.paulocollares.com.br/?attachment_id=2219" class="wp-image-2219" /><br />
+<figcaption>Cronograma do culto</figcaption>
+</figure>
+</li>
+<li class="blocks-gallery-item">
+<figure><a href="http://www.paulocollares.com.br/wp-content/uploads/2019/04/worship4j3.png" /><img src="{{ site.baseurl }}/images/2019/04/worship4j3.png" alt="" data-id="2221" data-link="http://www.paulocollares.com.br/?attachment_id=2221" class="wp-image-2221" /><br />
+<figcaption>Lista de músicas</figcaption>
+</figure>
+</li>
+<li class="blocks-gallery-item">
+<figure><a href="http://www.paulocollares.com.br/wp-content/uploads/2019/04/worship4j4.png" /><img src="{{ site.baseurl }}/images/2019/04/worship4j4.png" alt="" data-id="2222" data-link="http://www.paulocollares.com.br/?attachment_id=2222" class="wp-image-2222" /><br />
+<figcaption>Listagem da Bíblia</figcaption>
+</figure>
+</li>
+<li class="blocks-gallery-item">
+<figure><a href="http://www.paulocollares.com.br/wp-content/uploads/2019/04/worship4j5.png" /><img src="{{ site.baseurl }}/images/2019/04/worship4j5.png" alt="" data-id="2223" data-link="http://www.paulocollares.com.br/?attachment_id=2223" class="wp-image-2223" /><br />
+<figcaption>Listagem dos vídeos</figcaption>
+</figure>
+</li>
+<li class="blocks-gallery-item">
+<figure><a href="http://www.paulocollares.com.br/wp-content/uploads/2019/04/worship4j6-919x1024.png" /><img src="{{ site.baseurl }}/images/2019/04/worship4j6-919x1024.png" alt="" data-id="2224" data-link="http://www.paulocollares.com.br/?attachment_id=2224" class="wp-image-2224" /><br />
+<figcaption>Controle das mídias e preview do ao vido</figcaption>
+</figure>
+</li>
+<li class="blocks-gallery-item">
+<figure><a href="http://www.paulocollares.com.br/wp-content/uploads/2019/04/worship4j7-1024x288.png" /><img src="{{ site.baseurl }}/images/2019/04/worship4j7-1024x288.png" alt="" data-id="2225" data-link="http://www.paulocollares.com.br/?attachment_id=2225" class="wp-image-2225" /><br />
+<figcaption>Do lado esquerdo a apresentação no datashow, do lado direito o controle do operador</figcaption>
+</figure>
+</li>
+</ul>
+<p><!-- /wp:gallery --></p>
+<p></p>
+<p>[]'s</p>
+<p></p>
+<p></p>
+<p></p>
+<p></p>

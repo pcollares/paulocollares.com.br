@@ -1,0 +1,80 @@
+---
+title: Servidor HTTP simples em Java
+date: 2020-01-28 20:30:28.000000000 -03:00
+categories:
+- Programação
+tags:
+- java
+permalink: "/programacao/servidor-http-simples-em-java/"
+excerpt: Neste post iremos montar um servidor HTTP simples em Java. Útil para obter
+  informações simples de uma aplicação rodando um background por exemplo.
+---
+<p></p>
+<p>Neste post iremos montar um servidor HTTP simples em Java. Útil para obter informações simples de uma aplicação rodando um background por exemplo.</p>
+<p></p>
+<p></p>
+<p>O projeto completo pode ser baixado no Github: <a href="https://github.com/pcollares/exemplos-blog/tree/master/SimpleHTTPServer">https://github.com/pcollares/exemplos-blog/tree/master/SimpleHTTPServer</a></p>
+<p></p>
+<p></p>
+<p>O primeiro passo é criar uma instância do servidor http nativo:</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>HttpServer servidor = HttpServer.create(new InetSocketAddress(8080), 0);</code></pre>
+<p></p>
+<p></p>
+<p>Nesse exemplo ele irá executar na porta 8080.</p>
+<p></p>
+<p></p>
+<p>Agora adiciono um novo contexto e uma classe, que criaremos abaixo que será quem irá resolver as requisições.</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>servidor.createContext("/", new Root());</code></pre>
+<p></p>
+<p></p>
+<p>Bastando iniciar o servidor agora</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>servidor.start();</code></pre>
+<p></p>
+<p></p>
+<p>Nesse exemplo, a classe Root que irá responder as requisições feitas para o contexto '/' e deve implementar a interface HttpHandler para que o método handle prepare o retorno que será enviado no corpo da resposta http.</p>
+<p></p>
+<p></p>
+<p>Para isso, crio um StringBuilder para facilitar a concatenação das Strings:</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>StringBuilder out = new StringBuilder();
+
+out.append("&lt;html>");
+out.append("&lt;head>");
+out.append("&lt;title>Ola mundo").append("&lt;/title>");
+out.append("&lt;/head>");
+out.append("&lt;body>");
+out.append("Olá mundo");
+out.append("&lt;/body>");
+out.append("&lt;/html>");</code></pre>
+<p></p>
+<p></p>
+<p>E escrevo essa saída como um array de bytes:</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code"><code>he.sendResponseHeaders(200, out.toString().length());
+
+try (OutputStream os = he.getResponseBody()) {
+    os.write(out.toString().getBytes("ISO-8859-1"));
+}</code></pre>
+<p></p>
+<p></p>
+<p>O resultado pode ser visto acessando http://localhost:8080/</p>
+<p></p>
+<p></p>
+<p>No código completo no Github, adicionei mais uma página de exemplo (/stats) que demonstra como pode ser útil para obter informações do Hardware e do sistema operacional, como memória, uso do disco, processador, threads, etc...</p>
+<p></p>
+<p><!-- wp:image {"id":2923,"width":503,"height":389} --></p>
+<figure class="wp-block-image is-resized"><img src="{{ site.baseurl }}/images/2020/01/servidor-http-simples-em-java-memoria-processador-sistema-operacional.png" alt="" class="wp-image-2923" width="503" height="389" /><br />
+<figcaption>Exemplo de resposta do servidor http simples em Java</figcaption>
+</figure>
+<p></p>
+<p></p>
+<p>[]'s</p>
+<p></p>

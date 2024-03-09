@@ -1,0 +1,179 @@
+---
+title: 4 funções em PHP para tratar vídeos do Youtube
+excerpt: 4 funções em PHP para tratar vídeos do Youtube
+date: 2011-11-09 11:42:08.000000000 -03:00
+categories:
+- Programação
+tags:
+- php
+permalink: "/programacao/4-funcoes-em-php-para-tratar-videos-do-youtube/"
+---
+<p>Separei algumas funções muito úteis que criei e outras adaptei para o <a href="http://www.gospel10.com" target="_blank" rel="noopener noreferrer">Gospel 10</a> para tratamento de vídeos do Youtube, confiram:</p>
+<h3>1. Separa a Hash do vídeo do url</h3>
+<pre>
+function formataVideo($url){
+		
+		if ($url=='')
+			return false;
+		
+		$aUrl = parse_url($url);
+            $aUrl['query_params'] = array();
+            $aPairs = explode('&', $aUrl['query']);
+            foreach($aPairs as $sPair) {
+                if (trim($sPair) == '') { continue; }
+                list($sKey, $sValue) = explode('=', $sPair);
+                $aUrl['query_params'][$sKey] = urldecode($sValue);
+            }
+			$qUrl=$aUrl['query_params'];
+			
+			$v=$qUrl['v'];
+			
+			if ($v=="")
+				return false;		
+            return $v;	
+}
+</pre>
+<p><strong>Como usar:</strong></p>
+<pre>
+<?php echo formataVideo("http://www.youtube.com/watch?v=lxprHs6f6L4&feature=feedlik");
+//lxprHs6f6L4
+?>
+</pre>
+<h3>2. Retorna o Tempo do Vídeo</h3>
+<pre>
+function tempoVideoYoutube($url) {      
+	
+	// set video data feed URL
+	$feedURL = 'http://gdata.youtube.com/feeds/api/videos/' . $url;
+	
+	// read feed into SimpleXML object
+	if($handle=@fopen($feedURL,r))
+		$entry = simplexml_load_file($feedURL);
+	else
+		return "";
+	// get nodes in media: namespace for media information
+	$media = $entry->children('http://search.yahoo.com/mrss/');
+			
+	// get <yt:duration> node for video length
+	$yt = $media->children('http://gdata.youtube.com/schemas/2007');
+	$attrs = $yt->duration->attributes();
+	$length = $attrs['seconds']; 
+	
+	$minuto=floor($length/60);
+	$segundo= $length % 60;	
+	
+	if ($minuto<10)
+		$minuto="0".$minuto;
+	if ($segundo<10)
+		$segundo="0".$segundo;
+
+	$tempo=$minuto.":".$segundo;
+	
+	  
+    return $tempo;      
+} 
+</yt:duration></pre>
+<p><strong>Como usar:</strong></p>
+<pre>
+<?php echo tempoVideoYoutube("lxprHs6f6L4");
+//08:42
+?>
+</pre>
+<h3>3. Retorna a miniatura do vídeo</h3>
+<pre>
+function imagemVideo($url){	
+	$imagem="http://img.youtube.com/vi/".$url."/default.jpg";
+	return $imagem;
+}
+</pre>
+<p><strong>Como Usar:</strong></p>
+<pre>
+<img src="<?=imagemVideo("lxprHs6f6L4")?>">
+</pre>
+<h3>4. Retorna várias informações do vídeo</h3>
+<pre>
+function parseVideoEntry($url) {      
+      $obj= new stdClass;
+      
+	// set video data feed URL
+	$feedURL = 'http://gdata.youtube.com/feeds/api/videos/' . $url;
+	
+	// read feed into SimpleXML object
+	if($handle=@fopen($feedURL,r))
+		$entry = simplexml_load_file($feedURL);
+	else
+		return "";
+	
+      // get author name and feed URL
+      $obj->author = $entry->author->name;
+      $obj->authorURL = $entry->author->uri;
+      
+      // get nodes in media: namespace for media information
+      $media = $entry->children('http://search.yahoo.com/mrss/');
+      $obj->title = $media->group->title;
+      $obj->description = $media->group->description;
+      
+      // get video player URL
+      $attrs = $media->group->player->attributes();
+      $obj->watchURL = $attrs['url']; 
+      
+      // get video thumbnail
+      $attrs = $media->group->thumbnail[0]->attributes();
+      $obj->thumbnailURL = $attrs['url']; 
+            
+      // get <yt:duration> node for video length
+      $yt = $media->children('http://gdata.youtube.com/schemas/2007');
+      $attrs = $yt->duration->attributes();
+      $obj->length = $attrs['seconds']; 
+      
+      // get <yt:stats> node for viewer statistics
+      $yt = $entry->children('http://gdata.youtube.com/schemas/2007');
+      $attrs = $yt->statistics->attributes();
+      $obj->viewCount = $attrs['viewCount']; 
+      $minuto=floor($length/60);
+	$segundo= $length % 60;	
+	
+	if ($minuto<10)
+		$minuto="0".$minuto;
+	if ($segundo<10)
+		$segundo="0".$segundo;
+
+	$tempo=$minuto.":".$segundo;
+	
+      // get <gd:rating> node for video ratings
+      $gd = $entry->children('http://schemas.google.com/g/2005'); 
+      if ($gd->rating) { 
+        $attrs = $gd->rating->attributes();
+        $obj->rating = $attrs['average']; 
+      } else {
+        $obj->rating = 0;         
+      }
+        
+      // get <gd:comments> node for video comments
+      $gd = $entry->children('http://schemas.google.com/g/2005');
+      if ($gd->comments->feedLink) { 
+        $attrs = $gd->comments->feedLink->attributes();
+        $obj->commentsURL = $attrs['href']; 
+        $obj->commentsCount = $attrs['countHint']; 
+      }
+      
+      // get feed URL for video responses
+      $entry->registerXPathNamespace('feed', 'http://www.w3.org/2005/Atom');
+      $nodeset = $entry->xpath("feed:link[@rel='http://gdata.youtube.com/
+      schemas/2007#video.responses']"); 
+      if (count($nodeset) > 0) {
+        $obj->responsesURL = $nodeset[0]['href'];      
+      }
+         
+      // get feed URL for related videos
+      $entry->registerXPathNamespace('feed', 'http://www.w3.org/2005/Atom');
+      $nodeset = $entry->xpath("feed:link[@rel='http://gdata.youtube.com/
+      schemas/2007#video.related']"); 
+      if (count($nodeset) > 0) {
+        $obj->relatedURL = $nodeset[0]['href'];      
+      }
+    
+      // return object to caller  
+      return $obj;      
+    }   
+</gd:comments></gd:rating></yt:stats></yt:duration></pre>

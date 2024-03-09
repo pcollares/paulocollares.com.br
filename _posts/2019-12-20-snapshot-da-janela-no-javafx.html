@@ -1,0 +1,33 @@
+---
+title: Snapshot da janela no JavaFX
+date: 2019-12-20 15:30:20.000000000 -03:00
+categories:
+- Programação
+tags:
+- java
+permalink: "/programacao/snapshot-da-janela-no-javafx/"
+excerpt: Este código faz a captura da tela atual do JavaFX e salva como uma imagem.
+---
+<p></p>
+<p>Este código faz a captura da tela atual do JavaFX e salva como uma imagem.</p>
+<p></p>
+<p></p>
+<pre class="wp-block-code prettyprint"><code>final WritableImage snapshot = primaryStage.getScene().snapshot(new WritableImage(1920, 1080));
+
+File file = new File(System.getProperty("java.io.tmpdir") + File.separator + "snapshot_" + System.currentTimeMillis() + ".png");
+
+try {
+                    ImageIO.write(SwingFXUtils.fromFXImage(snapshot, null), "png", file);
+} catch (IOException ex) {
+                    Logger.getLogger(SnapshotTelaJavaFX.class.getName()).log(Level.SEVERE, null, ex);
+}</code></pre>
+<p></p>
+<p></p>
+<p>O projeto completo pode ser baixado no meu Github: <a href="https://github.com/pcollares/exemplos-blog/tree/master/SnapshotTelaJavaFX">https://github.com/pcollares/exemplos-blog/tree/master/SnapshotTelaJavaFX</a></p>
+<p></p>
+<p></p>
+<p>Foto da capa: <a href="https://unsplash.com/@ffstop?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Fotis Fotopoulos</a> on <a href="https://unsplash.com/s/photos/monitor?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Unsplash</a></p>
+<p></p>
+<p></p>
+<p>[]'s</p>
+<p></p>

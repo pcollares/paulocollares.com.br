@@ -1,0 +1,15 @@
+---
+title: Alterando o 'java home' no Linux
+date: 2015-09-28 10:46:24.000000000 -03:00
+categories:
+- Infraestrutura
+tags:
+- linux
+permalink: "/infraestrutura/alterando-o-java-home-no-linux/"
+excerpt: Simples passo a passo para alterar o java home no linux
+---
+<p>Para alterar o java_home no linux basta usar estes comandos:</p>
+<p><code>#update-alternatives --install "/usr/bin/java" "java" "/opt/jdk1.8.0_20/bin/java" 3<br />
+#update-alternatives --config java</code></p>
+<p>Após o último comando digite o numero relativo ao caminho informado no primeiro comando. Para testar digite:</p>
+<p><code>java -version</code></p>
