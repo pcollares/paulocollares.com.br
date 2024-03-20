@@ -20,7 +20,7 @@ permalink: "/programacao/exemplo-do-padrao-de-projeto-comando-controle-remoto/"
 <h2>Exemplo</h2>
 <p>O exemplo apresentado no livro, propõe a construção de um software, que gerencia um Controle Remoto para automação residencial, o controle é um dispositivo com 7 slots (cada slot representa um aparelho) com um botão de ligar, e outro de desligar associado a cada slot, além de um botão de desfazer a última ação, mais ou menos como a imagem abaixo:</p>
 <p><a href="http://www.paulocollares.com.br/exemplo-do-padrao-de-projeto-comando-controle-remoto/410tgswqsol-_sl500_aa300_/" rel="attachment wp-att-464"><img class="alignnone size-full wp-image-464" title="410tgswQsOL._SL500_AA300_" src="{{ site.baseurl }}/images/2012/07/410tgswQsOL._SL500_AA300_.jpg" alt="" width="300" height="300" /></a></p>
-<p><strong>Baixe o código completo <a href="http://www.paulocollares.com.br/arqs/projetos/DesignPatternCommand.zip">aqui</a></strong></p>
+<p><strong>Baixe o código completo <a href="http://www.paulocollares.com.br/files/projetos/DesignPatternCommand.zip">aqui</a></strong></p>
 <p>Temos várias classes que representam objetos da casa, como uma lâmpada:</p>
 <pre>public class Light {
 
@@ -125,7 +125,7 @@ Light light = new Light();</pre>
 <pre>remote.setCommand(0, lightOn, lightOff, "Luz");</pre>
 <p>e chamamos o comando:</p>
 <pre>remote.onButtonWasPushed(0);</pre>
-<p><strong>Baixe o código completo <a href="http://www.paulocollares.com.br/arqs/projetos/DesignPatternCommand.zip">aqui</a></strong></p>
+<p><strong>Baixe o código completo <a href="http://www.paulocollares.com.br/files/projetos/DesignPatternCommand.zip">aqui</a></strong></p>
 <p>Este é um exemplo simples, mas que serve bem para entendermos o funcionamento do padrão.</p>
 <p>Além do Padrão Command, utilizo também o Singleton, que força uma classe ter apenas uma instancia na aplicação, que neste caso é a janela de status.</p>
 <p>Na aplicação há dois slots vazios, tente criar mais dois objetos e adiciona-los ao controle remoto!</p>
