@@ -13,9 +13,9 @@ excerpt: Algumas boas práticas de desenvolvimento com Spring Boot
 
 **3. Manter separação clara entre Controller, Service e Repository**
 
-    **Controller:** lida com chamadas HTTP, validação e delega o trabalho.
-    **Service:** encapsula a lógica de negócio e orquestra interações entre repositórios e outros serviços.
-    **Repository:** gerencia a persistência no banco de dados.
+**Controller:** lida com chamadas HTTP, validação e delega o trabalho.
+**Service:** encapsula a lógica de negócio e orquestra interações entre repositórios e outros serviços.
+**Repository:** gerencia a persistência no banco de dados.
 
 **4. Manter controllers enxutos e serviços robustos** Controllers devem apenas delegar a lógica; toda lógica de negócio deve ficar nos serviços, garantindo clareza, testabilidade e separação de responsabilidades.
 
@@ -33,10 +33,10 @@ excerpt: Algumas boas práticas de desenvolvimento com Spring Boot
 
 **Referências:**
 
-https://medium.com/@sanchitvarshney/ten-architecture-tips-every-spring-boot-developer-should-learn-early-26ce8327f3c4
+(https://medium.com/@sanchitvarshney/ten-architecture-tips-every-spring-boot-developer-should-learn-early-26ce8327f3c4)
 
-https://medium.com/@ujjawalr/5-spring-boot-patterns-that-separate-senior-developers-from-juniors-3fdb110d7d30
+(https://medium.com/@ujjawalr/5-spring-boot-patterns-that-separate-senior-developers-from-juniors-3fdb110d7d30)
 
-https://medium.com/javaguides/12-best-practices-every-spring-boot-developer-should-follow-4d678d0d5ed6
+(https://medium.com/javaguides/12-best-practices-every-spring-boot-developer-should-follow-4d678d0d5ed6)
 
-https://medium.com/@pudarimadhavi99/advanced-spring-boot-concepts-every-java-developer-should-know-575fe023d4e5
+(https://medium.com/@pudarimadhavi99/advanced-spring-boot-concepts-every-java-developer-should-know-575fe023d4e5)
