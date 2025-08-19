@@ -4,7 +4,7 @@ date: 2025-08-15
 permalink: /textos/algumas-boas-praticas-de-desenvolvimento-com-spring/
 categories:
   - textos
-excerpt: Hoje é o dia do estagiário, esse meu texto é para auxiliar quem esta procurando a sua primeira oportunidade para entrar no mercado de trabalho
+excerpt: Algumas boas práticas de desenvolvimento com Spring Boot
 ---
 
 **1. Separar propriedades por ambiente** Evite colocar configurações de produção diretamente no application.properties padrão. Utilize perfis específicos como application-dev.yml, application-prod.yml e application-test.yml para organizar propriedades de acordo com cada ambiente.
