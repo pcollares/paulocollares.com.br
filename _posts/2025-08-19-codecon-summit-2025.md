@@ -34,7 +34,8 @@ O teste unitário é o seu primeiro usuário e não existe uma boa arquitetura s
 ## REST APIs
 
 É melhor falhar para alguns usuários do que para todos, enfatizando a importância do conceito "Fail Fast". APIs REST devem ser idempotentes, ou seja, chamar o mesmo endpoint várias vezes deve produzir o mesmo comportamento. Endpoints de escrita não devem ter efeitos colaterais de inserir o mesmo dado duas vezes, e as operações devem ser "tudo ou nada" para evitar inconsistências.
-Aprendizagem e Carreira
+
+## Aprendizagem e Carreira
 
 A aprendizagem se divide em duas formas: difusa (conhecimentos adquiridos em podcasts, eventos, conversas, palestras) e focada (conhecimento formal, cursos, estudo pessoal direcionado). "Aprender dói, tem que doer", pois o crescimento ocorre quando saímos da zona de conforto. A mensagem final para a carreira é comece agora, não esperar o momento certo, pois "Feito é melhor do que bem feito!". E lembre-se: "Nem tudo dá certo, mas o que importa é tentar. Falhe rápido, mas não deixe de tentar".
 
