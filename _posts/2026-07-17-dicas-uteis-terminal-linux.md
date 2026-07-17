@@ -1,6 +1,6 @@
 ---
 title: 'Dicas úteis de terminal Linux'
-date: 2026-01-26
+date: 2026-07-17
 permalink: /textos/dicas-uteis-terminal-linux/
 categories:
   - textos
